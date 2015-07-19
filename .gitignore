@@ -1,0 +1,8 @@
+node_modules
+bower_components
+d.ts
+.tscache
+build
+dist
+npm-debug.log
+installer

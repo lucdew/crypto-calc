@@ -1,0 +1,60 @@
+
+
+<div class="content-wrapper">
+
+	<div class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Data conversion</h3>
+	  </div>
+	  <div class="panel-body">
+		  <crypto-converter ng-model="dataToConvert"></crypto-converter>		   
+	  </div>
+	</div>
+
+
+	<div class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Bitwise operation</h3>
+	  </div>
+	  <div class="panel-body">
+      		<div class="row valign bottom7">
+                  <div class="col-md-2 col-sm-3 bold">Bitwise operation</div>
+                  
+                  <div class="col-md-2 col-sm-2 noside-padding">
+                     <div class="dropdown" dropdown >
+                          <button class="btn btn-default dropdown-toggle"  name="bitwiseOperator" type="button"  
+                            dropdown-toggle  id="bitwiseOperatorMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            {{utils.bitwise.bitwiseOperator.name}}
+                            <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu" aria-labelledby="bitwiseOperatorMenu" >
+                            <li ng-repeat="bitwiseOperator in utils.bitwiseOperators" ng-click="utils.setBitwiseOperator(bitwiseOperator)"><a href="#" prevent-default>{{bitwiseOperator.name}}</a></li>
+                          </ul>
+                      </div>
+                  </div>
+                   
+           </div>
+           <div class="bottom7">
+             <databox type="hex" name="bitwise.data1" model="utils.bitwise.data1" rows="2" label="Data 1" 
+               required error-msg="utils.errors.data1" >
+             </databox>
+           </div>
+           <div ng-show="utils.bitwise.bitwiseOperator.name != 'NOT'" class="bottom7"> 
+             <databox type="hex" name="bitwise.data2" model="utils.bitwise.data2" rows="2" label="Data 2" 
+               error-msg="utils.errors.data2" >
+             </databox>
+           </div>             
+            <div class="row bottom7">
+                 <div class="col-md-2 col-sm-2"><button class="btn btn-lg btn-primary" type="submit" ng-click="utils.executeBitwiseOperation()">Execute</button></div>
+            </div>
+           <div class="top15">
+             <databox type="hex" name="bitwise.result" model="utils.bitwise.result" rows="2" label="Result" >
+             </databox>
+           </div>
+	  </div>
+    
+	</div>
+	
+
+
+</div>

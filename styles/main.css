@@ -1,0 +1,280 @@
+/* GLOBAL STYLES
+-------------------------------------------------- */
+/* Padding below the footer and lighter body text */
+
+/*body {
+    padding-bottom: 40px;
+    color: #5a5a5a;
+}*/
+
+
+
+.border1 {
+  border: 1px black solid;
+}
+
+body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.vertical-align {
+  display: flex;
+  align-items: center;  
+}
+
+
+
+
+.valign > [class*="col"] {
+  display: inline-block;
+  float: none;
+  vertical-align: middle;
+}
+
+
+.left5 { margin-left:5px; }
+
+
+.top5 { margin-top:5px; }
+.top7 { margin-top:7px; }
+.top10 { margin-top:10px; }
+.top15 { margin-top:15px; }
+.top17 { margin-top:17px; }
+.top30 { margin-top:30px; }
+
+.bottom5 { margin-bottom:5px; }
+.bottom7 { margin-bottom:7px; }
+.bottom10 { margin-bottom:10px; }
+.bottom15 { margin-bottom:15px; }
+.bottom17 { margin-bottom:17px; }
+.bottom30 { margin-bottom:30px; }
+
+.col-offset {
+    margin-left: 0;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+form.submitted .ng-invalid {
+    border:1px solid #f00;
+}
+
+.panel-small {
+    background: #E0E0E0;
+}
+.panel-body {
+   background:#f8f8f8;
+   font-size: 12px;
+}
+
+.panel-heading {
+    margin:0;
+}
+
+.red {
+    color: red;
+}
+
+.noside-padding {
+    padding-left:0;
+    padding-right:0;
+}
+
+.novertical-margin {
+    margin-bottom:0;
+    margin-top:0;
+}
+
+.panel-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.content-wrapper {
+    margin: 0 auto;
+    padding: 30px 30px;
+}
+
+.form-panel {
+    border-color: #ddd;
+    background-color: #f5f5f5;
+    padding: 10px 10px ;
+}
+
+.left {
+    text-align: left;
+}
+
+
+.form-warning {
+    font-weight: normal;
+    text-align: left;
+}
+
+
+.navbar-default .navbar-nav > li > a{
+  border-bottom: 1px solid transparent ;
+}
+
+.navbar-default .navbar-nav > li > a:hover,  .navbar-default .navbar-nav > li > a.menuselected {
+  border-bottom: 1px solid #439348;
+  transition: border 1s linear;
+}
+/* CUSTOMIZE THE NAVBAR
+-------------------------------------------------- */
+
+/* Special class on .container surrounding .navbar, used for positioning it into place. */
+.navbar-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 20;
+}
+
+/* Flip around the padding for proper display in narrow viewports */
+.navbar-wrapper > .container {
+    padding-right: 0;
+    padding-left: 0;
+}
+.navbar-wrapper .navbar {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.navbar-wrapper .navbar .container {
+    width: auto;
+}
+
+
+/* CUSTOMIZE THE CAROUSEL
+-------------------------------------------------- */
+
+/* Carousel base class */
+.carousel {
+    height: 500px;
+    margin-bottom: 60px;
+}
+/* Since positioning the image, we need to help out the caption */
+.carousel-caption {
+    z-index: 10;
+}
+
+/* Declare heights because of positioning of img element */
+.carousel .item {
+    height: 500px;
+    background-color: #777;
+}
+.carousel-inner > .item > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    height: 500px;
+}
+
+
+
+/* MARKETING CONTENT
+-------------------------------------------------- */
+
+/* Center align the text within the three columns below the carousel */
+.marketing .col-lg-4 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+.marketing h2 {
+    font-weight: normal;
+}
+.marketing .col-lg-4 p {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+
+/* Featurettes
+------------------------- */
+
+.featurette-divider {
+    margin: 80px 0; /* Space out the Bootstrap <hr> more */
+}
+
+/* Thin out the marketing headings */
+.featurette-heading {
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+
+
+/* RESPONSIVE CSS
+-------------------------------------------------- */
+
+@media (min-width: 768px) {
+
+    /* Navbar positioning foo */
+    .navbar-wrapper {
+        margin-top: 20px;
+    }
+    .navbar-wrapper .container {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    .navbar-wrapper .navbar {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    /* The navbar becomes detached from the top, so we round the corners */
+    .navbar-wrapper .navbar {
+        border-radius: 4px;
+    }
+
+    /* Bump up size of carousel content */
+    .carousel-caption p {
+        margin-bottom: 20px;
+        font-size: 21px;
+        line-height: 1.4;
+    }
+
+    .featurette-heading {
+        font-size: 50px;
+    }
+}
+
+@media (min-width: 992px) {
+    .featurette-heading {
+        margin-top: 120px;
+    }
+}
+
+/* Router animations, commented out due to annoying vertical jump effect */
+
+/*.ng-enter {
+  opacity: 0;
+}
+
+.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+
+.ng-animate,
+.ng-enter,
+.ng-leave {
+
+  -webkit-transition: 0.5s linear all;
+  -moz-transition: 0.5s linear all;
+  -o-transition: 0.5s linear all;
+  transition: 0.5s linear all;
+}
+
+.ng-leave {
+  opacity: 1;
+}
+
+.ng-leave.ng-leave-active {
+  opacity: 0;
+}*/

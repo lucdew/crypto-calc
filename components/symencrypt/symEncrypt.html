@@ -1,0 +1,99 @@
+
+<div class="content-wrapper">
+
+	<div class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Symmetric Encrypt/Decrypt</h3>
+	  </div>
+      
+      <div class="panel-body">
+      
+      
+    <form name="form" class="form left" role="form" novalidate ng-class="{submitted:symencrypt.submitted}">
+
+      <div class="bottom15">
+        <databox type="hex" name="data" model="symencrypt.data" rows="2" label="Data" autofocus required error-msg="symencrypt.errors.data" >
+        </databox>
+      </div>
+
+
+      <div class="bottom15">
+          <sym-key name="key" model="symencrypt.key" cipher-algo="symencrypt.cipherAlgo" 
+              label="Key" required></sym-key>
+       </div>
+
+                 
+       <div class="row vertical-align bottom15">
+            <div class="col-md-3 col-sm-3 bold"><div>Cipher Algo</div></div>
+            <div class="col-md-2 col-sm-2" style="padding-left: 0;">
+               <div class="dropdown" dropdown >
+                    <button class="btn btn-default dropdown-toggle"  name="cipherAlgo" type="button"  dropdown-toggle 
+                         id="cipherAlgoMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      {{symencrypt.cipherAlgo.name||'Choose'}}
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="cipherAlgoMenu" >
+                      <li ng-repeat="cipherAlgo in symencrypt.cipherAlgos" ng-click="symencrypt.setCipherAlgo(cipherAlgo)"><a href="#" prevent-default>{{cipherAlgo.name}}</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4 red">
+                {{symencrypt.errors.cipherAlgo}}
+             </div>
+        </div>
+
+       <div class="row vertical-align bottom15" >
+            <div class="col-md-3 col-sm-3 left bold">Block Cipher Mode</div>
+            <div class="col-md-3 col-sm-3" style="padding-left: 0;">
+               <div class="dropdown" dropdown >
+                    <button class="btn btn-default dropdown-toggle"  name="blockCipherMode" type="button"  dropdown-toggle  id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      {{symencrypt.blockCipherMode.name}}
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" >
+                      <li ng-repeat="blockCipherMode in symencrypt.blockCipherModes" ng-click="symencrypt.setBlockCipherMode(blockCipherMode)"><a href="#" prevent-default>{{blockCipherMode.name}}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+ 
+        <div class="row valign bottom15">
+            <div class="col-md-3 col-sm-3 left bold">Padding</div>
+            <div class="col-md-3 col-sm-3" style="padding-left: 0;">
+               <div class="dropdown" dropdown >
+                    <button class="btn btn-default dropdown-toggle" name="padding" type="button"  dropdown-toggle  id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      {{symencrypt.padding.name}}
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" >
+                      <li ng-repeat="paddingType in symencrypt.paddingTypes" ng-click="symencrypt.setPaddingType(paddingType)"><a href="#" prevent-default>{{paddingType.name}}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>          
+
+
+        <div ng-show="symencrypt.blockCipherMode.hasIV">
+          <div class="bold">
+              IV
+          </div>
+          <input class="form-control bottom15" name="IV" type="text" ng-model="symencrypt.iv"/>
+        </div>
+
+          
+        <div class="row bottom15">
+             <div class="col-md-2 col-sm-2"><button class="btn btn-lg btn-primary" type="submit" ng-click="symencrypt.cipher(form,true)">Encrypt</button></div>
+             <div class="col-md-2 col-sm-2"><button class="btn btn-lg btn-primary" type="submit" ng-click="symencrypt.cipher(form,false)">Decrypt</button></div>
+        </div>
+         
+
+        <databox type="hex" name="result" model="symencrypt.result" rows="2" label="Result"></databox>
+
+    </form>
+    
+      </div> <!-- End: Panel body-->
+     
+    </div> <!-- End: Panel-->
+</div>
+
+

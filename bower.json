@@ -1,0 +1,29 @@
+{
+  "name": "cryptoui",
+  "main": "index.js",
+  "version": "0.0.0",
+  "authors": [
+    "Luc Dewavrin"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.0",
+    "bootstrap": "3.3.4",
+    "jquery": "~1.11.2",
+    "angular-animate": "~1.4.1",
+    "angular-bootstrap": "~0.13.0",
+    "underscore": "~1.8.3",
+    "buffer": "~3.46.1",
+    "forge": "~0.6.33"
+  }
+}
