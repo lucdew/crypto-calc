@@ -1,20 +1,18 @@
 <!doctype html>
 <html>
 	<head>
-		<meta charset="utf-8">
-		<title>Crypto Calc</title>
+	    <meta charset="utf-8">
+	    <title>Crypto Calc</title>
+
+        <link rel="shortcut icon" href="/images/lock_2x.ico" type="image/x-icon" />
 
 	    <!-- build:css styles/vendor.css -->
 	    <!-- bower:css -->
 	    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
 	    <!-- endbower -->
-		<link rel="stylesheet" href="styles/index.css">
+	    <link rel="stylesheet" href="styles/index.css">
 	    <!-- endbuild -->
-        <link href="styles/main.css" rel="stylesheet"/>
-		<script type="text/javascript">
-	  	   window.$=window.jQuery=require('jquery');
-           window.cryptolib = require('./crypto-lib/cryptolib-nodejs').cryptolib;
-	   </script>
+            <link href="styles/main.css" rel="stylesheet"/>
 	</head>
 	<body ng-controller="AppController as app">
 
@@ -28,7 +26,7 @@
                         <li><a ng-link="utils" class="left5" ng-class="{menuselected: app.activeState ==='utils'}">Utils</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a ng-link="about" class="left5" ng-class="{menuselected: app.activeState ==='about'}">
+                       <li><a ng-link="about" class="left5" ng-class="{menuselected: app.activeState ==='about'}">
                                <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
                            </a>
                         </li>
@@ -43,7 +41,7 @@
 
 		<div ui-view="content" ng-viewport></div>
         <!-- build:js lib/cryptoCalc.js -->
-    
+            <script src="bower_components/jquery/dist/jquery.js"></script>
         <!-- bower:js -->
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -52,6 +50,18 @@
         <script src="bower_components/underscore/underscore.js"></script>
         <script src="bower_components/buffer/buffer.min.js"></script>
         <!-- endbower -->
+        <script src="bower_components/forge/js/debug.js"></script>
+        <script src="bower_components/forge/js/md.js"></script>
+        <script src="bower_components/forge/js/sha1.js"></script>
+        <script src="bower_components/forge/js/sha256.js"></script>
+        <script src="bower_components/forge/js/util.js"></script>
+        <script src="bower_components/forge/js/prng.js"></script>
+        <script src="bower_components/forge/js/random.js"></script>
+        <script src="bower_components/forge/js/cipher.js"></script>
+        <script src="bower_components/forge/js/cipherModes.js"></script>
+        <script src="bower_components/forge/js/aes.js"></script>
+        <script src="bower_components/forge/js/des.js"></script>
+        <script type="text/javascript" src="crypto-lib/cryptolib-web.js"></script>
         <script type="text/javascript" src="js/router.es5.js"></script>
         <script type="text/javascript" src="js/cryptoCalc.js"></script>
         <script type="text/javascript" src="components/symencrypt/symencrypt.js"></script>
@@ -60,7 +70,8 @@
 
         <!-- endbuild -->
           <script type="text/javascript">
-       
+           window.cryptolib = window.webcryptolib.cryptolib;
+           window.Buffer = buffer.Buffer;
            var doc = angular.element(document),
                docEl = angular.element(document.documentElement);
                angular.bootstrap(doc,['CryptoCalcModule']);

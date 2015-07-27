@@ -157,11 +157,9 @@ describe('Cipher', function () {
     describe('ciphering/deciphering', function () {
         it('should final cipher data with padding', function () {
             var clearData = 'abcde';
-            var acipher = cipher.createCipher(cipher.cipherAlgo.aes, cipher.blockCipherMode.cbc, cryptolib.padding.iso78164);
-            acipher.init(new Buffer('01020304050607080102030405060708'), true);
-            var cipherRes = acipher.finish(new Buffer(clearData, 'ascii'));
-            var deCipher = acipher.init(new Buffer('01020304050607080102030405060708'), false);
-            var result = acipher.finish(cipherRes);
+            var key = new Buffer('01020304050607080102030405060708');
+            var cipherRes = cipher.cipher(true, key, new Buffer(clearData, 'ascii'), cipher.cipherAlgo.aes, cipher.blockCipherMode.cbc, { padding: cryptolib.padding.iso78164 });
+            var result = cipher.cipher(false, key, cipherRes, cipher.cipherAlgo.aes, cipher.blockCipherMode.cbc, { padding: cryptolib.padding.iso78164 });
             assert.equal(result.toString('ascii'), clearData);
         });
     });

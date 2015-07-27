@@ -32,9 +32,6 @@ function SymencryptController($timeout, cryptolib, CryptoCalc) {
         if (!this.data) {
             this.setFieldError('data', 'Missing data');
         }
-        else if (this.data.length % 2 !== 0) {
-            this.setFieldError('data', 'Invalid hexa data');
-        }
         if (!this.key) {
             this.setFieldError('key', 'Missing key');
         }
@@ -56,14 +53,14 @@ function SymencryptController($timeout, cryptolib, CryptoCalc) {
             return;
         }
         try {
-            var aCipher = cryptolib.cipher.createCipher(this.cipherAlgo, this.blockCipherMode, this.padding);
             var ivBuffer = null;
             if (this.iv) {
                 ivBuffer = new Buffer(this.iv, 'hex');
             }
-            aCipher.init(new Buffer(this.key, 'hex'), cipherMode, ivBuffer);
-            var resBuffer = aCipher.finish(new Buffer(this.data, 'hex'));
-            this.result = resBuffer.toString('hex').toUpperCase();
+            var bKey = new Buffer(this.key, 'hex');
+            var bData = new Buffer(this.data, this.datatype);
+            var resBuffer = cryptolib.cipher.cipher(cipherMode, bKey, bData, this.cipherAlgo, this.blockCipherMode, { padding: this.padding, iv: ivBuffer });
+            this.result = resBuffer.toString(this.resulttype).toUpperCase();
         }
         catch (e) {
             console.log(JSON.stringify(e));

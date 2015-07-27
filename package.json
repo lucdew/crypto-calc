@@ -5,17 +5,18 @@
   "description": "Crypto calculator",
   "license": "MIT",
   "main": "index.js",
-  "repository": "luc/crypto-calc",
+  "repository": "http://github.com/lucdew/crypto-calc",
   "author": {
     "name": "Luc Dewavrin",
-    "url": "github.com/lucdew/crypto-calc"
+    "url": "http://github.com/lucdew/crypto-calc"
   },
   "engines": {
     "node": ">=0.12.0"
   },
   "scripts": {
     "start": "electron .",
-    "build": "grunt"
+    "buildelectron": "grunt",
+    "buildweb": "grunt buildweb"
   },
   "keywords": [
     "electron-app"
@@ -24,7 +25,8 @@
   "dependencies": {
     "chai": "^3.0.0",
     "electron-debug": "^0.1.0",
-    "jquery": "^2.1.4"
+    "jquery": "^2.1.4",
+    "node-forge": "^0.6.34"
   },
   "devDependencies": {
     "bower-files": "^3.7.0",
@@ -32,8 +34,10 @@
     "electron-prebuilt": "^0.28.3",
     "grunt": "^0.4.5",
     "grunt-bower-task": "^0.4.0",
+    "grunt-browserify": "^3.8.0",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-compress": "^0.13.0",
     "grunt-contrib-copy": "^0.8.0",
     "grunt-electron": "^1.0.0",
     "grunt-electron-installer": "^0.33.0",

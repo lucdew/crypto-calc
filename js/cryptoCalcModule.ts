@@ -11,7 +11,8 @@ module CryptoCalcModule {
              { path: '/',            redirectTo: '/symencrypt' },
              { path: '/symencrypt',  component: 'symencrypt' },
              { path: '/banking',     component: 'banking' },
-             { path: '/utils',       component: 'utils' }
+             { path: '/utils',       component: 'utils' },
+             { path: '/about',       component: 'about' }
             
         ];
         

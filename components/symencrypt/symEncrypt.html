@@ -12,7 +12,7 @@
     <form name="form" class="form left" role="form" novalidate ng-class="{submitted:symencrypt.submitted}">
 
       <div class="bottom15">
-        <databox type="hex" name="data" model="symencrypt.data" rows="2" label="Data" autofocus required error-msg="symencrypt.errors.data" >
+        <databox type="symencrypt.datatype" types="hex,base64,utf8" name="data" model="symencrypt.data" rows="2" label="Data" autofocus required error-msg="symencrypt.errors.data" >
         </databox>
       </div>
 
@@ -24,8 +24,8 @@
 
                  
        <div class="row vertical-align bottom15">
-            <div class="col-md-3 col-sm-3 bold"><div>Cipher Algo</div></div>
-            <div class="col-md-2 col-sm-2" style="padding-left: 0;">
+            <div class="col-md-1 col-sm-3 bold"><div>Cipher Algo</div></div>
+            <div class="col-md-1 col-sm-2" style="padding-left: 0;">
                <div class="dropdown" dropdown >
                     <button class="btn btn-default dropdown-toggle"  name="cipherAlgo" type="button"  dropdown-toggle 
                          id="cipherAlgoMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -43,7 +43,7 @@
         </div>
 
        <div class="row vertical-align bottom15" >
-            <div class="col-md-3 col-sm-3 left bold">Block Cipher Mode</div>
+            <div class="col-md-1 col-sm-3 left bold" style="padding-right: 0px;">Block Cipher Mode</div>
             <div class="col-md-3 col-sm-3" style="padding-left: 0;">
                <div class="dropdown" dropdown >
                     <button class="btn btn-default dropdown-toggle"  name="blockCipherMode" type="button"  dropdown-toggle  id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -58,7 +58,7 @@
         </div>
  
         <div class="row valign bottom15">
-            <div class="col-md-3 col-sm-3 left bold">Padding</div>
+            <div class="col-md-1 col-sm-3 left bold">Padding</div>
             <div class="col-md-3 col-sm-3" style="padding-left: 0;">
                <div class="dropdown" dropdown >
                     <button class="btn btn-default dropdown-toggle" name="padding" type="button"  dropdown-toggle  id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -82,12 +82,12 @@
 
           
         <div class="row bottom15">
-             <div class="col-md-2 col-sm-2"><button class="btn btn-lg btn-primary" type="submit" ng-click="symencrypt.cipher(form,true)">Encrypt</button></div>
-             <div class="col-md-2 col-sm-2"><button class="btn btn-lg btn-primary" type="submit" ng-click="symencrypt.cipher(form,false)">Decrypt</button></div>
+             <div class="col-md-1 col-sm-2"><button class="btn btn-lg btn-primary" type="submit" ng-click="symencrypt.cipher(form,true)">Encrypt</button></div>
+             <div class="col-md-1 col-sm-2"><button class="btn btn-lg btn-primary" type="submit" ng-click="symencrypt.cipher(form,false)">Decrypt</button></div>
         </div>
          
 
-        <databox type="hex" name="result" model="symencrypt.result" rows="2" label="Result"></databox>
+        <databox type="symencrypt.resulttype" types="hex,base64,utf8" name="result" model="symencrypt.result" rows="2" label="Result"></databox>
 
     </form>
     

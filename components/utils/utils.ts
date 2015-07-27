@@ -12,15 +12,15 @@ angular.module('CryptoCalcModule.utils', ['CryptoCalcModule.common'])
                },
                 template: `
                 <div class="bottom7">
-                    <databox type="hex" name="hex" model="dataToConvert.hex" rows="2" label="Hexa"></databox>
+                    <databox types="hex" name="hex" model="dataToConvert.hex" rows="2" label="Hexa"></databox>
                 </div>
                 <div class="bottom7">
-                   <databox type="ascii" name="ascii" model="dataToConvert.ascii" rows="2" label="Ascii"></databox>
+                   <databox types="ascii" name="ascii" model="dataToConvert.ascii" rows="2" label="Ascii"></databox>
                 </div>
                 <div class="bottom7">
-                   <databox type="base64" name="base64" model="dataToConvert.base64" rows="2" label="Base64"></databox>
+                   <databox types="base64" name="base64" model="dataToConvert.base64" rows="2" label="Base64"></databox>
                 </div>
-                <databox type="utf8" name="utf8" model="dataToConvert.utf8" rows="2" label="Utf8"></databox>             
+                <databox types="utf8" name="utf8" model="dataToConvert.utf8" rows="2" label="Utf8"></databox>             
                 `,           
                 link: function(scope:angular.IScope,element:angular.IAugmentedJQuery,
                   attrs:angular.IAttributes){

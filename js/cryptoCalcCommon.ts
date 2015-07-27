@@ -24,8 +24,26 @@ module CryptoCalcModule {
 
          });     
          
-         cryptoCalcCommonModule.directive('databox', 
-            function() {
+         cryptoCalcCommonModule.directive('databox', ['$timeout',
+            function($timeout:angular.ITimeoutService) {
+                   var typesMetadata = {
+                         hex:{
+                               desc : 'Hexa',
+                               regexp : /^(\s*[0-9a-fA-F][0-9a-fA-F]\s*)+$/,
+                          },
+                          utf8:{
+                               desc : 'Utf-8',
+                               regexp : /[A-Za-z\u0080-\u00FF ]+/ // weak regexp to lack of support in Ecmascript 5 
+                          },
+                          ascii:{
+                               desc : 'Ascii',
+                               regexp : /^[\x00-\x7F]+$/   
+                          },
+                          base64:{
+                               desc : 'Base64',
+                               regexp : /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/    
+                          }
+                   };
                    return {
                        restrict:'E',
                        //replace : true,
@@ -34,28 +52,44 @@ module CryptoCalcModule {
                           'rows' : '@',
                           'label' : '@',
                           'model' : '=',
-                          'type' : '@',
+                          'type' : '=',
                           'errorMsg' : '='         
                        },
                         template: function(element:angular.IAugmentedJQuery,
                           attrs:any) {
                             
-                                                               
+                           var types = attrs.types ? attrs.types.split(','):null;                                 
                            
                            var errorHtml = element.html();
                            var tpl =  `
                            <div class="container-fluid" style="padding:0">
-                                <div class="row">
-                                   <div class="col-md-2 col-sm-2 bold" style="padding-right:0;">{{label}}</div>
+                                <div class="row vertical-align bottom5">                                   
+                                   <div class="col-md-2 col-sm-4 noright-padding">
+                                           <span class="bold">{{label}}</span>`;
+                                           if (types) {
+                                                
+                                                tpl+=`<div class="btn-group left5 encodingchooser"  data-toggle="buttons">`;
+                                                types.forEach(function(val:string,idx:number){
+                                                       tpl+=`<label class="btn btn-xs btn-default`;
+                                                       if (idx==0) {
+                                                             tpl+=` active `;  
+                                                       } 
+                                                       tpl+=`" ng-click="toggleType($event,'${val}')">
+                                                            <input type="radio" name="options" id="option1" autocomplete="off" checked>`;
+                                                       tpl+=(<any>typesMetadata)[val].desc;
+                                                       tpl+=`</label>`;                                
+                                                });
+                                                tpl+=`</div>`;
+                                                    
+                                           }
+                                   tpl+=`</div>
                                    <div class="col-md-4 col-sm-4 noside-padding red"> {{errorMsg}}</div>
-                               <div class="col-md-2 col-sm-2 col-md-offset-2 col-sm-offset-2 bold noside-padding">Chars : {{charsNum}}</div>      
-                               <div class="col-md-2 col-sm-2 bold noside-padding" >Size (bytes): {{size}}</div>
+                                   <div class="col-md-2 col-sm-2 bold noside-padding">Chars : {{charsNum}}</div>      
+                                   <div class="col-md-2 col-sm-2 bold noside-padding" >Size (bytes): {{size}}</div>
                                 </div>
-                                <textarea class="form-control" name="{{name}}" type="text" ng-model="model" rows="{{rows}}" `
-                            
-                             if (attrs.ngClass) {
-                                     tpl+=" ng-class=\""+attrs.ngClass+"\"";
-                             }
+                                <textarea class="form-control" name="{{name}}" type="text" ng-model="model" rows="{{rows}}" 
+                                       ng-class="{'field-error': errorMsg}"`
+
                              if (attrs.$attr.autofocus) {
                                      tpl+=" autofocus";
                              }
@@ -70,25 +104,67 @@ module CryptoCalcModule {
                         } ,           
                         link: function(scope:any,element:angular.IAugmentedJQuery,
                           attrs:any){
+                             
+                             if (attrs.types) {
+                                  scope.type=attrs.types.split(',')[0];   
+                             }
+                             if (!scope.type) {
+                                 scope.type = 'hex';
+                             }
                        
-                               
+                             scope.toggleType = function($event:any,type:string) {
+                                  var oldtype = scope.type;
+                                  var oldvalue = scope.model;
+                                  scope.type=type;
+                                  scope.model = new buffer.Buffer(oldvalue,oldtype).toString(type); 
+                                  
+                             }
+                             scope.$on('$destroy',() => {
+                                  if (scope.lastError) {
+                                      $timeout.cancel(scope.lastError);
+                                  }      
+                             });
+                             
+                             scope.reportDataError = () => {
+                                     
+                                    scope.lastError = $timeout(() => {
+                                    
+                                            var typeMetadata = (<any>typesMetadata)[scope.type];
+                                            var typeDesc = typeMetadata.desc;
+                                            if (scope.type==='hex' && scope.model.length %2 !==0 ) {
+                                                 scope.errorMsg = 'Invalid length for '+typeDesc+' string';
+                                            }
+                                            else {
+                                                 scope.errorMsg = 'Invalid characters for type '+typeDesc;    
+                                            }
+                                    },200); 
+                             };
+                             
                              scope.$watch('model',function(newValue:any,oldValue:any) {
                                      
                                   var size = 0,charsNum = 0;
                                   scope.errorMsg = '';
+                                  if (scope.lastError) {
+                                      $timeout.cancel(scope.lastError);
+                                  }
                                   
-                                  var type = attrs.type;
+                                  var type = scope.type;
                                   
                                   if (newValue) {
-                                          
+                                    
+                                    var validatingRexep = (<any>typesMetadata)[scope.type].regexp;
+                                    if (!validatingRexep.test(scope.model)) {
+                                           scope.reportDataError();
+                                           return;  
+                                    }
                                     try {
                                          var buf = new buffer.Buffer(newValue,type);
                                          size = buf.length;
                                          charsNum = newValue.length;
+                                         
                                     }
                                     catch(e) {
-                                        console.log(e);
-                                        
+                                        scope.reportDataError();  
                                     } 
                                   }
                                    
@@ -102,7 +178,7 @@ module CryptoCalcModule {
                      }
            
                   
-                  });
+                  }]);
 
           cryptoCalcCommonModule.directive('pan', 
             function($timeout:any,cryptolib:Cryptolib.CryptoLibStatic) {
@@ -126,7 +202,7 @@ module CryptoCalcModule {
                                 </div>
                                 <div class="row">
          
-                                 <div class="col-md-4 col-sm-4 noside-padding">
+                                 <div class="col-md-2 col-sm-4 noside-padding">
          
                                 <input class="form-control" style="width:170px" maxlength="19" size="19" name="{{name}}" type="text" ng-model="model"`
                             
@@ -145,12 +221,12 @@ module CryptoCalcModule {
                              </div>
                              
     
-                                  <div class="col-md-4 col-sm-4 noside-padding" style="font-size:11px">
+                                  <div class="col-md-3 col-sm-4 noside-padding" style="font-size:11px">
                                       <div class="bold">Issuing Network : {{issuingNetwork}}</div>
                                       <div class="bold" >Check digit: <span ng-show="valid" >{{checkDigit}}</span></div>
                                       
                                    </div>
-                                   <div class="col-md-4 col-sm-4 noside-padding" style="font-size:11px"> 
+                                   <div class="col-md-2 col-sm-4 noside-padding" style="font-size:11px"> 
                                         <div class="bold">Account Id: {{accountIdentifier}}</div> 
                                         <div class="bold">Issuer Id: {{issuerIdentificationNumber}}</div>                                       
                                    </div>

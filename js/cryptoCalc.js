@@ -6,7 +6,8 @@ var CryptoCalcModule;
         { path: '/', redirectTo: '/symencrypt' },
         { path: '/symencrypt', component: 'symencrypt' },
         { path: '/banking', component: 'banking' },
-        { path: '/utils', component: 'utils' }
+        { path: '/utils', component: 'utils' },
+        { path: '/about', component: 'about' }
     ];
     function AppController($router, $scope, $location) {
         var self = this;
@@ -35,7 +36,25 @@ var CryptoCalcModule;
             utils: {}
         };
     });
-    cryptoCalcCommonModule.directive('databox', function () {
+    cryptoCalcCommonModule.directive('databox', ['$timeout', function ($timeout) {
+        var typesMetadata = {
+            hex: {
+                desc: 'Hexa',
+                regexp: /^(\s*[0-9a-fA-F][0-9a-fA-F]\s*)+$/,
+            },
+            utf8: {
+                desc: 'Utf-8',
+                regexp: /[A-Za-z\u0080-\u00FF ]+/
+            },
+            ascii: {
+                desc: 'Ascii',
+                regexp: /^[\x00-\x7F]+$/
+            },
+            base64: {
+                desc: 'Base64',
+                regexp: /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/
+            }
+        };
         return {
             restrict: 'E',
             scope: {
@@ -43,15 +62,27 @@ var CryptoCalcModule;
                 'rows': '@',
                 'label': '@',
                 'model': '=',
-                'type': '@',
+                'type': '=',
                 'errorMsg': '='
             },
             template: function (element, attrs) {
+                var types = attrs.types ? attrs.types.split(',') : null;
                 var errorHtml = element.html();
-                var tpl = "\n                           <div class=\"container-fluid\" style=\"padding:0\">\n                                <div class=\"row\">\n                                   <div class=\"col-md-2 col-sm-2 bold\" style=\"padding-right:0;\">{{label}}</div>\n                                   <div class=\"col-md-4 col-sm-4 noside-padding red\"> {{errorMsg}}</div>\n                               <div class=\"col-md-2 col-sm-2 col-md-offset-2 col-sm-offset-2 bold noside-padding\">Chars : {{charsNum}}</div>      \n                               <div class=\"col-md-2 col-sm-2 bold noside-padding\" >Size (bytes): {{size}}</div>\n                                </div>\n                                <textarea class=\"form-control\" name=\"{{name}}\" type=\"text\" ng-model=\"model\" rows=\"{{rows}}\" ";
-                if (attrs.ngClass) {
-                    tpl += " ng-class=\"" + attrs.ngClass + "\"";
+                var tpl = "\n                           <div class=\"container-fluid\" style=\"padding:0\">\n                                <div class=\"row vertical-align bottom5\">                                   \n                                   <div class=\"col-md-2 col-sm-4 noright-padding\">\n                                           <span class=\"bold\">{{label}}</span>";
+                if (types) {
+                    tpl += "<div class=\"btn-group left5 encodingchooser\"  data-toggle=\"buttons\">";
+                    types.forEach(function (val, idx) {
+                        tpl += "<label class=\"btn btn-xs btn-default";
+                        if (idx == 0) {
+                            tpl += " active ";
+                        }
+                        tpl += "\" ng-click=\"toggleType($event,'" + val + "')\">\n                                                            <input type=\"radio\" name=\"options\" id=\"option1\" autocomplete=\"off\" checked>";
+                        tpl += typesMetadata[val].desc;
+                        tpl += "</label>";
+                    });
+                    tpl += "</div>";
                 }
+                tpl += "</div>\n                                   <div class=\"col-md-4 col-sm-4 noside-padding red\"> {{errorMsg}}</div>\n                                   <div class=\"col-md-2 col-sm-2 bold noside-padding\">Chars : {{charsNum}}</div>      \n                                   <div class=\"col-md-2 col-sm-2 bold noside-padding\" >Size (bytes): {{size}}</div>\n                                </div>\n                                <textarea class=\"form-control\" name=\"{{name}}\" type=\"text\" ng-model=\"model\" rows=\"{{rows}}\" \n                                       ng-class=\"{'field-error': errorMsg}\"";
                 if (attrs.$attr.autofocus) {
                     tpl += " autofocus";
                 }
@@ -62,18 +93,55 @@ var CryptoCalcModule;
                 return tpl;
             },
             link: function (scope, element, attrs) {
+                if (attrs.types) {
+                    scope.type = attrs.types.split(',')[0];
+                }
+                if (!scope.type) {
+                    scope.type = 'hex';
+                }
+                scope.toggleType = function ($event, type) {
+                    var oldtype = scope.type;
+                    var oldvalue = scope.model;
+                    scope.type = type;
+                    scope.model = new buffer.Buffer(oldvalue, oldtype).toString(type);
+                };
+                scope.$on('$destroy', function () {
+                    if (scope.lastError) {
+                        $timeout.cancel(scope.lastError);
+                    }
+                });
+                scope.reportDataError = function () {
+                    scope.lastError = $timeout(function () {
+                        var typeMetadata = typesMetadata[scope.type];
+                        var typeDesc = typeMetadata.desc;
+                        if (scope.type === 'hex' && scope.model.length % 2 !== 0) {
+                            scope.errorMsg = 'Invalid length for ' + typeDesc + ' string';
+                        }
+                        else {
+                            scope.errorMsg = 'Invalid characters for type ' + typeDesc;
+                        }
+                    }, 200);
+                };
                 scope.$watch('model', function (newValue, oldValue) {
                     var size = 0, charsNum = 0;
                     scope.errorMsg = '';
-                    var type = attrs.type;
+                    if (scope.lastError) {
+                        $timeout.cancel(scope.lastError);
+                    }
+                    var type = scope.type;
                     if (newValue) {
+                        var validatingRexep = typesMetadata[scope.type].regexp;
+                        if (!validatingRexep.test(scope.model)) {
+                            scope.reportDataError();
+                            return;
+                        }
                         try {
                             var buf = new buffer.Buffer(newValue, type);
                             size = buf.length;
                             charsNum = newValue.length;
                         }
                         catch (e) {
-                            console.log(e);
+                            scope.reportDataError();
                         }
                     }
                     scope.size = size;
@@ -81,7 +149,7 @@ var CryptoCalcModule;
                 });
             }
         };
-    });
+    }]);
     cryptoCalcCommonModule.directive('pan', function ($timeout, cryptolib) {
         return {
             restrict: 'E',
@@ -92,7 +160,7 @@ var CryptoCalcModule;
             },
             template: function (element, attrs) {
                 var errorHtml = element.html();
-                var tpl = "\n                           <div class=\"container-fluid\">\n                                <div class=\"row\">\n                                   <div class=\"col-md-3 col-sm-3 noside-padding red\"> {{errorMsg}}</div>\n                                </div>\n                                <div class=\"row\">\n         \n                                 <div class=\"col-md-4 col-sm-4 noside-padding\">\n         \n                                <input class=\"form-control\" style=\"width:170px\" maxlength=\"19\" size=\"19\" name=\"{{name}}\" type=\"text\" ng-model=\"model\"";
+                var tpl = "\n                           <div class=\"container-fluid\">\n                                <div class=\"row\">\n                                   <div class=\"col-md-3 col-sm-3 noside-padding red\"> {{errorMsg}}</div>\n                                </div>\n                                <div class=\"row\">\n         \n                                 <div class=\"col-md-2 col-sm-4 noside-padding\">\n         \n                                <input class=\"form-control\" style=\"width:170px\" maxlength=\"19\" size=\"19\" name=\"{{name}}\" type=\"text\" ng-model=\"model\"";
                 if (attrs.ngClass) {
                     tpl += " ng-class=\"" + attrs.ngClass + "\"";
                 }
@@ -102,7 +170,7 @@ var CryptoCalcModule;
                 if (attrs.$attr.required) {
                     tpl += " required";
                 }
-                tpl += ">\n                             \n                             </div>\n                             \n    \n                                  <div class=\"col-md-4 col-sm-4 noside-padding\" style=\"font-size:11px\">\n                                      <div class=\"bold\">Issuing Network : {{issuingNetwork}}</div>\n                                      <div class=\"bold\" >Check digit: <span ng-show=\"valid\" >{{checkDigit}}</span></div>\n                                      \n                                   </div>\n                                   <div class=\"col-md-4 col-sm-4 noside-padding\" style=\"font-size:11px\"> \n                                        <div class=\"bold\">Account Id: {{accountIdentifier}}</div> \n                                        <div class=\"bold\">Issuer Id: {{issuerIdentificationNumber}}</div>                                       \n                                   </div>\n                             </div>\n                             \n                             \n                             </div>";
+                tpl += ">\n                             \n                             </div>\n                             \n    \n                                  <div class=\"col-md-3 col-sm-4 noside-padding\" style=\"font-size:11px\">\n                                      <div class=\"bold\">Issuing Network : {{issuingNetwork}}</div>\n                                      <div class=\"bold\" >Check digit: <span ng-show=\"valid\" >{{checkDigit}}</span></div>\n                                      \n                                   </div>\n                                   <div class=\"col-md-2 col-sm-4 noside-padding\" style=\"font-size:11px\"> \n                                        <div class=\"bold\">Account Id: {{accountIdentifier}}</div> \n                                        <div class=\"bold\">Issuer Id: {{issuerIdentificationNumber}}</div>                                       \n                                   </div>\n                             </div>\n                             \n                             \n                             </div>";
                 return tpl;
             },
             link: function (scope, element, attrs) {

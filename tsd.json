@@ -6,19 +6,19 @@
   "bundle": "d.ts/tsd.d.ts",
   "installed": {
     "node/node.d.ts": {
-      "commit": "e18e130e2188348070f98d92b98c0ea481c4a086"
+      "commit": "f6c8ca47193fb67947944a3170912672ac3e908e"
     },
     "mocha/mocha.d.ts": {
-      "commit": "43b6bf88758852b9ab713a9b011487f047f94f4e"
+      "commit": "f6c8ca47193fb67947944a3170912672ac3e908e"
     },
     "chai/chai.d.ts": {
-      "commit": "84dfeeac378552c22297a5d555b1999a396d7e7c"
+      "commit": "f6c8ca47193fb67947944a3170912672ac3e908e"
     },
     "angularjs/angular.d.ts": {
-      "commit": "84dfeeac378552c22297a5d555b1999a396d7e7c"
+      "commit": "f6c8ca47193fb67947944a3170912672ac3e908e"
     },
     "jquery/jquery.d.ts": {
-      "commit": "84dfeeac378552c22297a5d555b1999a396d7e7c"
+      "commit": "f6c8ca47193fb67947944a3170912672ac3e908e"
     }
   }
 }

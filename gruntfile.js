@@ -38,7 +38,7 @@ module.exports = function (grunt) {
             refresh: {
                 options: {
                     command: 'reinstall',
-                    //latest: true,
+                   //latest: true,
                     config: 'tsd.json'
                 }
             }
@@ -68,10 +68,25 @@ module.exports = function (grunt) {
                 
             } 
         },
+        browserify : {
+            dist: {
+            files: {
+              'crypto-lib/cryptolib-web.js': ['crypto-lib/cryptolib-nodejs.js'],
+            },
+            options: {
+              exclude : ['crypto','node-forge'],
+              browserifyOptions : {
+                  standalone : 'webcryptolib'
+              }
+              
+            }
+          }
+            
+        },
 
         wiredep: {
             app: {
-                src: ['index.html'],
+                src: ['index.html','index-web.html'],
                 exclude: [
                     /jquery/,
                     /forge/,
@@ -93,26 +108,72 @@ module.exports = function (grunt) {
               }
         },
         copy: {
-              dev: {
-                files: [{
-                  expand: true,
-                  cwd: '.',
-                  src: ['package.json', 'index.js', 'index.html','styles/**/*','js/**/*','components/**/*','images/**/*','crypto-lib/**/*'],
-                  dest: 'build/'
-                },
-                {
-                  expand: true,
-                  src: bowerFiles().relative(__dirname).files,
-                  dest: 'build/'
-                }, 
-                
-                {
-                  cwd: 'node_modules/',
-                  src: Object.keys(packagejson.dependencies).map(function (dep) { return dep + '/**/*';}),
-                  dest: 'build/node_modules/',
-                  expand: true
-                }]
+              base: {
+                files: [
+                    {
+                      expand: true,
+                      cwd: '.',
+                      src: ['package.json', 'styles/**/*','js/**/*','images/**/*','crypto-lib/**/*'],
+                      dest: 'build/'
+                    },
+                    // bower files
+                    {
+                      expand: true,
+                      src: bowerFiles().relative(__dirname).files,
+                      dest: 'build/'
+                    },
+                   // forge copy all files
+                   {
+                      expand: true,
+                      src: 'bower_components/forge/js/**',
+                      dest: 'build/'
+                    }
+
+                ]
+              },
+              components : {
+                  files : [
+                    {
+                      expand: true,
+                      cwd: '.',
+                      src: ['components/**/*'],
+                      dest: 'build/',
+                  
+                    }
+                  ],
+                  
+                  options: {
+                     process: function (content, srcpath) {
+                         return content.replace(/VERSION/g,packagejson['version'])
+                                       .replace(/AUTHOR/g,packagejson['author'].name)
+                                       .replace(/REPO/g,packagejson['author'].url)
+                                       .replace(/DATE/g,(new Date()).toString()); 
+                     }                 
+                  }
+              },
+              web: {
+                  src: 'index-web.html',
+                  dest: 'build/index.html'          
+              },
+              electron: {
+                  files: [
+                    {
+                      expand: true,
+                      cwd: '.',
+                      src: ['index.html','index.js'],
+                      dest: 'build/'                       
+                        
+                    },            
+                    {
+                      cwd: 'node_modules/',
+                      src: Object.keys(packagejson.dependencies).map(function (dep) { return dep + '/**/*';}),
+                      dest: 'build/node_modules/',
+                      expand: true
+                    }
+                ]                       
               }
+              
+              
         },          
         electron: {
               windows: {
@@ -168,7 +229,19 @@ module.exports = function (grunt) {
                   //,signWithParams: '/f ' + certificateFile + ' /p <%= certificatePassword %> /tr http://timestamp.comodoca.com/rfc3161'
              }
     
-        });
+        ,
+        compress: {
+              main: {
+                options: {
+                  archive: 'dist/cryptocalc-web.zip'
+                },
+                files: [
+                  {expand: true, cwd:'build',src: ['**/*']}
+                ]
+              }
+        }
+     
+    });
    
     
 
@@ -182,6 +255,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-electron-installer');
+    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-compress');
 
     //Making grunt default to force in order not to break the project.
     grunt.option('force', true);
@@ -192,17 +267,35 @@ module.exports = function (grunt) {
     
     grunt.registerTask('buildui',['ts:ui','ts:components']);
     
-    grunt.registerTask('default', [
+    grunt.registerTask('buildelectron', [
         'clean',
         'bower',
         'wiredep:app',
         'tsd',
         'ts',
         'mochaTest',
-        'copy',
+        'copy:base',
+        'copy:components',
+        'copy:electron',
         'electron:windows',
         'create-windows-installer'       
     ]);
+    
+    grunt.registerTask('buildweb', [
+        'clean',
+        'bower',
+        'wiredep:app',
+        'tsd',
+        'ts',
+        'mochaTest',
+        'browserify',
+        'copy:base',
+        'copy:components',
+        'copy:web',
+        'compress'     
+    ]);
+    
+    grunt.registerTask('default', [ 'buildelectron']);
 
     grunt.registerTask('fullbuild', [
         'clean',

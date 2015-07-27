@@ -3,8 +3,8 @@
 /// <reference path="./cryptolib.d.ts"/>
 
 import cryptolibnodejs = require('./cryptolib-nodejs');
-
 import chai = require('chai');
+
 var assert = chai.assert;
 var expect = chai.expect;
 var cryptolib = cryptolibnodejs.cryptolib;
@@ -14,7 +14,6 @@ var cipher = cryptolib.cipher;
 function b(hex:string):Buffer {
 	return new Buffer(hex,'hex');
 }
-
 
 function assertCryptoError(fn:()=>void,errorCode:Cryptolib.Error.IErrorCode) {
 	
@@ -225,13 +224,14 @@ describe('Cipher', () => {
 		
 		it('should final cipher data with padding', () => {
 			var clearData = 'abcde';
-			var acipher = cipher.createCipher(cipher.cipherAlgo.aes,cipher.blockCipherMode.cbc,cryptolib.padding.iso78164);
-			acipher.init(new Buffer('01020304050607080102030405060708'),true);
-			var cipherRes = acipher.finish(new Buffer(clearData,'ascii'));
+			var key = new Buffer('01020304050607080102030405060708');
+			var cipherRes = cipher.cipher(true,key,new Buffer(clearData,'ascii'),
+				cipher.cipherAlgo.aes,cipher.blockCipherMode.cbc,{padding: cryptolib.padding.iso78164});
 			
 			
-			var deCipher = acipher.init(new Buffer('01020304050607080102030405060708'),false);
-			var result = acipher.finish(cipherRes);
+			var result = cipher.cipher(false,key,cipherRes,
+				cipher.cipherAlgo.aes,cipher.blockCipherMode.cbc,{padding: cryptolib.padding.iso78164});
+			
 			assert.equal(result.toString('ascii'),clearData);
 		});
 		

@@ -38,15 +38,22 @@ declare module Cryptolib {
 	}
 
 	
+    module Random {
+	    interface IRandomStatic {		
+			generate(length:number):Buffer;
+		}		
+	}
 		
 	
 	module Util {
 		interface Buffer {
-		    [index: number]: number;
+		  [index: number]: number;
 		    write(string: string, offset?: number, length?: number, encoding?: string): number;
 		    toString(encoding?: string, start?: number, end?: number): string;
 		    toJSON(): any;
 		    length: number;
+		    equals(otherBuffer: Buffer): boolean;
+		    compare(otherBuffer: Buffer): number;
 		    copy(targetBuffer: Buffer, targetStart?: number, sourceStart?: number, sourceEnd?: number): number;
 		    slice(start?: number, end?: number): Buffer;
 		    writeUIntLE(value: number, offset: number, byteLength: number, noAssert?: boolean): number;
@@ -90,6 +97,10 @@ declare module Cryptolib {
 		 
 		 interface IUtilStatic {
 			 createBuffer(data:string,encoding:string):Buffer;
+			 leftPad(aString:string,n:number,padChar:string):string;
+			 rightPad(aString:string,n:number,padChar:string):string;
+			 takeLast(aString:string,n:number):string;
+			 generateRandomNumberString(length:number):string;
 			 fromHex(data:string):Buffer;
 			 toHex(data:Buffer):string;
 			 xor(a:Buffer,b:Buffer):Buffer;
@@ -239,17 +250,17 @@ declare module Cryptolib {
 		    getAll(): IBlockCipherMode[];            
 	    }
 		
-		interface ICipherStatic {
-			cipherAlgo : ICipherAlgoStatic;
-			blockCipherMode: IBlockCipherModeStatic;
-			createCipher(cipherAlgo:ICipherAlgo,blockCipherMode:IBlockCipherMode,padding:Padding.IPadding):ICipher;
-			computeKcv(key:Buffer,cipherAlgo:ICipherAlgo,length?:number):string;
+		interface ICipherOptions {
+			iv?:Buffer;
+			padding?: Padding.IPadding;			
 		}
 		
-		interface ICipher {
-			init(key:Buffer,mode:boolean,iv?:Util.Buffer):void;
-			update(data:Buffer):Buffer;
-			finish(data?:Buffer):Buffer;
+		
+		interface ICipherStatic {
+			cipherAlgo: ICipherAlgoStatic;
+			blockCipherMode : IBlockCipherModeStatic;
+			cipher(cipherMode:boolean,key:Buffer,data:Buffer,cipherAlgo:ICipherAlgo,blockCipherMode:IBlockCipherMode,cipherOpts?:ICipherOptions):Buffer;
+			computeKcv(key:Buffer,cipherAlgo:ICipherAlgo,length?:number):string;
 		}
 		
 	}
@@ -263,6 +274,7 @@ declare module Cryptolib {
 		error : Error.ErrorStatic;
 		pin: Pin.IPinStatic;
 		banking:Banking.IBankingStatic;
+		random: Random.IRandomStatic;
 	}
 	
 	

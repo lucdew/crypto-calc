@@ -35,12 +35,12 @@
                    
            </div>
            <div class="bottom7">
-             <databox type="hex" name="bitwise.data1" model="utils.bitwise.data1" rows="2" label="Data 1" 
+             <databox types="hex" name="bitwise.data1" model="utils.bitwise.data1" rows="2" label="Data 1" 
                required error-msg="utils.errors.data1" >
              </databox>
            </div>
            <div ng-show="utils.bitwise.bitwiseOperator.name != 'NOT'" class="bottom7"> 
-             <databox type="hex" name="bitwise.data2" model="utils.bitwise.data2" rows="2" label="Data 2" 
+             <databox types="hex" name="bitwise.data2" model="utils.bitwise.data2" rows="2" label="Data 2" 
                error-msg="utils.errors.data2" >
              </databox>
            </div>             
@@ -48,7 +48,7 @@
                  <div class="col-md-2 col-sm-2"><button class="btn btn-lg btn-primary" type="submit" ng-click="utils.executeBitwiseOperation()">Execute</button></div>
             </div>
            <div class="top15">
-             <databox type="hex" name="bitwise.result" model="utils.bitwise.result" rows="2" label="Result" >
+             <databox types="hex" name="bitwise.result" model="utils.bitwise.result" rows="2" label="Result" >
              </databox>
            </div>
 	  </div>

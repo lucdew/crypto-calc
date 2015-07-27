@@ -10,7 +10,7 @@
         
          <form name="toPinBlockForm" class="form left" role="form" novalidate> 
             <div class="row vertical-align bottom15">
-                    <div class="col-md-2 col-sm-2 bold">Format</div>
+                    <div class="col-md-1 col-sm-2 bold noright-padding">Format</div>
                     
                     <div class="col-md-2 col-sm-2 noside-padding">
                        <div class="dropdown" dropdown >
@@ -30,29 +30,29 @@
             </div>
 
             <div class="row novertical-margin">
-                 <div class="col-md-offset-2 col-sm-offset-2 bold"><span style="padding-left:90px;" >Length: {{banking.to.pin.length}}</span></div> 
+                 <div class="col-md-offset-1 col-sm-offset-2 bold"><span style="padding-left:90px;" >Length: {{banking.to.pin.length}}</span></div> 
             </div>
             
             <div class="row vertical-align bottom15">
-                 <div class="col-md-2 col-sm-2 bold">Pin</div>       
+                 <div class="col-md-1 col-sm-2 bold noright-padding">Pin</div>       
                  <div class="col-md-10 col-sm-10 noside-padding" >
                       <input class="form-control" style="width:160px" name="Pin" type="text" ng-model="banking.to.pin" size="14" maxlength="14"/>
                  </div>  
             </div>
 
             <div class="row novertical-margin" ng-show="banking.to.isoPinType.value===1">
-                 <div class="col-md-offset-2 col-sm-offset-2 bold"><span style="padding-left:90px;" >Length: {{banking.to.transactionId.length}}</span></div> 
+                 <div class="col-md-offset-1 col-sm-offset-2 bold"><span style="padding-left:90px;" >Length: {{banking.to.transactionId.length}}</span></div> 
             </div>
             
             <div class="row vertical-align bottom15" ng-show="banking.to.isoPinType.value===1">
-                 <div class="col-md-2 col-sm-2 bold">Transaction id </div>              
+                 <div class="col-md-1 col-sm-2 bold noright-padding">Transaction id </div>              
                  <div class="col-md-10 col-sm-10 noside-padding" >
                        <input class="form-control" style="width:160px" name="transactionId" type="text" ng-model="banking.to.transactionId" size="14" maxlength="14"/>
                   </div>
             </div>
                  
             <div class="row vertical-align bottom15"  ng-show="banking.to.isoPinType.value===0 || banking.to.isoPinType.value===3">  
-                 <div class="col-md-2 col-sm-2 bold">Pan </div>              
+                 <div class="col-md-1 col-sm-2 bold noright-padding">Pan </div>              
                  <div class="col-md-10 col-sm-10 noside-padding">
                        <pan name="pan" label="Pan" model="banking.to.pan"/>
                   </div>        
@@ -64,7 +64,7 @@
           </div>
             
           <div class="row vertical-align">
-             <div class="col-md-2 col-sm-2 bold">
+             <div class="col-md-1 col-sm-2 bold  noright-padding">
                 Pin block
              </div>
              <div class="col-md-10 col-sm-10 noside-padding">
@@ -85,7 +85,7 @@
         
          <form name="fromPinBlockForm" class="form left" role="form" novalidate> 
             <div class="row vertical-align bottom15">
-                    <div class="col-md-2 col-sm-2 bold">Pin block</div>
+                    <div class="col-md-1 col-sm-2 bold">Pin block</div>
                     
                     <div class="col-md-4 col-sm-4 noside-padding">
                         <input class="form-control" style="width:190px"  name="from.pinblock" type="text" ng-model="banking.from.pinBlock" maxlength="16"/>
@@ -93,22 +93,22 @@
             </div>
             
             <div class="row vertical-align bottom15"  ng-show="banking.from.pinLength">
-               <div class="col-md-2 col-sm-2 bold">Pin Length</div>              
+               <div class="col-md-1 col-sm-2 bold">Pin Length</div>              
                <div class="col-md-4 col-sm-4 noside-padding" >{{banking.from.pinLength}}</div>
             </div>
             <div class="row vertical-align bottom15"  ng-show="banking.from.pinType">
-               <div class="col-md-2 col-sm-2 bold">Pin type</div>              
+               <div class="col-md-1 col-sm-2 bold">Pin type</div>              
                <div class="col-md-4 col-sm-4 noside-padding" >{{banking.from.pinType.name}}</div>
             </div>
             <div class="row vertical-align bottom15"  ng-show="banking.from.pinType.value===0 || banking.from.pinType.value===3">
-               <div class="col-md-2 col-sm-2 bold">Pan</div>              
+               <div class="col-md-1 col-sm-2 bold">Pan</div>              
                <div class="col-md-10 col-sm-10 noside-padding" >
                   <pan name="pan" label="pan" model="banking.from.pan"/>
                </div>
             </div>       
          
             <div class="row" ng-show="banking.from.pin">
-               <div class="col-md-2 col-sm-2 bold">Pin</div>
+               <div class="col-md-1 col-sm-2 bold">Pin</div>
                <div class="col-md-10 col-sm-10 noside-padding" >{{banking.from.pin}}</div>
             </div>
         
