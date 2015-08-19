@@ -22,6 +22,22 @@ module.exports = function (grunt) {
     } else if (beta) {
         APPNAME += ' (Beta)';
     }
+    
+    
+    grunt.task.registerTask('addBowerFilesToCopy', 'Copy bower tasks', function() {
+      // Dynamically adding bower deps to copy
+      // Done dynamically because it requires bower install to be perform before
+      var originalCopy = grunt.config('copy');
+      var additionalFiles ={expand: true,
+                  src: bowerFiles().relative(__dirname).files,
+                  dest: 'build/' } ;
+
+      grunt.log.writeln("Adding to copy:base the following files\n "+JSON.stringify(additionalFiles));
+      originalCopy['base'].files.push(additionalFiles);
+      grunt.config('copy',originalCopy);
+
+    });
+
 
     grunt.initConfig({
 
@@ -61,7 +77,7 @@ module.exports = function (grunt) {
                  dest : 'js/cryptoCalc.js'               
             },
             test : {
-                src: ['crypto-lib/cryptolib-test.ts' ]
+                src: ['test/crypto-lib/cryptolib-test.ts' ]
             }, 
             cryptolib: {
                 src: ['crypto-lib/cryptolib-nodejs.ts']
@@ -74,7 +90,7 @@ module.exports = function (grunt) {
               'crypto-lib/cryptolib-web.js': ['crypto-lib/cryptolib-nodejs.js'],
             },
             options: {
-              exclude : ['crypto','node-forge'],
+              exclude : ['crypto','node-forge','crypto-js'],
               browserifyOptions : {
                   standalone : 'webcryptolib'
               }
@@ -90,7 +106,8 @@ module.exports = function (grunt) {
                 exclude: [
                     /jquery/,
                     /forge/,
-                    /angular-mocks/
+                    /angular-mocks/,
+                    /crypto-js/
                 ]
             }
         },
@@ -104,7 +121,7 @@ module.exports = function (grunt) {
                   quiet: false, // Optionally suppress output to standard out (defaults to false) 
                   clearRequireCache: false // Optionally clear the require cache before running tests (defaults to false) 
                 },
-                src: ['crypto-lib/cryptolib-test.js']
+                src: ['test/crypto-lib/cryptolib-test.js']
               }
         },
         copy: {
@@ -116,19 +133,18 @@ module.exports = function (grunt) {
                       src: ['package.json', 'styles/**/*','js/**/*','images/**/*','crypto-lib/**/*'],
                       dest: 'build/'
                     },
-                    // bower files
-                    {
-                      expand: true,
-                      src: bowerFiles().relative(__dirname).files,
-                      dest: 'build/'
-                    },
                    // forge copy all files
                    {
                       expand: true,
                       src: 'bower_components/forge/js/**',
                       dest: 'build/'
+                    },
+                   // cryptojs copy all files
+                   {
+                      expand: true,
+                      src: 'bower_components/crypto-js/*.js',
+                      dest: 'build/'
                     }
-
                 ]
               },
               components : {
@@ -151,10 +167,21 @@ module.exports = function (grunt) {
                      }                 
                   }
               },
-              web: {
+              webhome: {
                   src: 'index-web.html',
-                  dest: 'build/index.html'          
+                  dest: 'build/index.html'         
               },
+              websitemap: {
+                  src: 'sitemap.xml',
+                  dest: 'build/',
+                  options: {
+                     process: function (content, srcpath) {
+                        var isoNow = new Date().toISOString();
+                        return content.replace(/<lastmod>[^<]+<\/lastmod>/g,'<lastmod>'+isoNow+'</lastmode>'); 
+                     }                 
+                  }     
+              }, 
+
               electron: {
                   files: [
                     {
@@ -263,9 +290,9 @@ module.exports = function (grunt) {
 
     //Default task(s).
     
-    grunt.registerTask('test',['ts:cryptolib','ts:test','mochaTest']);
+    grunt.registerTask('test',['ts:cryptolib','ts:test','mochaTest','browserify']);
     
-    grunt.registerTask('buildui',['ts:ui','ts:components']);
+    grunt.registerTask('buildui',['ts:ui','ts:components','browserify']);
     
     grunt.registerTask('buildelectron', [
         'clean',
@@ -274,6 +301,7 @@ module.exports = function (grunt) {
         'tsd',
         'ts',
         'mochaTest',
+        'addBowerFilesToCopy',
         'copy:base',
         'copy:components',
         'copy:electron',
@@ -289,9 +317,11 @@ module.exports = function (grunt) {
         'ts',
         'mochaTest',
         'browserify',
+        'addBowerFilesToCopy',
         'copy:base',
         'copy:components',
-        'copy:web',
+        'copy:webhome',
+        'copy:websitemap',
         'compress'     
     ]);
     

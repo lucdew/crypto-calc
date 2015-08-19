@@ -1,0 +1,154 @@
+aes:
+   cipher:
+      "ECB/NoPadding":
+         data: "01020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         cipherMode: ecb
+         padding: noPadding
+         expected: "A28D633F9686BD28865AFA76E1B186C0"
+      "CBC/NoPadding":
+         data: "01020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         cipherMode: cbc
+         padding: noPadding
+         expected: "A28D633F9686BD28865AFA76E1B186C0"
+      "OFB/NoPadding":
+         data: "01020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         cipherMode: ofb
+         padding: noPadding
+         expected: "8788C4DA8F4A1E0D97E768856FAE409A"
+         iv: "00000000000000000000000000000000"
+      "OFB/NoPadding data not of block size":
+         data: "01020304050607080102030405"
+         key: "11223344556677881122334455667788"
+         cipherMode: ofb
+         padding: noPadding
+         expected: "8788C4DA8F4A1E0D97E768856F"
+         iv: "00000000000000000000000000000000"
+      "CFB/NoPadding":
+         data: "01020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         cipherMode: cfb
+         padding: noPadding
+         expected: "8788C4DA8F4A1E0D97E768856FAE409A"
+      "CFB/NoPadding data not of block size":
+         data: "0102030405060708010203040506070801"
+         key: "11223344556677881122334455667788"
+         cipherMode: cfb
+         padding: noPadding
+         expected: "8788C4DA8F4A1E0D97E768856FAE409AB6"
+      "CTR/NoPadding data not of block size":
+         data: "010203040506070801"
+         key: "11223344556677881122334455667788"
+         cipherMode: ctr
+         padding: noPadding
+         expected: "8788C4DA8F4A1E0D97"
+         iv: "00000000000000000000000000000000"
+      "CTR/NoPadding with iv 2 blocks":
+         data: "0102030405060708010203040506070801020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         cipherMode: ctr
+         padding: noPadding
+         expected: "671408BB969130AE3E68E2BBEDC9E0354B3C5DA11458E2193C766ABB554AF228"
+         iv: "098D27B71AC83834CD288E3200000001"
+      "CBC/ISO7816-4":
+         data: "0102030405060708010203"
+         key: "11223344556677881122334455667788"
+         cipherMode: cbc
+         padding: iso78164
+         expected: "A3967BAEF5F282BA5E98047CDDD94F77"
+      "CBC/NoPadding with IV":
+         data: "01020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         cipherMode: cbc
+         iv: "00000000000000000000000000000001"
+         padding: noPadding
+         expected: "DEC150AC82EC8811F99C64A7738AD1F9"
+      "GCM/NoPadding with IV on 12 bytes=96 bit, tag length 128":
+         cipherMode: gcm
+         data: "01020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         iv: "098D27B71AC83834CD288E32"
+         padding: noPadding
+         additionalAuthenticatedData: "626F6E6A6F7572206C657320616D6973"
+         expected: 
+            data: "4B3C5DA11458E2193C766ABB554AF228"
+            iv: "098D27B71AC83834CD288E32"
+            authenticationTag: "107A9F984854FC98470F3181E8B75782"
+      "GCM/NoPadding with IV on 16 bytes, tag length 128":
+         cipherMode: gcm
+         data: "01020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         iv: "098D27B71AC83834CD288E3200000001"
+         padding: noPadding
+         additionalAuthenticatedData: "626F6E6A6F7572206C657320616D6973"
+         expected: 
+            data: "2A4F7CC3C9A82BF025E64E20F6E433D2"
+            iv: "098D27B71AC83834CD288E3200000001"
+            authenticationTag: "0400A9A4300FE855B79270AEA16C91EA"
+   decipher:
+      "GCM/NoPadding invalid authentication tag":
+         cipherMode: gcm
+         data: "2A4F7CC3C9A82BF025E64E20F6E433D2"
+         key: "11223344556677881122334455667788"
+         iv: "098D27B71AC83834CD288E3200000001"
+         padding: noPadding
+         additionalAuthenticatedData: "626F6E6A6F7572206C657320616D6973"
+         authenticationTag: "0400A9A4300FE855B79270AEA16C0000"
+         expectedError: "AUTHENTICATED_TAG_INVALID"
+       
+desede:
+   cipher:
+      "ECB/NoPadding":
+         data: "01020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         cipherMode: ecb
+         padding: noPadding
+         expected: "178F59F8578E0D3F178F59F8578E0D3F"
+      "CBC/NoPadding":
+         data: "01020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         cipherMode: cbc
+         padding: noPadding
+         expected: "178F59F8578E0D3FFA093B5900B9F7EE"
+      "OFB/NoPadding":
+         data: "01020304050607080102030405"
+         key: "11223344556677881122334455667788"
+         cipherMode: ofb
+         padding: noPadding
+         expected: "6EB03DA900327223C8981D07F1"
+         iv: "0000000000000000"
+      "CFB/NoPadding":
+         data: "0102030405060708010203040506070801"
+         key: "11223344556677881122334455667788"
+         cipherMode: cfb
+         padding: noPadding
+         expected: "6EB03DA900327223D31DABC8104EE026A2"
+      "CTR/NoPadding data not of block size":
+         data: "010203040506070801"
+         key: "11223344556677881122334455667788"
+         cipherMode: ctr
+         padding: noPadding
+         expected: "6EB03DA9003272237F"
+         iv: "0000000000000000"
+      "CBC/ISO7816-4":
+         data: "010203"
+         key: "11223344556677881122334455667788"
+         cipherMode: cbc
+         padding: iso78164
+         expected: "78AFA4F1E01BA24F"
+      "CBC/NoPadding with IV":
+         data: "01020304050607080102030405060708"
+         key: "11223344556677881122334455667788"
+         cipherMode: cbc
+         iv: "0000000000000001"
+         padding: noPadding
+         expected: "8AE9A572966738D21038F73435E69B82"
+      "CBC/ISO78164 Padding 192-bit long key with IV":
+         data: "010203040506070801"
+         key: "112233445566778811223344556677881122334455667788"
+         cipherMode: cbc
+         iv: "0102030405060708"
+         padding: iso78164
+         expected: "6FB23EAD0534752B9A2E17A0C25223EF"

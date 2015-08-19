@@ -9,10 +9,9 @@ import util = require('./cryptolib-util') ;
 import banking = require('./cryptolib-banking');
 import cipher = require('./cryptolib-cipher');
 import pin = require('./cryptolib-pin');
+import messageDigest = require('./cryptolib-message-digest');
+import mac = require('./cryptolib-mac');
 	
-
-
-
 export var cryptolib:Cryptolib.CryptoLibStatic = {
 	cipher: cipher,
     padding: padding,
@@ -20,12 +19,7 @@ export var cryptolib:Cryptolib.CryptoLibStatic = {
     util : util,
     pin : pin,
     banking:banking,
-    random: random
-    
+    random: random,
+    messageDigest: messageDigest,
+    mac: mac   
 };
-
-
-
-
-	
-

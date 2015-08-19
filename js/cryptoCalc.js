@@ -1,11 +1,12 @@
 var CryptoCalcModule;
 (function (CryptoCalcModule) {
-    CryptoCalcModule.cryptoCalcModule = angular.module('CryptoCalcModule', ['ngNewRouter', 'CryptoCalcModule.symencrypt', 'CryptoCalcModule.banking', 'CryptoCalcModule.utils']);
+    CryptoCalcModule.cryptoCalcModule = angular.module('CryptoCalcModule', ['ngNewRouter', 'CryptoCalcModule.symencrypt', 'CryptoCalcModule.banking', 'CryptoCalcModule.digest', 'CryptoCalcModule.utils']);
     CryptoCalcModule.cryptoCalcModule.controller('AppController', ['$router', '$scope', '$location', AppController]);
     AppController.$routeConfig = [
         { path: '/', redirectTo: '/symencrypt' },
         { path: '/symencrypt', component: 'symencrypt' },
         { path: '/banking', component: 'banking' },
+        { path: '/digest', component: 'digest' },
         { path: '/utils', component: 'utils' },
         { path: '/about', component: 'about' }
     ];
@@ -70,7 +71,7 @@ var CryptoCalcModule;
                 var errorHtml = element.html();
                 var tpl = "\n                           <div class=\"container-fluid\" style=\"padding:0\">\n                                <div class=\"row vertical-align bottom5\">                                   \n                                   <div class=\"col-md-2 col-sm-4 noright-padding\">\n                                           <span class=\"bold\">{{label}}</span>";
                 if (types) {
-                    tpl += "<div class=\"btn-group left5 encodingchooser\"  data-toggle=\"buttons\">";
+                    tpl += "<div class=\"btn-group left5 btn-group-default\" data-toggle=\"buttons\">";
                     types.forEach(function (val, idx) {
                         tpl += "<label class=\"btn btn-xs btn-default";
                         if (idx == 0) {
@@ -82,7 +83,7 @@ var CryptoCalcModule;
                     });
                     tpl += "</div>";
                 }
-                tpl += "</div>\n                                   <div class=\"col-md-4 col-sm-4 noside-padding red\"> {{errorMsg}}</div>\n                                   <div class=\"col-md-2 col-sm-2 bold noside-padding\">Chars : {{charsNum}}</div>      \n                                   <div class=\"col-md-2 col-sm-2 bold noside-padding\" >Size (bytes): {{size}}</div>\n                                </div>\n                                <textarea class=\"form-control\" name=\"{{name}}\" type=\"text\" ng-model=\"model\" rows=\"{{rows}}\" \n                                       ng-class=\"{'field-error': errorMsg}\"";
+                tpl += "</div>\n                                   \n                                   <div class=\"col-md-1 col-sm-2 bold noside-padding\">Chars : {{charsNum}}</div>      \n                                   <div class=\"col-md-1 col-sm-2 bold noside-padding\" >Size (bytes): {{size}}</div>\n                                   <div class=\"col-md-8 col-sm-4 noside-padding red bold\"> {{errorMsg || typeErrorMsg}}</div>\n                                </div>\n                                <textarea class=\"form-control\" name=\"{{name}}\" type=\"text\" ng-model=\"model\" rows=\"{{rows}}\" \n                                       ng-class=\"{'field-error': errorMsg || typeErrorMsg}\"";
                 if (attrs.$attr.autofocus) {
                     tpl += " autofocus";
                 }
@@ -102,29 +103,29 @@ var CryptoCalcModule;
                 scope.toggleType = function ($event, type) {
                     var oldtype = scope.type;
                     var oldvalue = scope.model;
+                    scope.typeErrorMsg = '';
                     scope.type = type;
-                    scope.model = new buffer.Buffer(oldvalue, oldtype).toString(type);
+                    scope.model = new buffer.Buffer(oldvalue ? oldvalue : '', oldtype).toString(type);
                 };
                 scope.$on('$destroy', function () {
                     if (scope.lastError) {
                         $timeout.cancel(scope.lastError);
                     }
                 });
-                scope.reportDataError = function () {
+                scope.reportTypeError = function () {
                     scope.lastError = $timeout(function () {
                         var typeMetadata = typesMetadata[scope.type];
                         var typeDesc = typeMetadata.desc;
                         if (scope.type === 'hex' && scope.model.length % 2 !== 0) {
-                            scope.errorMsg = 'Invalid length for ' + typeDesc + ' string';
+                            scope.typeErrorMsg = 'Invalid length for ' + typeDesc + ' string';
                         }
                         else {
-                            scope.errorMsg = 'Invalid characters for type ' + typeDesc;
+                            scope.typeErrorMsg = 'Invalid characters for type ' + typeDesc;
                         }
                     }, 200);
                 };
                 scope.$watch('model', function (newValue, oldValue) {
                     var size = 0, charsNum = 0;
-                    scope.errorMsg = '';
                     if (scope.lastError) {
                         $timeout.cancel(scope.lastError);
                     }
@@ -132,7 +133,7 @@ var CryptoCalcModule;
                     if (newValue) {
                         var validatingRexep = typesMetadata[scope.type].regexp;
                         if (!validatingRexep.test(scope.model)) {
-                            scope.reportDataError();
+                            scope.reportTypeError();
                             return;
                         }
                         try {
@@ -141,9 +142,10 @@ var CryptoCalcModule;
                             charsNum = newValue.length;
                         }
                         catch (e) {
-                            scope.reportDataError();
+                            scope.reportTypeError();
                         }
                     }
+                    scope.typeErrorMsg = '';
                     scope.size = size;
                     scope.charsNum = charsNum;
                 });
@@ -207,10 +209,11 @@ var CryptoCalcModule;
                 'name': '@',
                 'label': '@',
                 'model': '=',
-                'cipherAlgo': '='
+                'cipherAlgo': '=',
+                'errorMsg': '='
             },
             template: function (element, attrs) {
-                var tpl = "\n                           <div class=\"container-fluid\" style=\"padding:0\">\n                                <div class=\"row\">\n                                   <div class=\"col-md-4 col-sm-4 bold\">{{label}}</div>\n                                   <div class=\"col-md-2 col-sm-2 col-md-offset-2 col-sm-offset-2 bold\" ><span ng-show=\"cipherAlgo=='DES' || cipherAlgo=='3DES'\">Parity: {{parity}}</span></div>\n                                   <div class=\"col-md-2 col-sm-2 bold\">KCV: {{kcv}}</div>\n                                   <div class=\"col-md-2 col-sm-2 bold\">Size: {{size}}</div>\n                                   \n                                </div>\n                                <input class=\"form-control\" name=\"{{name}}\" type=\"text\" ng-model=\"model\"";
+                var tpl = "\n                           <div class=\"container-fluid noside-padding\">\n                                <div class=\"row\">\n                                   <div class=\"col-md-1 col-sm-2 bold noright-padding\">{{label}}</div>\n                                   <div class=\"col-md-1 col-sm-2 bold noside-padding\">KCV: {{kcv}}</div>\n                                   <div class=\"col-md-1 col-sm-2 bold noside-padding\">Size: {{size}}</div>\n                                   <div class=\"col-md-3 col-sm-4 bold noside-padding\">\n                                        <span ng-show=\"cipherAlgo.name=='DES' || cipherAlgo.name=='3DES'\">\n                                         Parity: {{parity.valid}}<span ng-show=\"parity.adjustedKey && !(parity.valid)\">, Adjusted: {{parity.adjustedKey.toString('hex')}}</span>\n                                        </span>\n                                   </div>\n                                   <div class=\"col-md-6 col-sm-2 bold noside-padding red\">{{errorMsg}}</div>\n                                   \n                                </div>\n                                <input class=\"form-control\" name=\"{{name}}\" type=\"text\" ng-model=\"model\"";
                 if (attrs.ngClass) {
                     tpl += " ng-class=\"" + attrs.ngClass + "\"";
                 }
@@ -236,28 +239,27 @@ var CryptoCalcModule;
                     try {
                         var data = new Buffer(scope['model'], 'hex');
                         scope['kcv'] = cryptolib.cipher.computeKcv(data, cipherAlgo, 3);
+                        scope['parity'] = cryptolib.cipher.checkAndAdjustParity(data);
                     }
                     catch (e) {
                         scope['kcv'] = '';
                         scope['parity'] = '';
                     }
                 }
-                scope.$watchGroup(['cipherAlgo', 'size'], function (newValue, oldValue) {
+                scope.$watch('cipherAlgo', function (newValue, oldValue) {
                     updateKeyInfo();
                 });
                 scope.$watch('model', function (newValue, oldValue) {
                     var keySize = 0;
+                    scope['errorMsg'] = '';
                     if (newValue && (newValue.length % 2) === 0) {
                         keySize = newValue.length * 4;
                     }
                     else {
                         keySize = 0;
                     }
-                    $timeout(function () {
-                        scope.$apply(function () {
-                            scope['size'] = keySize;
-                        });
-                    });
+                    scope['size'] = keySize;
+                    updateKeyInfo();
                 });
             }
         };

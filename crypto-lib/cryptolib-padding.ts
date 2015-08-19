@@ -1,6 +1,7 @@
 /// <reference path="./cryptolib-nodejs.ts"/>
 
 import error = require('./cryptolib-error');
+import random = require('./cryptolib-random');
 
 function extendBuffer(data:Buffer, optionally: boolean, blockSize : number, filler: (bufferToFill:Buffer) =>  void ) {
        
@@ -33,6 +34,93 @@ class NoPadding implements Cryptolib.Padding.IPadding {
 	}
 	
 }
+
+
+class ZeroPadding implements Cryptolib.Padding.IPadding {
+	
+	name:string = "ZERO_PADDING";
+	
+	pad(data:Buffer,blockSize: number, optionally?:boolean) {
+        return extendBuffer(data,optionally,blockSize,
+            (bufferToFill:Buffer)=> {
+                bufferToFill.fill(0,0,bufferToFill.length);
+            });			
+	}
+    unpad(data:Buffer) {
+        for (var i = 1;i <=data.length ;i++) {
+            
+            var byte = data[data.length-i];
+            if (byte!==0x00) {
+                return data.slice(0,data.length-i+1);
+            }
+        }
+        return new Buffer(0);
+	}
+	
+}
+
+
+class Iso10126 implements Cryptolib.Padding.IPadding {
+	
+	name:string = "ISO_10126";
+	
+	pad(data:Buffer,blockSize: number, optionally?:boolean) {
+        if (blockSize>255 || blockSize <1 ) {
+           throw new error.CryptoError(error.INVALID_BLOCK_SIZE,"Cannot pad block size of "+blockSize);
+        }
+        return extendBuffer(data,optionally,blockSize,
+            (bufferToFill:Buffer)=> { 
+                var randomData = random.generate(bufferToFill.length-1);
+                for (var i=0;i<randomData.length;i++) {
+                    bufferToFill[i]=randomData[i];
+                }                   
+                bufferToFill[bufferToFill.length-1]=bufferToFill.length;
+            });
+        
+	}
+    unpad(data:Buffer) {
+        var padLength = data[data.length-1];
+        if ( padLength < 1 || padLength > data.length) {
+            throw new error.CryptoError(error.INVALID_PADDING);
+        }
+        return data.slice(0,data.length-padLength);
+	}
+	
+}
+
+
+class AnsiX923 implements Cryptolib.Padding.IPadding {
+	
+	name:string = "ANSI_X923.1";
+	
+	pad(data:Buffer,blockSize: number, optionally?:boolean) {
+        if (blockSize>255 || blockSize <1 ) {
+           throw new error.CryptoError(error.INVALID_BLOCK_SIZE,"Cannot pad block size of "+blockSize);
+        }
+        return extendBuffer(data,optionally,blockSize,
+            (bufferToFill:Buffer)=> {                    
+                bufferToFill.fill(0,0,bufferToFill.length);
+                bufferToFill[bufferToFill.length-1]=bufferToFill.length;
+            });
+        
+	}
+    unpad(data:Buffer) {
+        var padLength = data[data.length-1];
+        if ( padLength < 1 || padLength > data.length-1) {
+            throw new error.CryptoError(error.INVALID_PADDING);
+        }
+        for (var i = 1; i < padLength;i++) {
+            
+            var byte = data[data.length-1-i];
+            if (byte!==0) {
+                throw new error.CryptoError(error.INVALID_PADDING);
+            }
+            
+        }
+        return data.slice(0,data.length-padLength);
+	}
+	
+}
 			
 class Iso78164Padding implements Cryptolib.Padding.IPadding {
     
@@ -58,7 +146,7 @@ class Iso78164Padding implements Cryptolib.Padding.IPadding {
                 throw new error.CryptoError(error.INVALID_PADDING);
             }              
         }
-         throw new error.CryptoError(error.INVALID_PADDING);
+        throw new error.CryptoError(error.INVALID_PADDING);
     }   
     
 }
@@ -101,9 +189,9 @@ var padding: Cryptolib.Padding.IPaddingStatic = {
 	noPadding : new NoPadding(),
 	pkcs7 : new PKCS7Padding(),
 	iso78164: new Iso78164Padding(),
-	getAll : () => {
-		return [padding.noPadding,padding.iso78164,padding.pkcs7];
-	}
+    zeroPadding: new ZeroPadding(),
+    iso10126: new Iso10126(),
+    ansiX923: new AnsiX923()
 }
 
 export = padding;

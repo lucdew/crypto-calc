@@ -13,13 +13,16 @@ To see a live demo go to [cryptocalc.dewavrin.info](http://cryptocalc.dewavrin.i
 it is delivered on http and content can be easily altered with mitm.
 
 So far it supports :
-* Symmetric encryption/decryption (AES,DES,3DES) with different padding PKCS5/7 and ISO-7816-4
+* Symmetric encryption/decryption with :
+  * **DES** / **3DES** / **AES** ciphers (! 3DES with double length or triple length keys!)
+  * **ECB** / **CBC** / **CFB** / **OFB** / **CTR** / **GCM** block cipher modes
+  * **ISO-7816-4** / **PKCS#5(PKCS#7)** / **NO Padding** / **X9.23** / **ISO 10126** padding
 
   <img src="images/screenshots/symencrypt.png" alt="Symmetric encryption" width="400"/>
 	
 * Banking :
-  * ISO9564 Pin block generation and parsing
-  * Primary Account Number parsing
+  * **ISO-9564** format 0 to 3 pin block generation and parsing
+  * Primary Account Number (**PAN**) parsing
   
   <img src="images/screenshots/banking-pin.png" alt="Iso PIN" width="400"/>
 

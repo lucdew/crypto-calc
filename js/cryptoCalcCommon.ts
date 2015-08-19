@@ -68,7 +68,7 @@ module CryptoCalcModule {
                                            <span class="bold">{{label}}</span>`;
                                            if (types) {
                                                 
-                                                tpl+=`<div class="btn-group left5 encodingchooser"  data-toggle="buttons">`;
+                                                tpl+=`<div class="btn-group left5 btn-group-default" data-toggle="buttons">`;
                                                 types.forEach(function(val:string,idx:number){
                                                        tpl+=`<label class="btn btn-xs btn-default`;
                                                        if (idx==0) {
@@ -83,12 +83,13 @@ module CryptoCalcModule {
                                                     
                                            }
                                    tpl+=`</div>
-                                   <div class="col-md-4 col-sm-4 noside-padding red"> {{errorMsg}}</div>
-                                   <div class="col-md-2 col-sm-2 bold noside-padding">Chars : {{charsNum}}</div>      
-                                   <div class="col-md-2 col-sm-2 bold noside-padding" >Size (bytes): {{size}}</div>
+                                   
+                                   <div class="col-md-1 col-sm-2 bold noside-padding">Chars : {{charsNum}}</div>      
+                                   <div class="col-md-1 col-sm-2 bold noside-padding" >Size (bytes): {{size}}</div>
+                                   <div class="col-md-8 col-sm-4 noside-padding red bold"> {{errorMsg || typeErrorMsg}}</div>
                                 </div>
                                 <textarea class="form-control" name="{{name}}" type="text" ng-model="model" rows="{{rows}}" 
-                                       ng-class="{'field-error': errorMsg}"`
+                                       ng-class="{'field-error': errorMsg || typeErrorMsg}"`
 
                              if (attrs.$attr.autofocus) {
                                      tpl+=" autofocus";
@@ -115,9 +116,9 @@ module CryptoCalcModule {
                              scope.toggleType = function($event:any,type:string) {
                                   var oldtype = scope.type;
                                   var oldvalue = scope.model;
+                                  scope.typeErrorMsg='';
                                   scope.type=type;
-                                  scope.model = new buffer.Buffer(oldvalue,oldtype).toString(type); 
-                                  
+                                  scope.model = new buffer.Buffer(oldvalue?oldvalue:'',oldtype).toString(type); 
                              }
                              scope.$on('$destroy',() => {
                                   if (scope.lastError) {
@@ -125,17 +126,17 @@ module CryptoCalcModule {
                                   }      
                              });
                              
-                             scope.reportDataError = () => {
+                             scope.reportTypeError = () => {
                                      
                                     scope.lastError = $timeout(() => {
                                     
                                             var typeMetadata = (<any>typesMetadata)[scope.type];
                                             var typeDesc = typeMetadata.desc;
                                             if (scope.type==='hex' && scope.model.length %2 !==0 ) {
-                                                 scope.errorMsg = 'Invalid length for '+typeDesc+' string';
+                                                 scope.typeErrorMsg = 'Invalid length for '+typeDesc+' string';
                                             }
                                             else {
-                                                 scope.errorMsg = 'Invalid characters for type '+typeDesc;    
+                                                 scope.typeErrorMsg = 'Invalid characters for type '+typeDesc;    
                                             }
                                     },200); 
                              };
@@ -143,7 +144,7 @@ module CryptoCalcModule {
                              scope.$watch('model',function(newValue:any,oldValue:any) {
                                      
                                   var size = 0,charsNum = 0;
-                                  scope.errorMsg = '';
+                              
                                   if (scope.lastError) {
                                       $timeout.cancel(scope.lastError);
                                   }
@@ -154,7 +155,7 @@ module CryptoCalcModule {
                                     
                                     var validatingRexep = (<any>typesMetadata)[scope.type].regexp;
                                     if (!validatingRexep.test(scope.model)) {
-                                           scope.reportDataError();
+                                           scope.reportTypeError();
                                            return;  
                                     }
                                     try {
@@ -164,10 +165,10 @@ module CryptoCalcModule {
                                          
                                     }
                                     catch(e) {
-                                        scope.reportDataError();  
+                                        scope.reportTypeError();  
                                     } 
                                   }
-                                   
+                                  scope.typeErrorMsg = '';
                                   scope.size = size;
                                   scope.charsNum = charsNum;
 
@@ -289,22 +290,25 @@ module CryptoCalcModule {
                           'name' : '@',
                           'label' : '@',
                           'model' : '=',
-                          'cipherAlgo' : '='   
+                          'cipherAlgo' : '=',
+                          'errorMsg' : '='
                        },
                         template: function(element:angular.IAugmentedJQuery,
                           attrs:any) {
-                                  
-
-                           
-                            
+                                       
                            var tpl =
                         `
-                           <div class="container-fluid" style="padding:0">
+                           <div class="container-fluid noside-padding">
                                 <div class="row">
-                                   <div class="col-md-4 col-sm-4 bold">{{label}}</div>
-                                   <div class="col-md-2 col-sm-2 col-md-offset-2 col-sm-offset-2 bold" ><span ng-show="cipherAlgo=='DES' || cipherAlgo=='3DES'">Parity: {{parity}}</span></div>
-                                   <div class="col-md-2 col-sm-2 bold">KCV: {{kcv}}</div>
-                                   <div class="col-md-2 col-sm-2 bold">Size: {{size}}</div>
+                                   <div class="col-md-1 col-sm-2 bold noright-padding">{{label}}</div>
+                                   <div class="col-md-1 col-sm-2 bold noside-padding">KCV: {{kcv}}</div>
+                                   <div class="col-md-1 col-sm-2 bold noside-padding">Size: {{size}}</div>
+                                   <div class="col-md-3 col-sm-4 bold noside-padding">
+                                        <span ng-show="cipherAlgo.name=='DES' || cipherAlgo.name=='3DES'">
+                                         Parity: {{parity.valid}}<span ng-show="parity.adjustedKey && !(parity.valid)">, Adjusted: {{parity.adjustedKey.toString('hex')}}</span>
+                                        </span>
+                                   </div>
+                                   <div class="col-md-6 col-sm-2 bold noside-padding red">{{errorMsg}}</div>
                                    
                                 </div>
                                 <input class="form-control" name="{{name}}" type="text" ng-model="model"`;
@@ -347,6 +351,7 @@ module CryptoCalcModule {
                                           try {
                                                var data:Buffer = new Buffer(scope['model'],'hex');
                                                scope['kcv'] = cryptolib.cipher.computeKcv(data,cipherAlgo,3);
+                                               scope['parity'] = cryptolib.cipher.checkAndAdjustParity(data);
                                           }
                                           catch(e) {
                                                 scope['kcv']='';
@@ -356,14 +361,15 @@ module CryptoCalcModule {
                                          
                              }
 
-                             scope.$watchGroup(['cipherAlgo','size'],function(newValue:any,oldValue:any) {
-                                    
+                             scope.$watch('cipherAlgo',function(newValue:any,oldValue:any) {                                   
                                      updateKeyInfo();
-                                     
+                                    
                              });
                                
                              scope.$watch('model',function(newValue:any,oldValue:any) {
                                    var keySize = 0;
+                                   scope['errorMsg']='';
+                                   
                                    if (newValue && (newValue.length%2)===0) {
                                         keySize =  newValue.length*4;
                                    }
@@ -371,12 +377,8 @@ module CryptoCalcModule {
                                         keySize = 0;
                                    }
                                    
-                                   $timeout(function(){
-                                        scope.$apply(()=> {
-                                         scope['size']=keySize;      
-                                        });
-                                   });
-                            
+                                   scope['size']=keySize;
+                                   updateKeyInfo();
                                    
 
                              });

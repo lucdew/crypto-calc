@@ -42,7 +42,6 @@ angular.module('CryptoCalcModule.utils', ['CryptoCalcModule.common']).controller
     };
 });
 function UtilsController(cryptolib) {
-    console.log('Loading crypto ' + cryptolib);
     this.bitwiseOperators = [
         { name: 'XOR', func: cryptolib.util.xor },
         { name: 'AND', func: cryptolib.util.and },

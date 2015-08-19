@@ -11,89 +11,140 @@ function SymencryptController($timeout:angular.ITimeoutService,cryptolib:Cryptol
 	
 	this.model=CryptoCalc.encrypt;
 	
+	var self=this;
+	
 	$timeout(() => {
-		
-		this.cipherAlgos=cryptolib.cipher.cipherAlgo.getAll();
-		this.blockCipherModes=cryptolib.cipher.blockCipherMode.getAll();
-		this.blockCipherMode=this['blockCipherModes'][0];
-		this.paddingTypes=cryptolib.padding.getAll();
-		this.padding=this['paddingTypes'][0];
+		self.errors={};
+		self.cipherAlgos=cryptolib.util.values(cryptolib.cipher.cipherAlgo);
+		self.setCipherAlgo(self.cipherAlgos[0]);
+		self.paddingTypes=cryptolib.util.values(cryptolib.padding);
+		self.padding=self['paddingTypes'][0];
 		
 	});
 	
-	this.setCipherAlgo=function(cipherAlgo:Cryptolib.Cipher.ICipherAlgo) {
-		this.cipherAlgo = cipherAlgo;
-		this.errors['cipherAlgo']=null;
-	}
-	
-    this.setBlockCipherMode=function(blockCipherMode:Cryptolib.Cipher.IBlockCipherMode) {
-		this.blockCipherMode = blockCipherMode;
-		if (this.cipherAlgo) {
-			this.iv=Array(2*(<Cryptolib.Cipher.ICipherAlgo>this.cipherAlgo).blockSize+1).join("0");
+	self.setCipherAlgo=function(cipherAlgo:Cryptolib.Cipher.ICipherAlgo) {
+		self.cipherAlgo = cipherAlgo;
+		self.errors['cipherAlgo']=null;
+		self.blockCipherModes=cryptolib.util.values(cipherAlgo.modes);
+		if (!self.blockCipherMode || self.blockCipherModes.indexOf(self.blockCipherMode) < 0 ) {
+			self.setBlockCipherMode(self.blockCipherModes[0]);
 		}
 	}
 	
-   this.setPaddingType=function(paddingType:string) {
-		this.padding = paddingType;
+	self.getIvForCipherMode = function(blockCipherMode:Cryptolib.Cipher.IBlockCipherMode) {
+		if (!self.cipherAlgo) {
+			return null;
+		}
+		if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.cbc ||
+			self.blockCipherMode === cryptolib.cipher.blockCipherMode.cfb) {
+		    return Array(2*(<Cryptolib.Cipher.ICipherAlgo>self.cipherAlgo).blockSize+1).join("0");	
+		}
+		else if(
+			self.blockCipherMode === cryptolib.cipher.blockCipherMode.ofb ||
+			self.blockCipherMode === cryptolib.cipher.blockCipherMode.ctr) {
+			return cryptolib.random.generate((<Cryptolib.Cipher.ICipherAlgo>self.cipherAlgo).blockSize).toString('hex');		
+		}
+		else if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.gcm) {
+			// 12 byte nonce
+			return cryptolib.random.generate(12).toString('hex');
+		}
+		return null;
+		
+	}
+	
+    self.setBlockCipherMode=(aBlockCipherMode:Cryptolib.Cipher.IBlockCipherMode) => {
+		
+		self.blockCipherMode = aBlockCipherMode;
+		// Todo : only change if user did not modify the provided one already
+		self.iv =  self.getIvForCipherMode(self.blockCipherMode);
+		
+	}
+	
+   self.setPaddingType=function(paddingType:string) {
+		self.padding = paddingType;
 	}
 	
 	
-	this.setFieldError=function(fieldName:string,msg:string) {
-		this.errors[fieldName] = msg;
-		//this.form[fieldName].$setValidity('server',false);
-		console.log('######### Error '+fieldName+', msg:'+msg);
+	self.setFieldError=function(fieldName:string,msg:string) {
+		self.errors[fieldName] = msg;
+		self.form[fieldName].$setValidity('server',false);
 	}
 	
-	this.isValidForm=function(cipherMode:boolean):boolean {
-		this.errors = {};
-		if (! this.data) {
-			this.setFieldError('data','Missing data');
+	self.isValidForm=function(cipherMode:boolean):boolean {
+		self.errors = {};
+		if (! self.data) {
+			self.setFieldError('data','Missing data');
 		}
 
-		if (! this.key) {
-			this.setFieldError('key','Missing key');
+		if (! self.key) {
+			self.setFieldError('key','Missing key');
 		}
-		else if (this.cipherAlgo &&  this.cipherAlgo.keyLengths.indexOf(this.key.length*4)===-1) {
-			this.setFieldError('key','Invalid key length only accepted are '+JSON.stringify(this.cipherAlgo.keyLengths));
-		}
-		
-		if (!this.cipherAlgo) {
-			this.setFieldError('cipherAlgo','Choose a cryptographic algorithm');
+		else if (self.cipherAlgo &&  self.cipherAlgo.keyLengths.indexOf(self.key.length*4)===-1) {
+			self.setFieldError('key','Invalid key length only accepted are '+JSON.stringify(self.cipherAlgo.keyLengths));
 		}
 		
-		if (this.iv && ! this.blockCipherMode.hasIV) {
-			this.setFieldError('IV','IV shall not be set for the block cipher Mode');
+		if (!self.cipherAlgo) {
+			self.setFieldError('cipherAlgo','Choose a cryptographic algorithm');
 		}
-
 		
-		return true;
-		
+		return !(self.errors && Object.keys(self.errors).length!=0);		
 		
 	}
 	
-	this.cipher = function(form:any,cipherMode:boolean) {
-		this.submitted = true;
-		this.form = form;
+	self.cipher = function(form:any,cipherMode:boolean) {
+		self.submitted = true;
+		self.form = form;
+		self.result={};
 		
 		
-		if (! this.isValidForm(cipherMode)) {	
+		if (! self.isValidForm(cipherMode)) {	
 			return;
 		}
 		
      	try {
 			
 			var ivBuffer : Buffer = null;
-			if (this.iv) {
-				ivBuffer = new Buffer(this.iv,'hex');
+			if (self.iv) {
+				ivBuffer = new Buffer(self.iv,'hex');
 			}
-			var bKey = new Buffer(this.key,'hex');
-			var bData = new Buffer(this.data,this.datatype);
-			var resBuffer = cryptolib.cipher.cipher(cipherMode,bKey,bData,
-				this.cipherAlgo,this.blockCipherMode,{padding: this.padding, iv: ivBuffer});
-		    this.result = resBuffer.toString(this.resulttype).toUpperCase();
+			var bKey = new Buffer(self.key,'hex');
+			var bData = new Buffer(self.data,self.datatype);
+			var cipherOpts:any = {padding: self.padding, iv: ivBuffer};
+			if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.gcm) {
+			    cipherOpts.additionalAuthenticatedData = new Buffer(self.aad,self.aadtype);	
+			}
+			var cipherResult:Cryptolib.Cipher.ICipherResult=null;
+			if (cipherMode) {
+				cipherResult = cryptolib.cipher.cipher(bKey,bData,
+							self.cipherAlgo,self.blockCipherMode,cipherOpts);
+			}
+			else {
+				if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.gcm) {
+			    	cipherOpts.authenticationTag = new Buffer(self.authTag,'hex');	
+				}
+				cipherResult = cryptolib.cipher.decipher(bKey,bData,
+							self.cipherAlgo,self.blockCipherMode,cipherOpts);	
+			}
+		    self.result.data = cipherResult.data.toString(self.resulttype);
+			if (cipherMode && self.blockCipherMode===cryptolib.cipher.blockCipherMode.gcm ) {
+				self.result.authTag = cipherResult.authenticationTag.toString('hex');
+			}
 		 }
 		 catch(e) {
-			 console.log(JSON.stringify(e));
+			 	var msg:string;
+				if (e instanceof cryptolib.error.CryptoError) {
+					var cryptoError = (<Cryptolib.Error.CryptoError>e);
+						msg = cryptoError.message || cryptoError.code.description;
+					if (cryptoError.code === cryptolib.error.AUTHENTICATED_TAG_INVALID) {
+						self.errors['authTag']='Invalid';
+					}
+					
+				}
+				else {
+					msg = e.message;
+				}
+				msg = msg || 'Unexpected error';				
+				self.errors['result']=msg;
 		 }
 		
 	}

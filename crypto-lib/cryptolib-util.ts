@@ -12,6 +12,15 @@ function generateRandomNumberString(length:number) {
     return aNum;
 }
 
+function toArrayBuffer(buffer:Buffer) {
+    var ab = new ArrayBuffer(buffer.length);
+    var view = new Uint8Array(ab);
+    for (var i = 0; i < buffer.length; ++i) {
+        view[i] = buffer[i];
+    }
+    return ab;
+}
+
 function bitwiseBuffers(a:Buffer,b:Buffer,bitwiseOperation: (aNum:number,bNum:number)=>number) {
       var res:number[] = []
       if (a.length > b.length) {
@@ -61,12 +70,24 @@ function takeLast(aString:string,n:number) {
     }
 }
 
+function values(obj:any) {
+    var vals:any[] = [];
+    for( var key in obj ) {
+        if ( obj.hasOwnProperty(key) ) {
+            vals.push(obj[key]);
+        }
+    }
+    return vals;
+}
 
-var util:Cryptolib.Util.IUtilStatic = {	
+
+var util:Cryptolib.Util.IUtilStatic = {
+    values: values,
     takeLast: takeLast,
     leftPad : leftPad,
     rightPad: rightPad,
     generateRandomNumberString: generateRandomNumberString,
+    toArrayBuffer : toArrayBuffer,
 	createBuffer(data:string,encoding:string) {
 		return new Buffer(data,encoding);
 	},

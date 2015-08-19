@@ -7,6 +7,14 @@ function generateRandomNumberString(length) {
     }
     return aNum;
 }
+function toArrayBuffer(buffer) {
+    var ab = new ArrayBuffer(buffer.length);
+    var view = new Uint8Array(ab);
+    for (var i = 0; i < buffer.length; ++i) {
+        view[i] = buffer[i];
+    }
+    return ab;
+}
 function bitwiseBuffers(a, b, bitwiseOperation) {
     var res = [];
     if (a.length > b.length) {
@@ -52,11 +60,22 @@ function takeLast(aString, n) {
         }
     }
 }
+function values(obj) {
+    var vals = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            vals.push(obj[key]);
+        }
+    }
+    return vals;
+}
 var util = {
+    values: values,
     takeLast: takeLast,
     leftPad: leftPad,
     rightPad: rightPad,
     generateRandomNumberString: generateRandomNumberString,
+    toArrayBuffer: toArrayBuffer,
     createBuffer: function (data, encoding) {
         return new Buffer(data, encoding);
     },

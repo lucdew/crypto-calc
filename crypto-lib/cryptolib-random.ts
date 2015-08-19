@@ -6,7 +6,7 @@ var nodejs = ( typeof process !== 'undefined' && process.versions && process.ver
 var webCrypto = typeof window !== 'undefined' && ((<any>window).crypto || (<any>window).msCrypto);
 
 
-export function generate(length:number) {
+export function generate(length:number):Buffer {
 	  if (nodejs) {
 		  return require('crypto').randomBytes(length);
 	  }

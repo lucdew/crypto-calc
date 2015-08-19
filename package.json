@@ -24,6 +24,7 @@
   "electron-version": "0.28.3",
   "dependencies": {
     "chai": "^3.0.0",
+    "crypto-js": "^3.1.5",
     "electron-debug": "^0.1.0",
     "jquery": "^2.1.4",
     "node-forge": "^0.6.34"
@@ -46,6 +47,7 @@
     "grunt-ts": "~4.1.2",
     "grunt-tsd": "^0.1.0",
     "grunt-wiredep": "^2.0.0",
+    "js-yaml": "^3.3.1",
     "load-grunt-tasks": "^3.2.0",
     "mocha": "^2.2.5",
     "time-grunt": "^1.2.1",

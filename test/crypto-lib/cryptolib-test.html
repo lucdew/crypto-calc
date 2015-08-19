@@ -1,0 +1,77 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link href="../../node_modules/mocha/mocha.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="mocha"></div>
+  
+  
+  <script src="../../bower_components/buffer/buffer.min.js"></script>
+  <script src="../../bower_components/js-yaml/dist/js-yaml.min.js"></script>
+  
+  <!-- endbower -->
+  <!-- forge -->
+  <script src="../../bower_components/forge/js/debug.js"></script>
+  <script src="../../bower_components/forge/js/md.js"></script>
+  <script src="../../bower_components/forge/js/sha1.js"></script>
+  <script src="../../bower_components/forge/js/sha256.js"></script>
+  <script src="../../bower_components/forge/js/sha512.js"></script>
+  <script src="../../bower_components/forge/js/util.js"></script>
+  <script src="../../bower_components/forge/js/prng.js"></script>
+  <script src="../../bower_components/forge/js/random.js"></script>
+  <script src="../../bower_components/forge/js/cipher.js"></script>
+  <script src="../../bower_components/forge/js/cipherModes.js"></script>
+  <script src="../../bower_components/forge/js/aes.js"></script>
+  
+  <!-- cryptojs -->
+  <script src="../../bower_components/crypto-js/crypto-js.js"></script>
+
+  
+  <!-- application -->
+  <script type="text/javascript" src="../../crypto-lib/cryptolib-web.js"></script>
+  
+
+  <script src="../../bower_components/jquery/dist/jquery.js"></script>
+  <script src="../../node_modules/chai/chai.js"></script>
+  <script src="../../node_modules/mocha/mocha.js"></script>
+
+<!-- We will using BDD-style assertions. See Mocha documentation for more info -->
+  <script>mocha.setup('bdd')</script>
+  <script>
+
+    function getYamlFilePromise(filePath) {
+       return $.ajax({
+            url: filePath,
+            type: "GET",
+            dataType: "text",
+            processData: false
+        });
+      
+    };
+	  window.Buffer = buffer.Buffer;
+   
+    function getFixtureFiles() {
+      var promises = [];
+       Array.prototype.slice.call(arguments).forEach(function(val) {
+          promises.push(getYamlFilePromise(val));   
+      });
+      return promises;
+    }
+
+     $.when.apply($,getFixtureFiles('padding-fixtures.yml','cipher-fixtures.yml','messageDigest-fixtures.yml')).done(function(){
+        window.fixtures = {};
+        window.fixtures['padding'] = jsyaml.load(arguments[0][0]);
+        window.fixtures['cipher'] = jsyaml.load(arguments[1][0]);
+        window.fixtures['messageDigest'] = jsyaml.load(arguments[2][0]);
+        $.getScript('cryptolib-test.js',function(){
+              mocha.checkLeaks();
+              mocha.globals(['jQuery']);
+              mocha.run();
+        });
+     });
+
+  </script>
+</body>
+</html>

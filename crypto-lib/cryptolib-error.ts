@@ -61,6 +61,17 @@ var INVALID_KEY_SIZE:Cryptolib.Error.IErrorCode = {
     value : 4, 
     name:"PAN_MISSING",
     description:"Pan is missing"};
+
+ var PAN_MISSING:Cryptolib.Error.IErrorCode = {
+    value : 5, 
+    name:"PAN_MISSING",
+    description:"Pan is missing"};
+    
+ var AUTHENTICATED_TAG_INVALID:Cryptolib.Error.IErrorCode = {
+    value : 6, 
+    name:"AUTHENTICATED_TAG_INVALID",
+    description:"Authenticated tag is invalid"};   
+    
     
 var error = {
         CryptoError: CryptoError,
@@ -69,6 +80,7 @@ var error = {
         INVALID_BLOCK_SIZE:INVALID_BLOCK_SIZE,
         INVALID_KEY_SIZE:INVALID_KEY_SIZE,
         PAN_MISSING:PAN_MISSING,
+        AUTHENTICATED_TAG_INVALID: AUTHENTICATED_TAG_INVALID,
         raiseInvalidArg : raiseInvalidArg   
 };
 

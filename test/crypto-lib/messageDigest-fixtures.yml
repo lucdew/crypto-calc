@@ -1,0 +1,48 @@
+MD5:
+   "valid":
+      data: "30313200"
+      expected: "34d6e98de50be322211df2812e0e08d9"
+SHA1:
+   "valid":
+      data: "30313200"
+      expected: "9ef3348ad77f311fc0cc3a65860453cab5aa117c"
+SHA2_224:
+   "valid":
+      data: "30313200"
+      expected: "ba8466b41939283efc048f445a26b6fd424ca5ed1adab8e854980b85"
+SHA2_256:
+   "valid":
+      data: "30313200"
+      expected: "a430f79d9764c32e8f6d02343e921cec1ab97c2f22fb5dee267ed904b631accf"
+SHA2_384:
+   "valid":
+      data: "30313200"
+      expected: "dad6f918a5c4d11f388f00dbf58f2f0fab0e8394059a4b19e35c8cc04dfeaa2f51807ad3a6422bcf845010f607a55f63"
+SHA2_512:
+   "valid":
+      data: "30313200"
+      expected: "1a68af30c3d20244c6a516029ba23e651b0ea78640067ee7dd52afab27e33f3528320e84490d4116cc31e00521c5d25b7af0a663f546a91f00ede03fa8240b27"
+SHA2_512_224:
+   "valid":
+      data: "746573746D65"
+      expected: "cfb02d304b9d0e8e44d3c7dd6ee50a76104831862de680fbe4c3e015"
+SHA2_512_256:
+   "valid":
+      data: "746573746D65"
+      expected: "a2d9e95b2b932abae8e8d12ccc1d9b4c06f177ac4ba9f596cadd9ea4aa6f28b1"
+SHA3_224:
+   "valid":
+      data: "746573746D65"
+      expected: "57c2aac66d74849c91b36dc790651ea7e6c35f9531db326c9b853471" 
+SHA3_256:
+   "valid":
+      data: "746573746D65"
+      expected: "858b944da129ef6cea120b3741754da143704518f70f71ea515a852f921af3af" 
+SHA3_384:
+   "valid":
+      data: "746573746D65"
+      expected: "4c7d09cfdb64fe1a02b9116ed44e61c589267fc0f7f17441920ebb501de4e83ee02c4b2e513d960f3fa542515c66ef09"
+SHA3_512:
+   "valid":
+      data: "746573746D65"
+      expected: "36f82c157a20bb2250ac4aaa0205ef692e652c6d06494514ab636796f0f0ebc3a162ae1a0987b34c905e3f0d64543a541efd390286798bf75f796615c703d123"  

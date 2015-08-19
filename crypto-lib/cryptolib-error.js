@@ -50,6 +50,16 @@ var PAN_MISSING = {
     name: "PAN_MISSING",
     description: "Pan is missing"
 };
+var PAN_MISSING = {
+    value: 5,
+    name: "PAN_MISSING",
+    description: "Pan is missing"
+};
+var AUTHENTICATED_TAG_INVALID = {
+    value: 6,
+    name: "AUTHENTICATED_TAG_INVALID",
+    description: "Authenticated tag is invalid"
+};
 var error = {
     CryptoError: CryptoError,
     INVALID_ARGUMENT: INVALID_ARGUMENT,
@@ -57,6 +67,7 @@ var error = {
     INVALID_BLOCK_SIZE: INVALID_BLOCK_SIZE,
     INVALID_KEY_SIZE: INVALID_KEY_SIZE,
     PAN_MISSING: PAN_MISSING,
+    AUTHENTICATED_TAG_INVALID: AUTHENTICATED_TAG_INVALID,
     raiseInvalidArg: raiseInvalidArg
 };
 module.exports = error;

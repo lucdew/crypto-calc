@@ -29,11 +29,9 @@ declare module Cryptolib {
             INVALID_BLOCK_SIZE:IErrorCode; 
             INVALID_KEY_SIZE:IErrorCode;
 			PAN_MISSING:IErrorCode;
+			AUTHENTICATED_TAG_INVALID: IErrorCode;
 			
 		}
-		
-		
-			
 		
 	}
 
@@ -47,7 +45,7 @@ declare module Cryptolib {
 	
 	module Util {
 		interface Buffer {
-		  [index: number]: number;
+		    [index: number]: number;
 		    write(string: string, offset?: number, length?: number, encoding?: string): number;
 		    toString(encoding?: string, start?: number, end?: number): string;
 		    toJSON(): any;
@@ -96,6 +94,8 @@ declare module Cryptolib {
 	     }
 		 
 		 interface IUtilStatic {
+			 values(object:any): any[];
+			 toArrayBuffer(buffer:Buffer):ArrayBuffer;
 			 createBuffer(data:string,encoding:string):Buffer;
 			 leftPad(aString:string,n:number,padChar:string):string;
 			 rightPad(aString:string,n:number,padChar:string):string;
@@ -171,6 +171,9 @@ declare module Cryptolib {
 	}
 	
 	
+	
+	
+	
 	module Pin {
 		
 	    interface IIsoPinTypeStatic {
@@ -203,11 +206,13 @@ declare module Cryptolib {
 	
 	module Padding {
 		    interface IPaddingStatic {
+				[index:string]: IPadding;
 				noPadding: IPadding;
 				iso78164: IPadding;
-				pkcs7: IPadding;	
-				getAll(): IPadding[];
-    
+				pkcs7: IPadding;
+				iso10126: IPadding;
+				zeroPadding: IPadding;
+				ansiX923: IPadding;
             }
 			
 			interface IPadding {
@@ -218,28 +223,72 @@ declare module Cryptolib {
 		
 	}
 	
+	
+	
+	module MessageDigest {
+		
+	   interface IMessageDigestType {
+	        name : string ;
+			digestSize: number;
+			blockSize: number;
+			security: number;
+	    }
+		
+		interface IMessageDigestTypeStatic {
+			MD5: IMessageDigestType;
+			SHA1: IMessageDigestType;
+			SHA2_224: IMessageDigestType;
+			SHA2_256: IMessageDigestType;
+			SHA2_384: IMessageDigestType;
+			SHA2_512: IMessageDigestType;
+			SHA2_512_224: IMessageDigestType;
+			SHA2_512_256: IMessageDigestType;
+			SHA3_224: IMessageDigestType;
+			SHA3_256: IMessageDigestType;
+			SHA3_384: IMessageDigestType;
+			SHA3_512: IMessageDigestType;
+			[index:string]: IMessageDigestType;			
+		}
+		
+		interface IMessageDigestStatic {
+			messageDigestType: IMessageDigestTypeStatic;
+			digest(messageDigest:IMessageDigestType,data:Buffer): Buffer;
+		}
+		
+	}
+	
+	module Mac {
+		interface IMacStatic {
+			blockCipherMac(key:Buffer,data:Buffer): Buffer; // CBC-MAC, CMAC, ISO9797 algo 3 retail MAC
+			hmac(messageDigest:MessageDigest.IMessageDigestType,key:Buffer,data:Buffer): Buffer;
+		}
+	}
+	
 	module Cipher {
-		
-		
+				
+   
+	    interface IBlockCipherMode {
+	        name:string;
+	        hasIV: boolean;
+	        cryptoName:string;
+			isStreaming: boolean;
+			isAuthenticatedEncryption: boolean;
+			supportedBlockSizes?: number[];       
+	    }
+
 	    interface ICipherAlgo {
 	        blockSize: number;
 	        name : string ;
 	        cryptoName : string;
 	        keyLengths?:number[]; 
-	    }
-		
-   
-	    interface IBlockCipherMode {
-	        name:string;
-	        hasIV: boolean;
-	        cryptoName:string;       
+			modes: IBlockCipherMode[];
 	    }
 	    
 	    interface ICipherAlgoStatic  {
 	        aes: ICipherAlgo;
 			des: ICipherAlgo;
 			desede: ICipherAlgo;
-			getAll(): ICipherAlgo[]; 	              
+			[index: string]: ICipherAlgo;	              
 	    }
 
 	    interface IBlockCipherModeStatic  {
@@ -247,26 +296,43 @@ declare module Cryptolib {
 			ecb: IBlockCipherMode;
 			cfb: IBlockCipherMode;	
 			ofb:IBlockCipherMode;
-		    getAll(): IBlockCipherMode[];            
+			ctr: IBlockCipherMode;
+			gcm: IBlockCipherMode;
+			[index: string]: IBlockCipherMode;          
 	    }
 		
 		interface ICipherOptions {
 			iv?:Buffer;
-			padding?: Padding.IPadding;			
+			padding?: Padding.IPadding;
+			additionalAuthenticatedData?:Buffer;
+			authenticationTag?: Buffer;			
+		}
+		
+		interface ICipherResult {
+			data: Buffer;
+			authenticationTag?:Buffer;
+			iv?:Buffer;
+			[index: string]: Buffer;
+		}
+		
+		
+		interface IParityCheck {
+			valid:boolean;
+			adjustedKey:Buffer;
 		}
 		
 		
 		interface ICipherStatic {
 			cipherAlgo: ICipherAlgoStatic;
 			blockCipherMode : IBlockCipherModeStatic;
-			cipher(cipherMode:boolean,key:Buffer,data:Buffer,cipherAlgo:ICipherAlgo,blockCipherMode:IBlockCipherMode,cipherOpts?:ICipherOptions):Buffer;
+			cipher(key:Buffer,data:Buffer,cipherAlgo:ICipherAlgo,blockCipherMode:IBlockCipherMode,cipherOpts?:ICipherOptions):ICipherResult;
+			decipher(key:Buffer,data:Buffer,cipherAlgo:ICipherAlgo,blockCipherMode:IBlockCipherMode,cipherOpts?:ICipherOptions): ICipherResult;
 			computeKcv(key:Buffer,cipherAlgo:ICipherAlgo,length?:number):string;
+			checkAndAdjustParity(key:Buffer):IParityCheck;
 		}
 		
 	}
-
-	
-	
+		
 	interface CryptoLibStatic {
 		cipher: Cipher.ICipherStatic;
 		padding: Padding.IPaddingStatic;
@@ -275,6 +341,8 @@ declare module Cryptolib {
 		pin: Pin.IPinStatic;
 		banking:Banking.IBankingStatic;
 		random: Random.IRandomStatic;
+		messageDigest: MessageDigest.IMessageDigestStatic;
+		mac: Mac.IMacStatic;
 	}
 	
 	

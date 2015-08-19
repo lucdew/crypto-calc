@@ -2,7 +2,8 @@
 
 module CryptoCalcModule {
        export var cryptoCalcModule = angular.module('CryptoCalcModule',
-         ['ngNewRouter','CryptoCalcModule.symencrypt','CryptoCalcModule.banking','CryptoCalcModule.utils']);
+         ['ngNewRouter','CryptoCalcModule.symencrypt','CryptoCalcModule.banking','CryptoCalcModule.digest',
+                 'CryptoCalcModule.utils']);
     
     
        cryptoCalcModule.controller('AppController',['$router','$scope','$location',AppController]);
@@ -11,6 +12,7 @@ module CryptoCalcModule {
              { path: '/',            redirectTo: '/symencrypt' },
              { path: '/symencrypt',  component: 'symencrypt' },
              { path: '/banking',     component: 'banking' },
+             { path: '/digest',     component: 'digest' },
              { path: '/utils',       component: 'utils' },
              { path: '/about',       component: 'about' }
             

@@ -113,18 +113,18 @@ textarea.field-error:focus {
 }
 
 
-
-.encodingchooser > label.active {
+.btn-group-default label.active {
     background-color: #337AB7;;
     color: #FFF;
     border-color: #2E6DA4;;
 }
 
-.encodingchooser > label.active:hover {
+.btn-group-default label.active:hover {
     background-color: #286090;
     color: #FFF;
     border-color: #204D74;
 }
+
 
 .form-panel {
     border-color: #ddd;

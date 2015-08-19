@@ -1,9 +1,25 @@
 var _this = this;
-var cryptolibnodejs = require('./cryptolib-nodejs');
-var chai = require('chai');
+if (typeof window === 'undefined') {
+    fixtures = {};
+    cryptolib = require('./../../crypto-lib/cryptolib-nodejs').cryptolib;
+    var fs = require('fs');
+    var yaml = require('js-yaml');
+    try {
+        fixtures['padding'] = yaml.load(fs.readFileSync(__dirname + '/padding-fixtures.yml', 'utf-8'));
+        fixtures['cipher'] = yaml.load(fs.readFileSync(__dirname + '/cipher-fixtures.yml', 'utf-8'));
+        fixtures['messageDigest'] = yaml.load(fs.readFileSync(__dirname + '/messageDigest-fixtures.yml', 'utf-8'));
+    }
+    catch (e) {
+        console.log("Failed loading YAML :" + e);
+        throw e;
+    }
+    chai = require('chai');
+}
+else {
+    cryptolib = window.webcryptolib.cryptolib;
+}
 var assert = chai.assert;
 var expect = chai.expect;
-var cryptolib = cryptolibnodejs.cryptolib;
 var util = cryptolib.util;
 var cipher = cryptolib.cipher;
 function b(hex) {
@@ -21,104 +37,61 @@ function assertCryptoError(fn, errorCode) {
     }
     assert.fail('Should have thrown a crypto error ');
 }
-function padAny(pad) {
-    return function (bdata, bblocksize, boptionally) {
-        var result = pad(new Buffer(bdata, 'hex'), bblocksize, boptionally);
-        return result ? result.toString('hex') : null;
-    };
-}
-function unpadAny(unpad) {
-    return function (bdata) {
-        var result = unpad(new Buffer(bdata, 'hex'));
-        return result ? result.toString('hex') : null;
-    };
-}
 describe('Padding', function () {
-    describe('pad/unpad ISO78164P', function () {
-        var pad = padAny(cryptolib.padding.iso78164.pad), unpad = unpadAny(cryptolib.padding.iso78164.unpad);
-        it('should pad 3 bytes', function () {
-            assert.equal(pad('0102030405', 8), '0102030405800000');
+    for (var aPadding in fixtures.padding) {
+        function assertPad(padding, testName) {
+            var _this = this;
+            var pad = cryptolib.padding[padding].pad;
+            return function () {
+                var test = fixtures.padding[padding]['pad'][testName];
+                if (test.expectedError) {
+                    assertCryptoError(pad.bind(_this, test.data, test.size ? test.size : 8), cryptolib.error[test.expectedError]);
+                }
+                else {
+                    if (test.expected instanceof RegExp) {
+                        assert.match(pad(b(test.data), test.size ? test.size : 8, test.optional).toString('hex'), test.expected);
+                    }
+                    else {
+                        assert.equal(pad(b(test.data), test.size ? test.size : 8, test.optional).toString('hex'), test.expected);
+                    }
+                }
+            };
+        }
+        function assertUnpad(padding, testName) {
+            var _this = this;
+            var unpad = cryptolib.padding[padding].unpad;
+            return function () {
+                var test = fixtures.padding[padding]['unpad'][testName];
+                if (test.expectedError) {
+                    assertCryptoError(unpad.bind(_this, test.data), cryptolib.error[test.expectedError]);
+                }
+                else {
+                    assert.equal(unpad(b(test.data)).toString('hex'), test.expected);
+                }
+            };
+        }
+        describe('pad/unpad ' + aPadding, function () {
+            for (var testName in fixtures.padding[aPadding]['pad']) {
+                it(testName, assertPad(aPadding, testName));
+            }
+            for (var testName in fixtures.padding[aPadding]['unpad']) {
+                it(testName, assertUnpad(aPadding, testName));
+            }
         });
-        it('should pad 1 bytes', function () {
-            assert.equal(pad('01020304050607', 8), '0102030405060780');
-        });
-        it('should pad 8 bytes', function () {
-            assert.equal(pad('0102030405060708', 8), '01020304050607088000000000000000');
-        });
-        it('should pad 3 bytes when data is greater than padding size', function () {
-            assert.equal(pad('01020304050607080102030405', 8), '01020304050607080102030405800000');
-        });
-        it('should not padd if optional and not padding is required', function () {
-            assert.equal(pad('0102030405060708', 8, true), '0102030405060708');
-        });
-        it('should padd if optional and padding is required', function () {
-            assert.equal(pad('0102030405', 8, true), '0102030405800000');
-        });
-        it('should unpad 3 bytes', function () {
-            assert.equal(unpad('0102030405800000'), '0102030405');
-        });
-        it('should unpad 1 bytes', function () {
-            assert.equal(unpad('0102030405060780'), '01020304050607');
-        });
-        it('should unpad 8 bytes', function () {
-            assert.equal(unpad('01020304050607088000000000000000'), '0102030405060708');
-        });
-        it('should throw when unpadding with no padding', function () {
-            assertCryptoError(unpad.bind(_this, '0102030405060708'), cryptolib.error.INVALID_PADDING);
-        });
-        it('should throw an error if padding if data is empty', function () {
-            assertCryptoError(pad.bind(_this, '', 8), cryptolib.error.INVALID_ARGUMENT);
-        });
-    });
-    describe('pad/unpad PKCS7P', function () {
-        var pad = padAny(cryptolib.padding.pkcs7.pad), unpad = unpadAny(cryptolib.padding.pkcs7.unpad);
-        it('should pad 3 bytes', function () {
-            assert.equal(pad('0102030405', 8), '0102030405030303');
-        });
-        it('should pad 1 bytes', function () {
-            assert.equal(pad('01020304050607', 8), '0102030405060701');
-        });
-        it('should pad 8 bytes', function () {
-            assert.equal(pad('0102030405060708', 8), '01020304050607080808080808080808');
-        });
-        it('should pad 3 bytes when data is greater than padding size', function () {
-            assert.equal(pad('01020304050607080102030405', 8), '01020304050607080102030405030303');
-        });
-        it('should not padd if optional and not padding is required', function () {
-            assert.equal(pad('0102030405060708', 8, true), '0102030405060708');
-        });
-        it('should padd if optional and padding is required', function () {
-            assert.equal(pad('0102030405', 8, true), '0102030405030303');
-        });
-        it('should unpad 3 bytes', function () {
-            assert.equal(unpad('0102030405030303'), '0102030405');
-        });
-        it('should unpad 1 bytes', function () {
-            assert.equal(unpad('0102030405060701'), '01020304050607');
-        });
-        it('should unpad 8 bytes', function () {
-            assert.equal(unpad('01020304050607080808080808080808'), '0102030405060708');
-        });
-        it('should throw when unpadding with no padding', function () {
-            assertCryptoError(unpad.bind(_this, '0102030405060708'), cryptolib.error.INVALID_PADDING);
-        });
-        it('should throw an error if padding if data is empty', function () {
-            assertCryptoError(pad.bind(_this, '', 8), cryptolib.error.INVALID_ARGUMENT);
-        });
-    });
+    }
     describe('getPaddingTypes', function () {
         it('should return list of padding types', function () {
-            var result = cryptolib.padding.getAll();
+            var result = util.values(cryptolib.padding);
             expect(result).to.have.deep.property('[0].name', 'NO_PADDING');
-            expect(result).to.have.deep.property('[1].name', 'ISO_7816_4');
-            expect(result).to.have.deep.property('[2].name', 'PKCS7');
+            expect(result).to.have.deep.property('[1].name', 'PKCS7');
+            expect(result).to.have.deep.property('[2].name', 'ISO_7816_4');
         });
     });
 });
 describe('Cipher', function () {
     describe('getCipherAlgos', function () {
         it('should return list of cipher algo', function () {
-            var result = cryptolib.cipher.cipherAlgo.getAll();
+            var result = util.values(cryptolib.cipher.cipherAlgo);
             expect(result).to.have.deep.property('[0].name', 'AES');
             expect(result).to.have.deep.property('[1].name', 'DES');
             expect(result).to.have.deep.property('[2].name', '3DES');
@@ -126,11 +99,13 @@ describe('Cipher', function () {
     });
     describe('getBlockCipherModes', function () {
         it('should return list of block cipher modes', function () {
-            var result = cryptolib.cipher.blockCipherMode.getAll();
+            var result = util.values(cryptolib.cipher.blockCipherMode);
             expect(result).to.have.deep.property('[0].name', 'ECB');
             expect(result).to.have.deep.property('[1].name', 'CBC');
             expect(result).to.have.deep.property('[2].name', 'CFB');
             expect(result).to.have.deep.property('[3].name', 'OFB');
+            expect(result).to.have.deep.property('[4].name', 'CTR');
+            expect(result).to.have.deep.property('[5].name', 'GCM');
         });
     });
     describe('computeKCV', function () {
@@ -154,14 +129,87 @@ describe('Cipher', function () {
             assertCryptoError(cryptolib.cipher.computeKcv.bind(_this, util.fromHex('FB44403370B3E3822C79AEBEB9436E40'), cryptolib.cipher.cipherAlgo.aes, 17), cryptolib.error.INVALID_ARGUMENT);
         });
     });
-    describe('ciphering/deciphering', function () {
-        it('should final cipher data with padding', function () {
-            var clearData = 'abcde';
-            var key = new Buffer('01020304050607080102030405060708');
-            var cipherRes = cipher.cipher(true, key, new Buffer(clearData, 'ascii'), cipher.cipherAlgo.aes, cipher.blockCipherMode.cbc, { padding: cryptolib.padding.iso78164 });
-            var result = cipher.cipher(false, key, cipherRes, cipher.cipherAlgo.aes, cipher.blockCipherMode.cbc, { padding: cryptolib.padding.iso78164 });
-            assert.equal(result.toString('ascii'), clearData);
-        });
+    function createCipherDecipherTest(operation, cipherAlgoName, testName, test) {
+        var _this = this;
+        var key = new Buffer(test.key, 'hex');
+        var data = new Buffer(test.data, 'hex');
+        var cipherMode = cipher.blockCipherMode[test.cipherMode];
+        var cipherAlgo = cipher.cipherAlgo[cipherAlgoName];
+        var cipherOpts = {};
+        cipherOpts.padding = cryptolib.padding[test.padding];
+        if (test.additionalAuthenticatedData) {
+            cipherOpts.additionalAuthenticatedData = new Buffer(test.additionalAuthenticatedData, 'hex');
+        }
+        if (test.authenticationTag) {
+            cipherOpts.authenticationTag = new Buffer(test.authenticationTag, 'hex');
+        }
+        if (test.iv) {
+            cipherOpts.iv = new Buffer(test.iv, 'hex');
+        }
+        if (operation === 'cipher') {
+            it('cipher ' + testName, function () {
+                var result = cipher.cipher(key, data, cipherAlgo, cipherMode, cipherOpts);
+                if (typeof (test.expected) === 'string') {
+                    assert.equal(result.data.toString('hex').toUpperCase(), test.expected);
+                }
+                else {
+                    for (var expectedKey in test.expected) {
+                        assert.equal(result[expectedKey].toString('hex').toUpperCase(), test.expected[expectedKey]);
+                    }
+                }
+            });
+            it('decipher ' + testName, function () {
+                var result = null;
+                if (typeof (test.expected) === 'string') {
+                    result = cipher.decipher(key, new Buffer(test.expected, 'hex'), cipherAlgo, cipherMode, cipherOpts);
+                }
+                else {
+                    if (test.expected.authenticationTag) {
+                        cipherOpts.authenticationTag = new Buffer(test.expected.authenticationTag, 'hex');
+                    }
+                    result = cipher.decipher(key, new Buffer(test.expected.data, 'hex'), cipherAlgo, cipherMode, cipherOpts);
+                }
+                assert.equal(result.data.toString('hex'), test.data);
+            });
+        }
+        else if (operation === 'decipher') {
+            it('decipher ' + testName, function () {
+                var result = null;
+                if (test.expectedError) {
+                    assertCryptoError(cipher.decipher.bind(_this, key, data, cipherAlgo, cipherMode, cipherOpts), cryptolib.error[test.expectedError]);
+                }
+                else {
+                    result = cipher.decipher(key, data, cipherAlgo, cipherMode, cipherOpts);
+                    if (typeof (test.expected) === 'string') {
+                        assert.equal(result.data.toString('hex').toUpperCase(), test.expected);
+                    }
+                    else {
+                        for (var expectedKey in test.expected) {
+                            assert.equal(result[expectedKey].toString('hex').toUpperCase(), test.expected[expectedKey]);
+                        }
+                    }
+                }
+            });
+        }
+    }
+    function createCipherTestsfunc(cipherAlgo) {
+        return function () {
+            for (var testName in fixtures.cipher[cipherAlgo].cipher) {
+                var test = fixtures.cipher[cipherAlgo].cipher[testName];
+                createCipherDecipherTest('cipher', cipherAlgo, testName, test);
+            }
+            for (var testName in fixtures.cipher[cipherAlgo].decipher) {
+                var test = fixtures.cipher[cipherAlgo].decipher[testName];
+                createCipherDecipherTest('decipher', cipherAlgo, testName, test);
+            }
+        };
+    }
+    for (var cipherAlgo in fixtures.cipher) {
+        describe(cipherAlgo, createCipherTestsfunc(cipherAlgo));
+    }
+    describe('Check Parity', function () {
+        it('Check Parity'), function () {
+        };
     });
 });
 describe('Pin', function () {
@@ -280,6 +328,65 @@ describe('Banking', function () {
         it('should add a valid check digit', function () {
             var checkDigit = cryptolib.banking.computeCheckDigit('444433332222111');
             assert.equal(checkDigit, '1');
+        });
+    });
+});
+describe('MessageDigest', function () {
+    var md = cryptolib.messageDigest;
+    function createMessageDigestTestsfunc(digestAlgo, digestTest) {
+        it(digestAlgo, function () {
+            assert.equal(md.digest(md.messageDigestType[digestAlgo], b(digestTest.valid.data)).toString('hex'), digestTest.valid.expected);
+        });
+    }
+    for (var digestAlgo in fixtures.messageDigest) {
+        console.log(digestAlgo);
+        var digestTest = fixtures.messageDigest[digestAlgo];
+        createMessageDigestTestsfunc(digestAlgo, digestTest);
+    }
+});
+describe('Mac', function () {
+    var md = cryptolib.messageDigest;
+    var hmac = cryptolib.mac.hmac;
+    var key = b('01020304');
+    var longKey64 = b('0011223344556677889900112233445566778899001122334455667788990011223344556677889900112233445566778899' + '0011223344556677889900112233');
+    var longKey70 = b('0011223344556677889900112233445566778899001122334455667788990011223344556677889900112233445566778899' + '0011223344556677889900112233445566778899');
+    var data = b('746573746D65');
+    describe('HMac', function () {
+        it('HMacMD5', function () {
+            assert.equal(hmac(md.messageDigestType.MD5, key, data).toString('hex'), '9089d029bd7e826a9c80090725682f11');
+        });
+        it('HMacMD5 with key longer than block size (>64)', function () {
+            assert.equal(hmac(md.messageDigestType.MD5, longKey70, data).toString('hex'), '78c2cbe8fbdf2a9ec5608b446b9d883e');
+        });
+        it('HMacMD5 with key equals to block size (=64)', function () {
+            assert.equal(hmac(md.messageDigestType.MD5, longKey64, data).toString('hex'), '0accd14b9b46b464c6dbf8c1df3feb62');
+        });
+        it('HMacSHA1', function () {
+            assert.equal(hmac(md.messageDigestType.SHA1, key, data).toString('hex'), '7caea159fec98c5ccd6ed215c394d8d14113c8be');
+        });
+        it('HMacSHA2_224', function () {
+            assert.equal(hmac(md.messageDigestType.SHA2_224, key, data).toString('hex'), 'a54bd4c230b9dbd6585f4ca7e8a633749e5e85929b22ea0ce5434fdd');
+        });
+        it('HMacSHA2_256', function () {
+            assert.equal(hmac(md.messageDigestType.SHA2_256, key, data).toString('hex'), '143275d97380ce4f8ba98e592b1ff1697d15517aa58c7fc0e245112ccdcc66fc');
+        });
+        it('HMacSHA2_384', function () {
+            assert.equal(hmac(md.messageDigestType.SHA2_384, key, data).toString('hex'), 'e9277364d368f48de701829dc182b7a9076fc7e126a8af49ce6dcadda126e7deccb40668fe6a296a849671439b77a6de');
+        });
+        it('HMacSHA2_512', function () {
+            assert.equal(hmac(md.messageDigestType.SHA2_512, key, data).toString('hex'), 'c8d33479fa6b3347d7904e48c8a0715cfbae890f86e2db224bbef8a3a9299fe02c6c14a5b11e85508fd7f59e5b983f3318172c805d6d274f59f868ca66ef4290');
+        });
+        it('HMacSHA2_512_224', function () {
+        });
+        it('HMacSHA2_512_256', function () {
+        });
+        it('HMacSHA3_224', function () {
+        });
+        it('HMacSHA3_256', function () {
+        });
+        it('HMacSHA3_384', function () {
+        });
+        it('HMacSHA3_512', function () {
         });
     });
 });
