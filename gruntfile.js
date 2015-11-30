@@ -1,8 +1,9 @@
 'use strict';
 
 
-var packagejson = require('./package.json');
-var bowerFiles = require('bower-files');
+var packagejson = require('./package.json'),
+    bowerFiles = require('bower-files'),
+    fs = require('fs');
 
 module.exports = function (grunt) {
 
@@ -31,7 +32,20 @@ module.exports = function (grunt) {
       var additionalFiles ={expand: true,
                   src: bowerFiles().relative(__dirname).files,
                   dest: 'build/' } ;
+      var allBowerFiles = [];
+      
+      additionalFiles.src.forEach(function(element) {
+          allBowerFiles.push(element);
+          if (element.length<4) {
+              return;
+          }
+          var minifiedFile = element.substring(0,element.length-3)+'.min.js';
+          if (fs.existsSync(minifiedFile)) {
+              allBowerFiles.push(minifiedFile);
+          }
+      }, this);
 
+      additionalFiles.src=allBowerFiles;
       grunt.log.writeln("Adding to copy:base the following files\n "+JSON.stringify(additionalFiles));
       originalCopy['base'].files.push(additionalFiles);
       grunt.config('copy',originalCopy);
@@ -77,7 +91,8 @@ module.exports = function (grunt) {
                  dest : 'js/cryptoCalc.js'               
             },
             test : {
-                src: ['test/crypto-lib/cryptolib-test.ts' ]
+                src: ['test/crypto-lib/cryptolib-test.ts',
+                    'test/asymmetric/asymmetric-tests.ts' ]
             }, 
             cryptolib: {
                 src: ['crypto-lib/cryptolib-nodejs.ts']
@@ -104,10 +119,12 @@ module.exports = function (grunt) {
             app: {
                 src: ['index.html','index-web.html'],
                 exclude: [
-                    /jquery/,
+                    /jquery\./,
+                    /spin/,
                     /forge/,
                     /angular-mocks/,
-                    /crypto-js/
+                    /crypto-js/,
+                    /jsrsasign/
                 ]
             }
         },
@@ -266,7 +283,23 @@ module.exports = function (grunt) {
                   {expand: true, cwd:'build',src: ['**/*']}
                 ]
               }
-        }
+        },
+        nodemon: {
+            dev: {
+                script: 'server.js',
+                options: {
+                    args: ['dev'],
+                    ext: 'js,html',
+                    watch: ['index-web.html', 'components', 'js', 'cryptolib'],
+                    delay: 1000,
+                    legacyWatch: true,
+                    env: {
+                        PORT: 3000
+                    },
+                    cwd: __dirname
+                }
+            }
+        },
      
     });
    
@@ -284,6 +317,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-electron-installer');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-nodemon');
 
     //Making grunt default to force in order not to break the project.
     grunt.option('force', true);
@@ -293,6 +327,8 @@ module.exports = function (grunt) {
     grunt.registerTask('test',['ts:cryptolib','ts:test','mochaTest','browserify']);
     
     grunt.registerTask('buildui',['ts:ui','ts:components','browserify']);
+    
+    grunt.registerTask('testui',['nodemon:dev'])
     
     grunt.registerTask('buildelectron', [
         'clean',

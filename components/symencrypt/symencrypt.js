@@ -1,3 +1,5 @@
+/// <reference path="../../d.ts/angularjs/angular.d.ts"/>
+/// <reference path="../../crypto-lib/cryptolib.d.ts"/>
 var symEncryptModule = angular.module('CryptoCalcModule.symencrypt', ['CryptoCalcModule.common']);
 symEncryptModule.controller('SymencryptController', ['$timeout', 'cryptolib', 'CryptoCalc', SymencryptController]);
 function SymencryptController($timeout, cryptolib, CryptoCalc) {
@@ -22,10 +24,12 @@ function SymencryptController($timeout, cryptolib, CryptoCalc) {
         if (!self.cipherAlgo) {
             return null;
         }
-        if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.cbc || self.blockCipherMode === cryptolib.cipher.blockCipherMode.cfb) {
+        if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.cbc ||
+            self.blockCipherMode === cryptolib.cipher.blockCipherMode.cfb) {
             return Array(2 * self.cipherAlgo.blockSize + 1).join("0");
         }
-        else if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.ofb || self.blockCipherMode === cryptolib.cipher.blockCipherMode.ctr) {
+        else if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.ofb ||
+            self.blockCipherMode === cryptolib.cipher.blockCipherMode.ctr) {
             return cryptolib.random.generate(self.cipherAlgo.blockSize).toString('hex');
         }
         else if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.gcm) {
@@ -99,7 +103,7 @@ function SymencryptController($timeout, cryptolib, CryptoCalc) {
                 var cryptoError = e;
                 msg = cryptoError.message || cryptoError.code.description;
                 if (cryptoError.code === cryptolib.error.AUTHENTICATED_TAG_INVALID) {
-                    self.setFieldError('authTag', 'Invalid');
+                    self.errors['authTag'] = 'Invalid';
                 }
             }
             else {

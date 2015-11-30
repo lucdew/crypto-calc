@@ -1,3 +1,5 @@
+/// <reference path="./cryptolib.d.ts"/>
+/// <reference path="../d.ts/node/node.d.ts"/>
 var error = require('./cryptolib-error');
 var util = require('./cryptolib-util');
 var random = require('./cryptolib-random');
@@ -6,9 +8,7 @@ var isoPinType = {
     format1: { name: 'ISO_9564_Format_1', value: 1 },
     format2: { name: 'ISO_9564_Format_2', value: 2 },
     format3: { name: 'ISO_9564_Format_3', value: 3 },
-    getAll: function () {
-        return [isoPinType.format0, isoPinType.format1, isoPinType.format2, isoPinType.format3];
-    }
+    getAll: function () { return [isoPinType.format0, isoPinType.format1, isoPinType.format2, isoPinType.format3]; }
 };
 function generateIsoPinRandomPadding(length) {
     var result = '';

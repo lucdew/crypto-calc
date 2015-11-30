@@ -1,3 +1,5 @@
+/// <reference path="./cryptolib.d.ts"/>
+/// <reference path="../d.ts/node/node.d.ts"/>
 var util = require('./cryptolib-util');
 var messageDigest = require('./cryptolib-message-digest');
 function blockCipherMac(key, data) {

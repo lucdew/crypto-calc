@@ -28,11 +28,11 @@
               <div class="col-md-3 col-sm-3" style="padding-left: 0;">
                  <div class="dropdown" dropdown >
                       <button class="btn btn-default dropdown-toggle" name="padding" type="button"  dropdown-toggle  id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        {{digest.messageDigestType.name}}
+                        {{digest.messageDigestType.name|nodash}}
                         <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" >
-                        <li ng-repeat="messageDigestType in digest.messageDigestTypes" ng-click="digest.setMessageDigestType(messageDigestType)"><a href="#" prevent-default>{{messageDigestType.name}}</a></li>
+                        <li ng-repeat="messageDigestType in digest.messageDigestTypes" ng-click="digest.setMessageDigestType(messageDigestType)"><a href="#" prevent-default>{{messageDigestType.name|nodash}}</a></li>
                       </ul>
                   </div>
               </div>

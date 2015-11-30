@@ -1,3 +1,5 @@
+/// <reference path="./cryptolib.d.ts"/>
+/// <reference path="../d.ts/node/node.d.ts"/>
 var random = require('./cryptolib-random');
 function generateRandomNumberString(length) {
     var buffer = random.generate(length);

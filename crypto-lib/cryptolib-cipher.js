@@ -1,3 +1,5 @@
+/// <reference path="./cryptolib.d.ts"/>
+/// <reference path="../d.ts/node/node.d.ts"/>
 var error = require('./cryptolib-error');
 var util = require('./cryptolib-util');
 var padding = require('./cryptolib-padding');
@@ -14,9 +16,12 @@ var blockCipherMode = {
     gcm: { name: 'GCM', cryptoName: 'gcm', hasIV: true, isAuthenticatedEncryption: true, isStreaming: true, supportedBlockSizes: [16] }
 };
 var cipherAlgo = {
-    aes: { blockSize: 16, name: 'AES', cryptoName: 'aes', keyLengths: [128, 192, 256], modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr, blockCipherMode.gcm] },
-    des: { blockSize: 8, name: 'DES', cryptoName: 'des', keyLengths: [64], modes: [blockCipherMode.ecb, blockCipherMode.cbc] },
-    desede: { blockSize: 8, name: '3DES', cryptoName: 'des-ede', keyLengths: [64, 128, 192], modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr] }
+    aes: { blockSize: 16, name: 'AES', cryptoName: 'aes', keyLengths: [128, 192, 256],
+        modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr, blockCipherMode.gcm] },
+    des: { blockSize: 8, name: 'DES', cryptoName: 'des', keyLengths: [64],
+        modes: [blockCipherMode.ecb, blockCipherMode.cbc] },
+    desede: { blockSize: 8, name: '3DES', cryptoName: 'des-ede', keyLengths: [64, 128, 192],
+        modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr] }
 };
 function genNullIv(length) {
     var iv = new Buffer(length);
@@ -166,7 +171,8 @@ function doCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, cipherOp
         dataToProcess = cipherOpts.padding.pad(data, aCipherAlgo.blockSize);
     }
     if (!iv && aBlockCipherMode.hasIV) {
-        if (aBlockCipherMode === blockCipherMode.cbc || aBlockCipherMode === blockCipherMode.cfb || aBlockCipherMode === blockCipherMode.ofb || aBlockCipherMode === blockCipherMode.ctr) {
+        if (aBlockCipherMode === blockCipherMode.cbc || aBlockCipherMode === blockCipherMode.cfb
+            || aBlockCipherMode === blockCipherMode.ofb || aBlockCipherMode === blockCipherMode.ctr) {
             iv = genNullIv(aCipherAlgo.blockSize);
             cipherOpts.iv = iv;
         }
@@ -182,7 +188,9 @@ function doCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, cipherOp
             cipherOpts.iv = iv;
         }
     }
-    var cipherResult = aBlockCipherMode === blockCipherMode.gcm ? doForgeCipher(cipherMode, key, dataToProcess, aCipherAlgo, aBlockCipherMode, cipherOpts) : doCryptoJSCipher(cipherMode, key, dataToProcess, aCipherAlgo, aBlockCipherMode, cipherOpts);
+    var cipherResult = aBlockCipherMode === blockCipherMode.gcm ?
+        doForgeCipher(cipherMode, key, dataToProcess, aCipherAlgo, aBlockCipherMode, cipherOpts) :
+        doCryptoJSCipher(cipherMode, key, dataToProcess, aCipherAlgo, aBlockCipherMode, cipherOpts);
     if (!cipherMode && cipherOpts && cipherOpts.padding) {
         cipherResult.data = cipherOpts.padding.unpad(cipherResult.data);
     }

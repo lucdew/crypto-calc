@@ -1,4 +1,9 @@
-angular.module('CryptoCalcModule.utils', ['CryptoCalcModule.common']).controller('UtilsController', ['cryptolib', UtilsController]).directive('cryptoConverter', function (cryptolib) {
+/// <reference path="../../d.ts/angularjs/angular.d.ts"/>
+/// <reference path="../../crypto-lib/cryptolib.d.ts"/>
+angular.module('CryptoCalcModule.utils', ['CryptoCalcModule.common'])
+    .controller('UtilsBitwiseController', ['cryptolib', BitwiseController])
+    .controller('UtilsEncodingController', [EncodingController])
+    .directive('cryptoConverter', function (cryptolib) {
     return {
         restrict: 'E',
         scope: {
@@ -41,27 +46,42 @@ angular.module('CryptoCalcModule.utils', ['CryptoCalcModule.common']).controller
         }
     };
 });
-function UtilsController(cryptolib) {
+function EncodingController() {
+}
+function BitwiseController(cryptolib) {
+    var _this = this;
     this.bitwiseOperators = [
         { name: 'XOR', func: cryptolib.util.xor },
         { name: 'AND', func: cryptolib.util.and },
         { name: 'OR', func: cryptolib.util.or },
         { name: 'NOT', func: cryptolib.util.not }
     ];
-    this.bitwise = {};
-    this.bitwise.bitwiseOperator = this.bitwiseOperators[0];
+    this.bitwiseOperator = this.bitwiseOperators[0];
+    this.dataList = [{ value: '' }, { value: '' }];
     this.setBitwiseOperator = function (aBitwiseOperator) {
-        this.bitwise.bitwiseOperator = aBitwiseOperator;
+        _this.bitwiseOperator = aBitwiseOperator;
+    };
+    this.addDataElt = function () {
+        _this.dataList.push({ value: '' });
+    };
+    this.removeDataElt = function () {
+        if (_this.dataList.length > 2) {
+            _this.dataList.pop();
+        }
     };
     this.executeBitwiseOperation = function () {
+        _this.result = '';
         var result;
-        if (this.bitwise.bitwiseOperator.name === 'NOT') {
-            result = this.bitwise.bitwiseOperator.func.call(null, new Buffer(this.bitwise.data1, 'hex'));
+        if (_this.bitwiseOperator.name === 'NOT') {
+            result = _this.bitwiseOperator.func.call(null, new Buffer(_this.dataList[0].value, 'hex'));
         }
         else {
-            result = this.bitwise.bitwiseOperator.func.call(null, new Buffer(this.bitwise.data1, 'hex'), new Buffer(this.bitwise.data2, 'hex'));
+            result = new Buffer(_this.dataList[0].value, 'hex');
+            for (var idx = 1; idx < _this.dataList.length; idx++) {
+                result = _this.bitwiseOperator.func.call(null, result, new Buffer(_this.dataList[idx].value, 'hex'));
+            }
         }
-        this.bitwise.result = result.toString('hex').toUpperCase();
+        _this.result = result.toString('hex').toUpperCase();
     };
 }
 //# sourceMappingURL=utils.js.map

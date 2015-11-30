@@ -1,3 +1,4 @@
+/// <reference path="./cryptolib-nodejs.ts"/>
 var error = require('./cryptolib-error');
 var random = require('./cryptolib-random');
 function extendBuffer(data, optionally, blockSize, filler) {
@@ -74,7 +75,7 @@ var Iso10126 = (function () {
 })();
 var AnsiX923 = (function () {
     function AnsiX923() {
-        this.name = "ANSI_X923.1";
+        this.name = "ANSI_X.923";
     }
     AnsiX923.prototype.pad = function (data, blockSize, optionally) {
         if (blockSize > 255 || blockSize < 1) {

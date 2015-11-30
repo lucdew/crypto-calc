@@ -12,22 +12,37 @@ It is still in development and should not be used for production.
 To see a live demo go to [cryptocalc.dewavrin.info](http://cryptocalc.dewavrin.info). Again do not use for production especially since
 it is delivered on http and content can be easily altered with mitm.
 
-So far it supports :
-* Symmetric encryption/decryption with :
-  * **DES** / **3DES** / **AES** ciphers (! 3DES with double length or triple length keys!)
-  * **ECB** / **CBC** / **CFB** / **OFB** / **CTR** / **GCM** block cipher modes
-  * **ISO-7816-4** / **PKCS#5(PKCS#7)** / **NO Padding** / **X9.23** / **ISO 10126** padding
 
-  <img src="images/screenshots/symencrypt.png" alt="Symmetric encryption" width="400"/>
-	
-* Banking :
+## Features
+
+Currently the following features are implemented.
+
+* Symmetric encryption/decryption:
+  * Ciphers: **DES** / **3DES** / **AES** (! 3DES with double length or triple length keys!)
+  * Block cipher modes: **ECB** / **CBC** / **CFB** / **OFB** / **CTR** / **GCM** with **Additional Authenticated Data**
+  * Padding: **ISO-7816-4** / **PKCS#5(PKCS#7)** / **NO Padding** / **X.923** / **ISO 10126**
+
+
+* RSA encryption/decryption:
+ * Algos: **RSA-OAEP**/ **PKCS#1.5**
+ * Keypair: **raw public key** , **x509 certificate** (only encryption), (encrypted) **pkcs#8**, **raw private key** 
+
+
+* Banking:
   * **ISO-9564** format 0 to 3 pin block generation and parsing
-  * Primary Account Number (**PAN**) parsing
-  
-  <img src="images/screenshots/banking-pin.png" alt="Iso PIN" width="400"/>
+  * **Primary Account Number (PAN)** parsing detecting the issuing network
 
-* Utilities : Encoding/Decoding to/from base64,hexa string, ascii...<br/>
-<img src="images/screenshots/utils-convert.png" alt="Encoding" width="400"/>
+
+* Message hashing and HMAC:
+  * **MD5**
+  * **SHA1** 
+  * **SHA2** (224,256,384,512,512-224,512-256)
+  * **SHA3** (384,512)
+
+
+* Utilities: 
+  * Encoding/Decoding to/from base64,hexa string, ascii...<br/>
+  * Bitwise operations
 
 
 

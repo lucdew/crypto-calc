@@ -91,7 +91,7 @@ class Iso10126 implements Cryptolib.Padding.IPadding {
 
 class AnsiX923 implements Cryptolib.Padding.IPadding {
 	
-	name:string = "ANSI_X923.1";
+	name:string = "ANSI_X.923";
 	
 	pad(data:Buffer,blockSize: number, optionally?:boolean) {
         if (blockSize>255 || blockSize <1 ) {

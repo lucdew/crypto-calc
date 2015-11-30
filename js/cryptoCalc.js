@@ -1,13 +1,48 @@
+/// <reference path="../d.ts/angularjs/angular.d.ts"/>
 var CryptoCalcModule;
 (function (CryptoCalcModule) {
-    CryptoCalcModule.cryptoCalcModule = angular.module('CryptoCalcModule', ['ngNewRouter', 'CryptoCalcModule.symencrypt', 'CryptoCalcModule.banking', 'CryptoCalcModule.digest', 'CryptoCalcModule.utils']);
+    function dotCase(str) {
+        return str.replace(/([A-Z])/g, function ($1) {
+            return '.' + $1.toLowerCase();
+        });
+    }
+    function computePath(componentName) {
+        var names = componentName.split('.');
+        names.push(names[names.length - 1]);
+        var path = "";
+        for (var idx = 0; idx < names.length; idx++) {
+            if (idx > 0) {
+                path += '/';
+            }
+            path += dotCase(names[idx]);
+        }
+        return path + '.html';
+    }
+    CryptoCalcModule.cryptoCalcModule = angular.module('CryptoCalcModule', ['ngNewRouter', 'CryptoCalcModule.symencrypt', 'CryptoCalcModule.asymmetric', 'CryptoCalcModule.banking', 'CryptoCalcModule.digest',
+        'CryptoCalcModule.utils']);
+    CryptoCalcModule.cryptoCalcModule.config(function ($componentLoaderProvider) {
+        $componentLoaderProvider.setTemplateMapping(function (name) {
+            var computedPath = computePath(name);
+            return 'components/' + computedPath;
+        });
+        $componentLoaderProvider.setCtrlNameMapping(function (name) {
+            var names = name.split('.');
+            var ctrlName = "";
+            for (var idx = 0; idx < names.length; idx++) {
+                ctrlName += names[idx][0].toUpperCase() + names[idx].substr(1);
+            }
+            return ctrlName + 'Controller';
+        });
+    });
     CryptoCalcModule.cryptoCalcModule.controller('AppController', ['$router', '$scope', '$location', AppController]);
     AppController.$routeConfig = [
         { path: '/', redirectTo: '/symencrypt' },
         { path: '/symencrypt', component: 'symencrypt' },
+        { path: '/asymmetric', component: 'asymmetric' },
         { path: '/banking', component: 'banking' },
         { path: '/digest', component: 'digest' },
-        { path: '/utils', component: 'utils' },
+        { path: '/utils/encoding', component: 'utils.encoding' },
+        { path: '/utils/bitwise', component: 'utils.bitwise' },
         { path: '/about', component: 'about' }
     ];
     function AppController($router, $scope, $location) {
@@ -25,6 +60,8 @@ var CryptoCalcModule;
         });
     }
 })(CryptoCalcModule || (CryptoCalcModule = {}));
+/// <reference path="../d.ts/angularjs/angular.d.ts"/>
+/// <reference path="../crypto-lib/cryptolib.d.ts"/>
 var CryptoCalcModule;
 (function (CryptoCalcModule) {
     var cryptoCalcCommonModule = angular.module('CryptoCalcModule.common', ['ngAnimate']);
@@ -37,121 +74,194 @@ var CryptoCalcModule;
             utils: {}
         };
     });
-    cryptoCalcCommonModule.directive('databox', ['$timeout', function ($timeout) {
-        var typesMetadata = {
-            hex: {
-                desc: 'Hexa',
-                regexp: /^(\s*[0-9a-fA-F][0-9a-fA-F]\s*)+$/,
-            },
-            utf8: {
-                desc: 'Utf-8',
-                regexp: /[A-Za-z\u0080-\u00FF ]+/
-            },
-            ascii: {
-                desc: 'Ascii',
-                regexp: /^[\x00-\x7F]+$/
-            },
-            base64: {
-                desc: 'Base64',
-                regexp: /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/
-            }
+    cryptoCalcCommonModule.filter('nodash', function () {
+        return function (input) {
+            input = input || '';
+            return input.replace(/_/g, ' ').replace(/-/g, ' ');
         };
-        return {
-            restrict: 'E',
-            scope: {
-                'name': '@',
-                'rows': '@',
-                'label': '@',
-                'model': '=',
-                'type': '=',
-                'errorMsg': '='
-            },
-            template: function (element, attrs) {
-                var types = attrs.types ? attrs.types.split(',') : null;
-                var errorHtml = element.html();
-                var tpl = "\n                           <div class=\"container-fluid\" style=\"padding:0\">\n                                <div class=\"row vertical-align bottom5\">                                   \n                                   <div class=\"col-md-2 col-sm-4 noright-padding\">\n                                           <span class=\"bold\">{{label}}</span>";
-                if (types) {
-                    tpl += "<div class=\"btn-group left5 btn-group-default\" data-toggle=\"buttons\">";
-                    types.forEach(function (val, idx) {
-                        tpl += "<label class=\"btn btn-xs btn-default";
-                        if (idx == 0) {
-                            tpl += " active ";
+    });
+    cryptoCalcCommonModule.directive('databox', ['$timeout',
+        function ($timeout) {
+            var typesMetadata = {
+                hex: {
+                    desc: 'Hexa',
+                    regexp: /^(\s*[0-9a-fA-F][0-9a-fA-F]\s*)+$/,
+                },
+                utf8: {
+                    desc: 'Utf-8',
+                    regexp: /[A-Za-z\u0080-\u00FF ]+/
+                },
+                ascii: {
+                    desc: 'Ascii',
+                    regexp: /^[\x00-\x7F]+$/
+                },
+                int: {
+                    desc: 'Integer',
+                    regexp: /^[0-9]+$/
+                },
+                base64: {
+                    desc: 'Base64',
+                    regexp: /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/
+                }
+            };
+            return {
+                restrict: 'E',
+                scope: {
+                    'name': '@',
+                    'rows': '@',
+                    'label': '@',
+                    'model': '=',
+                    'type': '=',
+                    'errorMsg': '='
+                },
+                template: function (element, attrs) {
+                    var types = attrs.types ? attrs.types.split(',') : null;
+                    var widthInPixels = attrs.widthInPixels;
+                    var widthInCols = attrs.widthInCols;
+                    var rows = attrs.rows ? parseInt(attrs.rows) : -1;
+                    var showAttrs = { 'showCharsNum': true, 'showSize': true, 'showErrors': true };
+                    for (var key in showAttrs) {
+                        if (typeof attrs[key] !== 'undefined') {
+                            showAttrs[key] = attrs[key].toLowerCase() === 'true';
                         }
-                        tpl += "\" ng-click=\"toggleType($event,'" + val + "')\">\n                                                            <input type=\"radio\" name=\"options\" id=\"option1\" autocomplete=\"off\" checked>";
-                        tpl += typesMetadata[val].desc;
-                        tpl += "</label>";
-                    });
-                    tpl += "</div>";
-                }
-                tpl += "</div>\n                                   \n                                   <div class=\"col-md-1 col-sm-2 bold noside-padding\">Chars : {{charsNum}}</div>      \n                                   <div class=\"col-md-1 col-sm-2 bold noside-padding\" >Size (bytes): {{size}}</div>\n                                   <div class=\"col-md-8 col-sm-4 noside-padding red bold\"> {{errorMsg || typeErrorMsg}}</div>\n                                </div>\n                                <textarea class=\"form-control\" name=\"{{name}}\" type=\"text\" ng-model=\"model\" rows=\"{{rows}}\" \n                                       ng-class=\"{'field-error': errorMsg || typeErrorMsg}\"";
-                if (attrs.$attr.autofocus) {
-                    tpl += " autofocus";
-                }
-                if (attrs.$attr.required) {
-                    tpl += " required";
-                }
-                tpl += "></div>";
-                return tpl;
-            },
-            link: function (scope, element, attrs) {
-                if (attrs.types) {
-                    scope.type = attrs.types.split(',')[0];
-                }
-                if (!scope.type) {
-                    scope.type = 'hex';
-                }
-                scope.toggleType = function ($event, type) {
-                    var oldtype = scope.type;
-                    var oldvalue = scope.model;
-                    scope.typeErrorMsg = '';
-                    scope.type = type;
-                    scope.model = new buffer.Buffer(oldvalue ? oldvalue : '', oldtype).toString(type);
-                };
-                scope.$on('$destroy', function () {
-                    if (scope.lastError) {
-                        $timeout.cancel(scope.lastError);
                     }
-                });
-                scope.reportTypeError = function () {
-                    scope.lastError = $timeout(function () {
-                        var typeMetadata = typesMetadata[scope.type];
-                        var typeDesc = typeMetadata.desc;
-                        if (scope.type === 'hex' && scope.model.length % 2 !== 0) {
-                            scope.typeErrorMsg = 'Invalid length for ' + typeDesc + ' string';
+                    if (widthInCols && widthInPixels) {
+                        throw "Both attributes widthInPixels and widthInCols have been set, choose one";
+                    }
+                    var errorHtml = element.html();
+                    var tpl = "\n                           <div class=\"container-fluid\" style=\"padding:0\">\n                                <div class=\"row vertical-align bottom5\">                                   \n                                   <div class=\"col-md-2 col-sm-4 noright-padding\">\n                                           <span class=\"bold\">{{label}}</span>";
+                    if (types) {
+                        tpl += "<div class=\"btn-group left5 btn-group-default\" data-toggle=\"buttons\">";
+                        types.forEach(function (val, idx) {
+                            tpl += "<label class=\"btn btn-xs btn-default";
+                            if (idx == 0) {
+                                tpl += " active ";
+                            }
+                            tpl += "\" ng-click=\"toggleType($event,'" + val + "')\">\n                                                            <input type=\"radio\" name=\"options\" id=\"option1\" autocomplete=\"off\" checked>";
+                            tpl += typesMetadata[val].desc;
+                            tpl += "</label>";
+                        });
+                        tpl += "</div>";
+                    }
+                    tpl += "</div>";
+                    if (showAttrs['showCharsNum']) {
+                        tpl += "<div class=\"col-md-1 col-sm-2 bold noside-padding\">Chars : {{charsNum}}</div>";
+                    }
+                    if (showAttrs['showSize']) {
+                        tpl += "<div class=\"col-md-1 col-sm-2 bold noside-padding\" >Size (bytes): {{size}}</div>";
+                    }
+                    if (showAttrs['showErrors']) {
+                        tpl += "<div class=\"col-md-8 col-sm-4 noside-padding red bold\"> {{errorMsg || typeErrorMsg}}</div>";
+                    }
+                    tpl += " </div>";
+                    if (widthInCols) {
+                        tpl += "\n                                            <div class=\"row vertical-align bottom5\">\n                                            <div class=\"";
+                        tpl += widthInCols;
+                        tpl += " noright-padding\">";
+                    }
+                    tpl += "<textarea class=\"form-control\" name=\"{{name}}\" type=\"text\" ng-model=\"model\" rows=\"{{rows}}\" \n                                       ng-class=\"{'field-error': errorMsg || typeErrorMsg}\"";
+                    if (attrs.$attr.autofocus) {
+                        tpl += " autofocus";
+                    }
+                    if (attrs.$attr.required) {
+                        tpl += " required";
+                    }
+                    tpl += " style=\"";
+                    if (widthInPixels) {
+                        tpl += "width:";
+                        tpl += widthInPixels;
+                        tpl += "px;";
+                    }
+                    if (rows === 1) {
+                        tpl += "resize: none; overflow: hidden;";
+                    }
+                    tpl += "\"";
+                    tpl += "></textarea>";
+                    if (widthInCols) {
+                        tpl += "</div></div>";
+                    }
+                    tpl += "</div>";
+                    return tpl;
+                },
+                link: function (scope, element, attrs) {
+                    if (attrs.types) {
+                        scope.type = attrs.types.split(',')[0];
+                    }
+                    if (!scope.type) {
+                        scope.type = 'hex';
+                    }
+                    scope.toggleType = function ($event, type) {
+                        var oldtype = scope.type;
+                        var oldvalue = scope.model;
+                        scope.typeErrorMsg = '';
+                        scope.type = type;
+                        var oldData = null;
+                        if (oldtype === 'int') {
+                            if (oldvalue) {
+                                var oldvalueHex = parseInt(oldvalue).toString(16);
+                                if (oldvalueHex.length % 2 !== 0) {
+                                    oldvalueHex = '0' + oldvalueHex;
+                                }
+                                oldData = new buffer.Buffer(oldvalueHex, 'hex');
+                            }
+                            else {
+                                oldData = new buffer.Buffer('', 'hex');
+                            }
                         }
                         else {
-                            scope.typeErrorMsg = 'Invalid characters for type ' + typeDesc;
+                            oldData = new buffer.Buffer(oldvalue ? oldvalue : '', oldtype);
                         }
-                    }, 200);
-                };
-                scope.$watch('model', function (newValue, oldValue) {
-                    var size = 0, charsNum = 0;
-                    if (scope.lastError) {
-                        $timeout.cancel(scope.lastError);
-                    }
-                    var type = scope.type;
-                    if (newValue) {
-                        var validatingRexep = typesMetadata[scope.type].regexp;
-                        if (!validatingRexep.test(scope.model)) {
-                            scope.reportTypeError();
-                            return;
+                        if (type === 'int') {
+                            scope.model = parseInt(oldData.toString('hex'), 16);
                         }
-                        try {
-                            var buf = new buffer.Buffer(newValue, type);
-                            size = buf.length;
-                            charsNum = newValue.length;
+                        else {
+                            scope.model = oldData.toString(type);
                         }
-                        catch (e) {
-                            scope.reportTypeError();
+                    };
+                    scope.$on('$destroy', function () {
+                        if (scope.lastError) {
+                            $timeout.cancel(scope.lastError);
                         }
-                    }
-                    scope.typeErrorMsg = '';
-                    scope.size = size;
-                    scope.charsNum = charsNum;
-                });
-            }
-        };
-    }]);
+                    });
+                    scope.reportTypeError = function () {
+                        scope.lastError = $timeout(function () {
+                            var typeMetadata = typesMetadata[scope.type];
+                            var typeDesc = typeMetadata.desc;
+                            if (scope.type === 'hex' && scope.model.length % 2 !== 0) {
+                                scope.typeErrorMsg = 'Invalid length for ' + typeDesc + ' string';
+                            }
+                            else {
+                                scope.typeErrorMsg = 'Invalid characters for type ' + typeDesc;
+                            }
+                        }, 200);
+                    };
+                    scope.$watch('model', function (newValue, oldValue) {
+                        var size = 0, charsNum = 0;
+                        if (scope.lastError) {
+                            $timeout.cancel(scope.lastError);
+                        }
+                        if (newValue) {
+                            var validatingRexep = typesMetadata[scope.type].regexp;
+                            if (!validatingRexep.test(scope.model)) {
+                                scope.reportTypeError();
+                                return;
+                            }
+                            try {
+                                var buf = new buffer.Buffer(newValue, scope.type);
+                                size = buf.length;
+                                charsNum = newValue.length;
+                            }
+                            catch (e) {
+                                scope.reportTypeError();
+                            }
+                        }
+                        scope.typeErrorMsg = '';
+                        scope.size = size;
+                        scope.charsNum = charsNum;
+                    });
+                }
+            };
+        }]);
     cryptoCalcCommonModule.directive('pan', function ($timeout, cryptolib) {
         return {
             restrict: 'E',
@@ -232,7 +342,8 @@ var CryptoCalcModule;
                 scope['parity'] = '';
                 function updateKeyInfo() {
                     var keySize = scope['size'], cipherAlgo = scope['cipherAlgo'];
-                    if (typeof keySize !== 'number' || (keySize % 2) !== 0 || keySize < 64 || !cipherAlgo || cipherAlgo.keyLengths.indexOf(keySize) === -1) {
+                    if (typeof keySize !== 'number' || (keySize % 2) !== 0 || keySize < 64 ||
+                        !cipherAlgo || cipherAlgo.keyLengths.indexOf(keySize) === -1) {
                         scope['kcv'] = '';
                         scope['parity'] = '';
                     }

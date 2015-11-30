@@ -9,7 +9,7 @@
       <div class="panel-body">
       
       
-    <form name="form" class="form left" role="form" novalidate ng-class="{submitted:symencrypt.submitted}">
+    <form name="symmetricForm" class="form left" role="form" novalidate ng-class="{submitted:symencrypt.submitted}">
 
       <div class="bottom15">
         <databox type="symencrypt.datatype" types="hex,base64,utf8" name="data" model="symencrypt.data" rows="2" label="Data" autofocus required error-msg="symencrypt.errors.data" >
@@ -28,7 +28,7 @@
                <div class="dropdown" dropdown >
                     <button class="btn btn-default dropdown-toggle"  name="cipherAlgo" type="button"  dropdown-toggle 
                          id="cipherAlgoMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      {{symencrypt.cipherAlgo.name||'Choose'}}
+                      {{(symencrypt.cipherAlgo.name)||'Choose'}}
                       <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="cipherAlgoMenu" >
@@ -61,11 +61,11 @@
             <div class="col-md-3 col-sm-3" style="padding-left: 0;">
                <div class="dropdown" dropdown >
                     <button class="btn btn-default dropdown-toggle" name="padding" type="button"  dropdown-toggle  id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      {{symencrypt.padding.name}}
+                      {{symencrypt.padding.name|nodash}}
                       <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" >
-                      <li ng-repeat="paddingType in symencrypt.paddingTypes" ng-click="symencrypt.setPaddingType(paddingType)"><a href="#" prevent-default>{{paddingType.name}}</a></li>
+                      <li ng-repeat="paddingType in symencrypt.paddingTypes" ng-click="symencrypt.setPaddingType(paddingType)"><a href="#" prevent-default>{{paddingType.name|nodash}}</a></li>
                     </ul>
                 </div>
             </div>

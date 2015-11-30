@@ -1,3 +1,5 @@
+/// <reference path="./cryptolib.d.ts"/>
+/// <reference path="../d.ts/node/node.d.ts"/>
 var error = require('./cryptolib-error');
 var forgelib = require('./forgelib');
 var cryptojslib = require('./cryptojslib');

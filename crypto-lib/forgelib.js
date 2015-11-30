@@ -1,6 +1,7 @@
+/// <reference path="../d.ts/node/node.d.ts"/>
+/// <reference path="./cryptolib.d.ts"/>
 var util = require('./cryptolib-util');
 var nodejs = (typeof process !== 'undefined' && process.versions && process.versions.node);
-exports.forge;
 if (nodejs) {
     exports.forge = require('node-forge');
 }

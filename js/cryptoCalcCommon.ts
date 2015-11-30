@@ -4,27 +4,28 @@
 module CryptoCalcModule {
         
         declare var buffer:any;
-        var cryptoCalcCommonModule = angular.module('CryptoCalcModule.common',
-         ['ngAnimate']);
+        var cryptoCalcCommonModule = angular.module('CryptoCalcModule.common',['ngAnimate']);
+               
+        cryptoCalcCommonModule.factory('cryptolib',function() {                          
+            return (<any>window).cryptolib;
+        });
          
+        cryptoCalcCommonModule.factory('CryptoCalc',function() {                       
+            return {
+                encrypt : {},
+                utils: {}
+            }
+        });
+        
+        cryptoCalcCommonModule.filter('nodash',function() {
+            return function(input) {
+                input = input || '';
+                return input.replace(/_/g,' ').replace(/-/g,' ');
+            }
+            
+        }); 
          
-         cryptoCalcCommonModule.factory('cryptolib',function() {
-                           
-             return (<any>window).cryptolib;
-
-         });
-         
-         cryptoCalcCommonModule.factory('CryptoCalc',function() {
-                           
-                  return {
-                          
-                          encrypt : {},
-                          utils: {}
-                  }
-
-         });     
-         
-         cryptoCalcCommonModule.directive('databox', ['$timeout',
+        cryptoCalcCommonModule.directive('databox', ['$timeout',
             function($timeout:angular.ITimeoutService) {
                    var typesMetadata = {
                          hex:{
@@ -38,6 +39,10 @@ module CryptoCalcModule {
                           ascii:{
                                desc : 'Ascii',
                                regexp : /^[\x00-\x7F]+$/   
+                          },
+                          int:{
+                               desc : 'Integer',
+                               regexp : /^[0-9]+$/   
                           },
                           base64:{
                                desc : 'Base64',
@@ -57,8 +62,34 @@ module CryptoCalcModule {
                        },
                         template: function(element:angular.IAugmentedJQuery,
                           attrs:any) {
-                            
-                           var types = attrs.types ? attrs.types.split(','):null;                                 
+                           
+                           // Types attribute
+                           var types = attrs.types ? attrs.types.split(','):null;
+                           
+                           // widthInPixels attribute
+                           var widthInPixels = attrs.widthInPixels;
+                           
+                           // widthInCols attribute
+                           var widthInCols = attrs.widthInCols;
+                           
+                           // rows attribute
+                           var rows = attrs.rows ? parseInt(attrs.rows) : -1;
+                        
+                           
+                           // showCharsNum, showSize, showErrors
+                           var showAttrs = {'showCharsNum': true, 'showSize': true, 'showErrors': true};
+                           for (var key in showAttrs) {
+                               if (typeof attrs[key]!=='undefined') {
+                                   
+                                   showAttrs[key]=attrs[key].toLowerCase()==='true';
+                               }
+                           }
+                           
+                           // widthInCols attribute
+                           if (widthInCols && widthInPixels) {
+                                   throw "Both attributes widthInPixels and widthInCols have been set, choose one";
+                           }
+                                                        
                            
                            var errorHtml = element.html();
                            var tpl =  `
@@ -79,28 +110,66 @@ module CryptoCalcModule {
                                                        tpl+=(<any>typesMetadata)[val].desc;
                                                        tpl+=`</label>`;                                
                                                 });
-                                                tpl+=`</div>`;
+                                                tpl+=`</div>`; // /buttons
                                                     
                                            }
-                                   tpl+=`</div>
+                                   tpl+=`</div>`; // /col
                                    
-                                   <div class="col-md-1 col-sm-2 bold noside-padding">Chars : {{charsNum}}</div>      
-                                   <div class="col-md-1 col-sm-2 bold noside-padding" >Size (bytes): {{size}}</div>
-                                   <div class="col-md-8 col-sm-4 noside-padding red bold"> {{errorMsg || typeErrorMsg}}</div>
-                                </div>
-                                <textarea class="form-control" name="{{name}}" type="text" ng-model="model" rows="{{rows}}" 
+                                   
+                                   if (showAttrs['showCharsNum']) {
+                                         tpl+=`<div class="col-md-1 col-sm-2 bold noside-padding">Chars : {{charsNum}}</div>`;  // /col
+                                   }
+                                   if (showAttrs['showSize']) {
+                                         tpl+=`<div class="col-md-1 col-sm-2 bold noside-padding" >Size (bytes): {{size}}</div>`;  // /col
+                                   }
+                                   if (showAttrs['showErrors']) {
+                                       tpl+=`<div class="col-md-8 col-sm-4 noside-padding red bold"> {{errorMsg || typeErrorMsg}}</div>`;   // /col
+                                   }
+                                   
+                               tpl+=` </div>` // row
+                                
+                                if (widthInCols) {
+                                        tpl+=`
+                                            <div class="row vertical-align bottom5">
+                                            <div class="`; 
+                                        tpl+=widthInCols;
+                                        tpl+=` noright-padding">`; // row,col
+                                }
+                                tpl+=`<textarea class="form-control" name="{{name}}" type="text" ng-model="model" rows="{{rows}}" 
                                        ng-class="{'field-error': errorMsg || typeErrorMsg}"`
 
+                             // Autofocus attribute
                              if (attrs.$attr.autofocus) {
                                      tpl+=" autofocus";
                              }
+                             // Required attribute
                              if (attrs.$attr.required) {
                                      tpl+=" required";
                              }
-                                
-                             tpl+="></div>";
                              
-                            
+                             // style
+                             tpl+=` style="`;
+                             if (widthInPixels) {
+                                tpl+="width:"; 
+                                tpl+=widthInPixels;
+                                tpl+=`px;`;
+                             }
+                             if (rows===1) {
+                                tpl+="resize: none; overflow: hidden;";
+                             }
+                             tpl+=`"`;
+
+                             
+
+                             tpl+="></textarea>";
+                             
+                             if (widthInCols) {
+                                      tpl+=`</div></div>`; // /col,/row
+                             }
+                             
+                             tpl+="</div>"; // /container
+                             
+
                              return tpl;                       
                         } ,           
                         link: function(scope:any,element:angular.IAugmentedJQuery,
@@ -118,7 +187,32 @@ module CryptoCalcModule {
                                   var oldvalue = scope.model;
                                   scope.typeErrorMsg='';
                                   scope.type=type;
-                                  scope.model = new buffer.Buffer(oldvalue?oldvalue:'',oldtype).toString(type); 
+                                  var oldData = null;
+
+                                  if (oldtype === 'int') {
+                                      if (oldvalue ) {
+                                         var oldvalueHex=parseInt(oldvalue).toString(16);
+                                         if (oldvalueHex.length%2 !==0) {
+                                             oldvalueHex='0'+oldvalueHex;
+                                         }
+                                         oldData = new buffer.Buffer(oldvalueHex,'hex'); 
+                                      }
+                                      else {
+                                          oldData = new buffer.Buffer('','hex');
+                                      }
+                                        
+                                  }
+                                  else {
+                                      oldData = new buffer.Buffer(oldvalue? oldvalue:'',oldtype);    
+                                  }
+                                    
+                                  if (type==='int') {
+                                     scope.model = parseInt(oldData.toString('hex'),16); 
+                                  }
+                                  else {
+                                       scope.model = oldData.toString(type);  
+                                  }
+                                  
                              }
                              scope.$on('$destroy',() => {
                                   if (scope.lastError) {
@@ -149,7 +243,6 @@ module CryptoCalcModule {
                                       $timeout.cancel(scope.lastError);
                                   }
                                   
-                                  var type = scope.type;
                                   
                                   if (newValue) {
                                     
@@ -159,7 +252,7 @@ module CryptoCalcModule {
                                            return;  
                                     }
                                     try {
-                                         var buf = new buffer.Buffer(newValue,type);
+                                         var buf = new buffer.Buffer(newValue,scope.type);
                                          size = buf.length;
                                          charsNum = newValue.length;
                                          
@@ -405,9 +498,6 @@ module CryptoCalcModule {
                           
                           
             });               
-                  
-   
-        
 
 }	
 

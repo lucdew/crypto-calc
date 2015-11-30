@@ -1,3 +1,5 @@
+/// <reference path="../../d.ts/angularjs/angular.d.ts"/>
+/// <reference path="../../crypto-lib/cryptolib.d.ts"/>
 var bankingModule = angular.module('CryptoCalcModule.banking', ['CryptoCalcModule.common']);
 bankingModule.controller('BankingController', ['$timeout', 'cryptolib', BankingController]);
 function BankingController($timeout, cryptolib) {

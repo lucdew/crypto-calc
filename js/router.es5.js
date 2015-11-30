@@ -174,6 +174,7 @@ function ngViewportDirective($animate, $injector, $q, $router) {
         return true;
       },
       activate: function(instruction) {
+        console.log(instruction);
         var nextInstruction = serializeInstruction(instruction);
         if (nextInstruction === previousInstruction) {
           return;
@@ -189,7 +190,16 @@ function ngViewportDirective($animate, $injector, $q, $router) {
         });
 
         var newController = instruction.controller;
-        newScope[componentName] = newController;
+        // HOOK
+        // rename component if has a dot otherwise not well interpreted by the view
+        var lastDotIndex = componentName.lastIndexOf(".");
+        if (lastDotIndex>-1) {
+            newScope[componentName.substring(lastDotIndex+1)]=newController;
+        }
+        else {
+            newScope[componentName] = newController;
+        }
+       
 
         var result;
         if (currentController && currentController.deactivate) {

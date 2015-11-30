@@ -1,8 +1,8 @@
-var __extends = this.__extends || function (d, b) {
+/// <reference path="./cryptolib.d.ts"/>
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var CryptoError = (function (_super) {
     __extends(CryptoError, _super);
@@ -28,38 +28,31 @@ function raiseInvalidArg(msg) {
 var INVALID_ARGUMENT = {
     value: 0,
     name: "INVALID_ARGUMENT",
-    description: "Invalid argument"
-};
+    description: "Invalid argument" };
 var INVALID_PADDING = {
     value: 1,
     name: "INVALID_PADDING",
-    description: "Invalid padding"
-};
+    description: "Invalid padding" };
 var INVALID_BLOCK_SIZE = {
     value: 2,
     name: "INVALID_BLOCK_SIZE",
-    description: "Invalid block size"
-};
+    description: "Invalid block size" };
 var INVALID_KEY_SIZE = {
     value: 3,
     name: "INVALID_KEY_SIZE",
-    description: "Invalid key size"
-};
+    description: "Invalid key size" };
 var PAN_MISSING = {
     value: 4,
     name: "PAN_MISSING",
-    description: "Pan is missing"
-};
+    description: "Pan is missing" };
 var PAN_MISSING = {
     value: 5,
     name: "PAN_MISSING",
-    description: "Pan is missing"
-};
+    description: "Pan is missing" };
 var AUTHENTICATED_TAG_INVALID = {
     value: 6,
     name: "AUTHENTICATED_TAG_INVALID",
-    description: "Authenticated tag is invalid"
-};
+    description: "Authenticated tag is invalid" };
 var error = {
     CryptoError: CryptoError,
     INVALID_ARGUMENT: INVALID_ARGUMENT,

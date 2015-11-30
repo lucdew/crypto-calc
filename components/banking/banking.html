@@ -16,12 +16,12 @@
                        <div class="dropdown" dropdown >
                             <button class="btn btn-default dropdown-toggle"  name="format" type="button"  
                               dropdown-toggle  id="formatMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                              {{banking.to.isoPinType.name}}
+                              {{banking.to.isoPinType.name|nodash}}
                               <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="formatMenu" >
                               <li ng-repeat="isoPinType in banking.isoPinTypes" ng-click="banking.setIsoPinType(isoPinType)">
-                                <a href="#" prevent-default>{{isoPinType.name}}</a>
+                                <a href="#" prevent-default>{{isoPinType.name|nodash}}</a>
                               </li>
                             </ul>
                         </div>
@@ -98,7 +98,7 @@
             </div>
             <div class="row vertical-align bottom15"  ng-show="banking.from.pinType">
                <div class="col-md-1 col-sm-2 bold">Pin type</div>              
-               <div class="col-md-4 col-sm-4 noside-padding" >{{banking.from.pinType.name}}</div>
+               <div class="col-md-4 col-sm-4 noside-padding" >{{banking.from.pinType.name|nodash}}</div>
             </div>
             <div class="row vertical-align bottom15"  ng-show="banking.from.pinType.value===0 || banking.from.pinType.value===3">
                <div class="col-md-1 col-sm-2 bold">Pan</div>              
