@@ -7,7 +7,16 @@
 	    <h3 class="panel-title">Data conversion</h3>
 	  </div>
 	  <div class="panel-body">
-		  <crypto-converter ng-model="dataToConvert"></crypto-converter>		   
+			<div class="bottom7">
+				<databox types="hex" name="hex" model="dataToConvert" rows="2" label="Hexa" width-in-cols="col-md-6 col-sm-8"></databox>
+			</div>
+			<div class="bottom7">
+			<databox types="ascii" name="ascii" model="dataToConvert" rows="2" label="Ascii" width-in-cols="col-md-6 col-sm-8"></databox>
+			</div>
+			<div class="bottom7">
+			<databox types="base64" name="base64" model="dataToConvert" rows="2" label="Base64" width-in-cols="col-md-6 col-sm-8"></databox>
+			</div>
+			<databox types="utf8" name="utf8" model="dataToConvert" rows="2" label="Utf8" width-in-cols="col-md-6 col-sm-8"></databox>  	   
 	  </div>
 	</div>
 

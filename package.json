@@ -27,7 +27,7 @@
     "crypto-js": "^3.1.5",
     "electron-debug": "^0.5.1",
     "jquery": "^2.1.4",
-    "js-yaml": "^3.4.3",
+    "js-yaml": "^3.4.6",
     "node-forge": "^0.6.38"
   },
   "devDependencies": {
@@ -50,7 +50,6 @@
     "grunt-ts": "~5.2.0",
     "grunt-tsd": "^0.1.0",
     "grunt-wiredep": "^2.0.0",
-    "js-yaml": "^3.4.6",
     "load-grunt-tasks": "^3.3.0",
     "mocha": "^2.3.4",
     "time-grunt": "^1.2.2",

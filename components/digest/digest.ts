@@ -12,10 +12,12 @@ function DigestController($timeout:angular.ITimeoutService,cryptolib:Cryptolib.C
 	this.messageDigestTypes = cryptolib.util.values(cryptolib.messageDigest.messageDigestType);
 	
 	this.mode = 'digest';
+	this.results={};
 	
 	this.messageDigestType = this.messageDigestTypes[0];
+	this.results[this.messageDigestType]=new Buffer('');
 	
-	this.setMessageDigestType = (aMessageDigestType:Cryptolib.MessageDigest.IMessageDigestType) => {
+	this.setMessageDigestType = (aMessageDigestType:any) => {
 		this.messageDigestType = aMessageDigestType;
 		this.computeDigest();
 	}
@@ -41,8 +43,6 @@ function DigestController($timeout:angular.ITimeoutService,cryptolib:Cryptolib.C
 			}
 			self.computeDigest();
 		});
-		
-	
 	}
 	
      self.resetResult = () => {
@@ -56,18 +56,11 @@ function DigestController($timeout:angular.ITimeoutService,cryptolib:Cryptolib.C
 	this.computeDigest = function(digestData:Buffer,digestKey:Buffer) {
 		var data:Buffer;
 		var key:Buffer;
-		if (!self.data) {
-			self.result='';
+		self.results={};
+		if (!self.data || self.data.length===0) {
 			return;
 		}
-		try {
-			data = new Buffer(self.data,self.dataType);
-		}
-		catch(e) {
-			// Component alreay reports format errors
-			self.resetResult();
-			return;
-		}
+
 		if (self.mode==='hmac') {
 			try {
 				key = new Buffer(self.key,self.keyType);
@@ -77,13 +70,26 @@ function DigestController($timeout:angular.ITimeoutService,cryptolib:Cryptolib.C
 				self.resetResult();
 				return;
 			}
-			self.result = cryptolib.mac.hmac(self.messageDigestType,key,data).toString(self.resultType);
+			if (self.messageDigestType==='ALL') {
+				self.messageDigestTypes.forEach(md => {
+					self.results[md.name] = cryptolib.mac.hmac(md,key,self.data);
+				});
+			}
+			else {
+				self.results[self.messageDigestType.name] =  cryptolib.mac.hmac(self.messageDigestType,key,self.data);
+			}
+			
 		}
 		else {
-			self.result = cryptolib.messageDigest.digest(self.messageDigestType,data).toString(self.resultType);
+			if (self.messageDigestType==='ALL') {
+				self.messageDigestTypes.forEach(md => {
+					self.results[md.name] = cryptolib.messageDigest.digest(md,self.data);
+				});
+			}
+			else {
+				self.results[self.messageDigestType.name] = cryptolib.messageDigest.digest(self.messageDigestType,self.data);
+			}
 		}
-		
-		
 	}
 	
 	

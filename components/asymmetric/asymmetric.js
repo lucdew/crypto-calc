@@ -212,14 +212,12 @@ function AsymmetricController($timeout, cryptolib) {
         catch (e) {
         }
         self.cipher.errors['asymmetric.cipher.keyPair.password'] = 'Invalid password';
-        console.log("updated error");
         form['asymmetric.cipher.keyPair.password'].$setValidity('server', false);
     };
     self.cipher.setCipherAlgo = function (cipherAlgo) {
         self.cipher.cipherAlgo = cipherAlgo;
     };
     self.cipher.cipher = function (form, cipherMode) {
-        console.log('ciphering');
         try {
             var params = {};
             var keyPair = self.cipher.keyPair;
@@ -250,8 +248,7 @@ function AsymmetricController($timeout, cryptolib) {
                     forge.pki.privateKeyFromPem(rawPem);
                 pubKey = forge.pki.setRsaPublicKey(privateKey.n, privateKey.e);
             }
-            var bData = new Buffer(self.cipher.data, self.cipher.dataType);
-            var fBuffer = forge.util.createBuffer(cryptolib.util.toArrayBuffer(bData));
+            var fBuffer = forge.util.createBuffer(cryptolib.util.toArrayBuffer(self.cipher.data));
             var forgeResult = null;
             if (cipherMode) {
                 forgeResult = pubKey.encrypt(fBuffer.getBytes(), self.cipher.cipherAlgo);
@@ -260,7 +257,7 @@ function AsymmetricController($timeout, cryptolib) {
                 forgeResult = privateKey.decrypt(fBuffer.getBytes(), self.cipher.cipherAlgo);
             }
             var result = forge.util.createBuffer(forgeResult).toHex();
-            self.cipher.result = new Buffer(result, 'hex').toString(self.cipher.resultType);
+            self.cipher.result = new Buffer(result, 'hex');
         }
         catch (e) {
             console.log(e);

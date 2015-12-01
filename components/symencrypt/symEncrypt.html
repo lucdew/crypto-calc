@@ -12,14 +12,18 @@
     <form name="symmetricForm" class="form left" role="form" novalidate ng-class="{submitted:symencrypt.submitted}">
 
       <div class="bottom15">
-        <databox type="symencrypt.datatype" types="hex,base64,utf8" name="data" model="symencrypt.data" rows="2" label="Data" autofocus required error-msg="symencrypt.errors.data" >
+        <databox type="symencrypt.datatype" types="hex,base64,utf8" name="data" model="symencrypt.data" rows="2" label="Data"  width-in-cols="col-md-6 col-sm-8" autofocus required error-msg="symencrypt.errors.data" >
         </databox>
       </div>
 
       <div class="bottom15">
-          <sym-key name="key" model="symencrypt.key" cipher-algo="symencrypt.cipherAlgo" 
-              label="Key" error-msg="symencrypt.errors.key" required></sym-key>
-       </div>
+          <div class="row">
+              <div class="col-md-6 col-sm-8 noright-padding">
+                  <sym-key name="key" model="symencrypt.key" cipher-algo="symencrypt.cipherAlgo" 
+                        label="Key" error-msg="symencrypt.errors.key" required></sym-key>
+              </div>
+          </div>
+      </div>
 
                  
        <div class="row vertical-align bottom15">
@@ -80,7 +84,7 @@
         </div>
         
         <div ng-show="symencrypt.blockCipherMode.name=='GCM'" class="bottom15">
-            <databox type="symencrypt.aadtype" types="hex,base64,utf8,ascii" name="aad" model="symencrypt.aad" rows="2" label="AAD"
+            <databox type="symencrypt.aadtype" types="hex,base64,utf8,ascii" name="aad" model="symencrypt.aad" rows="2" width-in-cols="col-md-6 col-sm-8"  label="AAD"
               error-msg="symencrypt.errors.aad" >
             </databox>
         </div>
@@ -89,7 +93,12 @@
             <div class="bold">
                 Auth tag (only for decryption)
             </div>
-            <input class="form-control" name="authTag" type="text" ng-model="symencrypt.authTag"/>
+            <div class="row">
+              <div class="col-md-6 col-sm-8 noright-padding" >
+                    <input class="form-control" name="authTag" type="text" ng-model="symencrypt.authTag"/>
+              </div>
+            </div>
+           
         </div>
           
         <div class="row bottom15">
@@ -98,7 +107,7 @@
         </div>
          
         <div class="bottom15">
-             <databox type="symencrypt.resulttype" types="hex,base64,utf8" name="result" model="symencrypt.result.data" rows="2" label="Result" error-msg="symencrypt.errors.result">
+             <databox type="symencrypt.resulttype" types="hex,base64,utf8" name="result" model="symencrypt.result.data" rows="2"  width-in-cols="col-md-6 col-sm-8" label="Result" error-msg="symencrypt.errors.result">
              </databox>
         </div>
         

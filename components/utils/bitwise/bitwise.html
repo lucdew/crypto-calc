@@ -25,13 +25,13 @@
                    
            </div>
            <div ng-show="bitwise.bitwiseOperator.name == 'NOT'" class="bottom7"> 
-             <databox types="hex" name="bitwise.data1" model="bitwise.dataList[0].value" rows="2" label="Data 1" 
+             <databox types="hex" name="bitwise.data1" model="bitwise.dataList[0].value" rows="2"  width-in-cols="col-md-6 col-sm-8" label="Data 1" 
                error-msg="utils.errors.data0" >
              </databox>
            </div>
            <div ng-show="bitwise.bitwiseOperator.name != 'NOT'">
               <div ng-repeat="dataElt in bitwise.dataList" class="bottom7"> 
-                <databox types="hex" name="bitwise.data{{$index+1}}" model="dataElt.value" rows="2" label="Data {{$index+1}}" 
+                <databox types="hex" name="bitwise.data{{$index+1}}" model="dataElt.value" rows="2"  width-in-cols="col-md-6 col-sm-8" label="Data {{$index+1}}" 
                   error-msg="utils.errors.data$index" >
                 </databox>
               </div>
@@ -48,7 +48,7 @@
                  <div class="col-md-2 col-sm-2"><button class="btn btn-lg btn-primary" type="submit" ng-click="bitwise.executeBitwiseOperation()">Execute</button></div>
             </div>
            <div class="top15">
-             <databox types="hex" name="bitwise.result" model="bitwise.result" rows="2" label="Result" >
+             <databox types="hex" name="bitwise.result" model="bitwise.result" rows="2"  width-in-cols="col-md-6 col-sm-8" label="Result" >
              </databox>
            </div>
 	  </div>

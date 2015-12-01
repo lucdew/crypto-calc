@@ -159,7 +159,7 @@ var CryptoCalcModule;
                         tpl += widthInCols;
                         tpl += " noright-padding\">";
                     }
-                    tpl += "<textarea class=\"form-control\" name=\"{{name}}\" type=\"text\" ng-model=\"model\" rows=\"{{rows}}\" \n                                       ng-class=\"{'field-error': errorMsg || typeErrorMsg}\"";
+                    tpl += "<textarea class=\"form-control\" name=\"{{name}}\" type=\"text\" ng-model=\"encodedbuffer\" rows=\"{{rows}}\" \n                                       ng-class=\"{'field-error': errorMsg || typeErrorMsg}\"";
                     if (attrs.$attr.autofocus) {
                         tpl += " autofocus";
                     }
@@ -184,39 +184,27 @@ var CryptoCalcModule;
                     return tpl;
                 },
                 link: function (scope, element, attrs) {
+                    if (!scope.model) {
+                        scope.model = new Buffer('');
+                    }
                     if (attrs.types) {
                         scope.type = attrs.types.split(',')[0];
                     }
                     if (!scope.type) {
                         scope.type = 'hex';
                     }
+                    scope.encodeBuffer = function () {
+                        if (scope.type === 'int') {
+                            scope.encodedbuffer = parseInt(scope.model.toString('hex'), 16);
+                        }
+                        else {
+                            scope.encodedbuffer = scope.model.toString(scope.type);
+                        }
+                    };
                     scope.toggleType = function ($event, type) {
-                        var oldtype = scope.type;
-                        var oldvalue = scope.model;
                         scope.typeErrorMsg = '';
                         scope.type = type;
-                        var oldData = null;
-                        if (oldtype === 'int') {
-                            if (oldvalue) {
-                                var oldvalueHex = parseInt(oldvalue).toString(16);
-                                if (oldvalueHex.length % 2 !== 0) {
-                                    oldvalueHex = '0' + oldvalueHex;
-                                }
-                                oldData = new buffer.Buffer(oldvalueHex, 'hex');
-                            }
-                            else {
-                                oldData = new buffer.Buffer('', 'hex');
-                            }
-                        }
-                        else {
-                            oldData = new buffer.Buffer(oldvalue ? oldvalue : '', oldtype);
-                        }
-                        if (type === 'int') {
-                            scope.model = parseInt(oldData.toString('hex'), 16);
-                        }
-                        else {
-                            scope.model = oldData.toString(type);
-                        }
+                        scope.encodeBuffer();
                     };
                     scope.$on('$destroy', function () {
                         if (scope.lastError) {
@@ -236,27 +224,32 @@ var CryptoCalcModule;
                         }, 200);
                     };
                     scope.$watch('model', function (newValue, oldValue) {
+                        scope.encodeBuffer();
+                    });
+                    scope.$watch('encodedbuffer', function (newValue, oldValue) {
                         var size = 0, charsNum = 0;
                         if (scope.lastError) {
                             $timeout.cancel(scope.lastError);
                         }
-                        if (newValue) {
+                        if (newValue && newValue !== oldValue) {
                             var validatingRexep = typesMetadata[scope.type].regexp;
-                            if (!validatingRexep.test(scope.model)) {
+                            if (!validatingRexep.test(scope.encodedbuffer)) {
                                 scope.reportTypeError();
                                 return;
                             }
                             try {
-                                var buf = new buffer.Buffer(newValue, scope.type);
-                                size = buf.length;
+                                scope.model = new buffer.Buffer(newValue, scope.type);
                                 charsNum = newValue.length;
                             }
                             catch (e) {
                                 scope.reportTypeError();
                             }
                         }
+                        else if (!newValue) {
+                            scope.model = new Buffer('');
+                        }
                         scope.typeErrorMsg = '';
-                        scope.size = size;
+                        scope.size = scope.model.length;
                         scope.charsNum = charsNum;
                     });
                 }

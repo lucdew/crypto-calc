@@ -7,7 +7,9 @@ function DigestController($timeout, cryptolib) {
     var self = this;
     this.messageDigestTypes = cryptolib.util.values(cryptolib.messageDigest.messageDigestType);
     this.mode = 'digest';
+    this.results = {};
     this.messageDigestType = this.messageDigestTypes[0];
+    this.results[this.messageDigestType] = new Buffer('');
     this.setMessageDigestType = function (aMessageDigestType) {
         _this.messageDigestType = aMessageDigestType;
         _this.computeDigest();
@@ -38,15 +40,8 @@ function DigestController($timeout, cryptolib) {
     this.computeDigest = function (digestData, digestKey) {
         var data;
         var key;
-        if (!self.data) {
-            self.result = '';
-            return;
-        }
-        try {
-            data = new Buffer(self.data, self.dataType);
-        }
-        catch (e) {
-            self.resetResult();
+        self.results = {};
+        if (!self.data || self.data.length === 0) {
             return;
         }
         if (self.mode === 'hmac') {
@@ -57,10 +52,24 @@ function DigestController($timeout, cryptolib) {
                 self.resetResult();
                 return;
             }
-            self.result = cryptolib.mac.hmac(self.messageDigestType, key, data).toString(self.resultType);
+            if (self.messageDigestType === 'ALL') {
+                self.messageDigestTypes.forEach(function (md) {
+                    self.results[md.name] = cryptolib.mac.hmac(md, key, self.data);
+                });
+            }
+            else {
+                self.results[self.messageDigestType.name] = cryptolib.mac.hmac(self.messageDigestType, key, self.data);
+            }
         }
         else {
-            self.result = cryptolib.messageDigest.digest(self.messageDigestType, data).toString(self.resultType);
+            if (self.messageDigestType === 'ALL') {
+                self.messageDigestTypes.forEach(function (md) {
+                    self.results[md.name] = cryptolib.messageDigest.digest(md, self.data);
+                });
+            }
+            else {
+                self.results[self.messageDigestType.name] = cryptolib.messageDigest.digest(self.messageDigestType, self.data);
+            }
         }
     };
 }

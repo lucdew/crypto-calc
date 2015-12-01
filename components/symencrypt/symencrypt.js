@@ -77,22 +77,21 @@ function SymencryptController($timeout, cryptolib, CryptoCalc) {
                 ivBuffer = new Buffer(self.iv, 'hex');
             }
             var bKey = new Buffer(self.key, 'hex');
-            var bData = new Buffer(self.data, self.datatype);
             var cipherOpts = { padding: self.padding, iv: ivBuffer };
             if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.gcm) {
-                cipherOpts.additionalAuthenticatedData = new Buffer(self.aad, self.aadtype);
+                cipherOpts.additionalAuthenticatedData = self.aad;
             }
             var cipherResult = null;
             if (cipherMode) {
-                cipherResult = cryptolib.cipher.cipher(bKey, bData, self.cipherAlgo, self.blockCipherMode, cipherOpts);
+                cipherResult = cryptolib.cipher.cipher(bKey, self.data, self.cipherAlgo, self.blockCipherMode, cipherOpts);
             }
             else {
                 if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.gcm) {
                     cipherOpts.authenticationTag = new Buffer(self.authTag, 'hex');
                 }
-                cipherResult = cryptolib.cipher.decipher(bKey, bData, self.cipherAlgo, self.blockCipherMode, cipherOpts);
+                cipherResult = cryptolib.cipher.decipher(bKey, self.data, self.cipherAlgo, self.blockCipherMode, cipherOpts);
             }
-            self.result.data = cipherResult.data.toString(self.resulttype);
+            self.result.data = cipherResult.data;
             if (cipherMode && self.blockCipherMode === cryptolib.cipher.blockCipherMode.gcm) {
                 self.result.authTag = cipherResult.authenticationTag.toString('hex');
             }

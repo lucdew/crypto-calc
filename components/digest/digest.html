@@ -9,7 +9,7 @@
         
          <form name="digestForm" class="form left" role="form" novalidate> 
             <div class="bottom15">
-              <databox type="digest.dataType" types="hex,base64,utf8" name="data" model="digest.data" rows="2" label="Data" autofocus required error-msg="digest.errors.data" >
+              <databox type="digest.dataType" types="hex,base64,utf8" name="data" model="digest.data" rows="2" width-in-cols="col-md-6 col-sm-8" label="Data" autofocus required error-msg="digest.errors.data" >
               </databox>
             </div>
             
@@ -28,10 +28,12 @@
               <div class="col-md-3 col-sm-3" style="padding-left: 0;">
                  <div class="dropdown" dropdown >
                       <button class="btn btn-default dropdown-toggle" name="padding" type="button"  dropdown-toggle  id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        {{digest.messageDigestType.name|nodash}}
+                        {{(digest.messageDigestType.name|nodash) || 'ALL'}}
                         <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" >
+                        <li ng-click="digest.setMessageDigestType('ALL')"><a href="#" prevent-default>ALL</a></li>
+                        <li class="divider" role="separator"></li>
                         <li ng-repeat="messageDigestType in digest.messageDigestTypes" ng-click="digest.setMessageDigestType(messageDigestType)"><a href="#" prevent-default>{{messageDigestType.name|nodash}}</a></li>
                       </ul>
                   </div>
@@ -39,13 +41,13 @@
           </div>
           
           <div class="bottom15" ng-show="digest.mode=='hmac'">
-              <databox type="digest.keyType" types="hex,base64,utf8" name="key" model="digest.key" rows="1" label="Key" error-msg="digest.errors.key" >
+              <databox type="digest.keyType" types="hex,base64,utf8" name="key" model="digest.key" rows="1" label="Key"  width-in-cols="col-md-6 col-sm-8" error-msg="digest.errors.key" >
               </databox>
           </div>
-            
-          <databox type="digest.resultType" types="hex,base64,utf8" name="result" model="digest.result" rows="2" label="Result"></databox>
-        
-
+          <hr/>
+          <div ng-repeat="(resultType,resultValue) in digest.results" class="bottom10">
+                <databox types="hex,base64,utf8" name="result" model="resultValue" rows="1"  width-in-cols="col-md-8 col-sm-10" label="{{resultType|nodash}}"></databox>
+          </div>
        </form>
     </div>
   </div>

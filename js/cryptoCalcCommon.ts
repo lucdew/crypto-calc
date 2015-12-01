@@ -135,7 +135,7 @@ module CryptoCalcModule {
                                         tpl+=widthInCols;
                                         tpl+=` noright-padding">`; // row,col
                                 }
-                                tpl+=`<textarea class="form-control" name="{{name}}" type="text" ng-model="model" rows="{{rows}}" 
+                                tpl+=`<textarea class="form-control" name="{{name}}" type="text" ng-model="encodedbuffer" rows="{{rows}}" 
                                        ng-class="{'field-error': errorMsg || typeErrorMsg}"`
 
                              // Autofocus attribute
@@ -175,44 +175,29 @@ module CryptoCalcModule {
                         link: function(scope:any,element:angular.IAugmentedJQuery,
                           attrs:any){
                              
+                             if (!scope.model) {
+                                 scope.model = new Buffer('');
+                             }
                              if (attrs.types) {
                                   scope.type=attrs.types.split(',')[0];   
                              }
                              if (!scope.type) {
                                  scope.type = 'hex';
                              }
+                             
+                             scope.encodeBuffer = function() {
+                                  if (scope.type==='int') {
+                                     scope.encodedbuffer = parseInt(scope.model.toString('hex'),16); 
+                                  }
+                                  else {
+                                       scope.encodedbuffer = scope.model.toString(scope.type);  
+                                  }
+                             }
                        
                              scope.toggleType = function($event:any,type:string) {
-                                  var oldtype = scope.type;
-                                  var oldvalue = scope.model;
                                   scope.typeErrorMsg='';
                                   scope.type=type;
-                                  var oldData = null;
-
-                                  if (oldtype === 'int') {
-                                      if (oldvalue ) {
-                                         var oldvalueHex=parseInt(oldvalue).toString(16);
-                                         if (oldvalueHex.length%2 !==0) {
-                                             oldvalueHex='0'+oldvalueHex;
-                                         }
-                                         oldData = new buffer.Buffer(oldvalueHex,'hex'); 
-                                      }
-                                      else {
-                                          oldData = new buffer.Buffer('','hex');
-                                      }
-                                        
-                                  }
-                                  else {
-                                      oldData = new buffer.Buffer(oldvalue? oldvalue:'',oldtype);    
-                                  }
-                                    
-                                  if (type==='int') {
-                                     scope.model = parseInt(oldData.toString('hex'),16); 
-                                  }
-                                  else {
-                                       scope.model = oldData.toString(type);  
-                                  }
-                                  
+                                  scope.encodeBuffer();
                              }
                              scope.$on('$destroy',() => {
                                   if (scope.lastError) {
@@ -221,21 +206,24 @@ module CryptoCalcModule {
                              });
                              
                              scope.reportTypeError = () => {
-                                     
                                     scope.lastError = $timeout(() => {
                                     
-                                            var typeMetadata = (<any>typesMetadata)[scope.type];
-                                            var typeDesc = typeMetadata.desc;
-                                            if (scope.type==='hex' && scope.model.length %2 !==0 ) {
-                                                 scope.typeErrorMsg = 'Invalid length for '+typeDesc+' string';
-                                            }
-                                            else {
-                                                 scope.typeErrorMsg = 'Invalid characters for type '+typeDesc;    
-                                            }
+                                        var typeMetadata = (<any>typesMetadata)[scope.type];
+                                        var typeDesc = typeMetadata.desc;
+                                        if (scope.type==='hex' && scope.model.length %2 !==0 ) {
+                                            scope.typeErrorMsg = 'Invalid length for '+typeDesc+' string';
+                                        }
+                                        else {
+                                            scope.typeErrorMsg = 'Invalid characters for type '+typeDesc;    
+                                        }
                                     },200); 
                              };
                              
                              scope.$watch('model',function(newValue:any,oldValue:any) {
+                                 scope.encodeBuffer();
+                             });
+                             
+                             scope.$watch('encodedbuffer',function(newValue:any,oldValue:any) {
                                      
                                   var size = 0,charsNum = 0;
                               
@@ -243,35 +231,31 @@ module CryptoCalcModule {
                                       $timeout.cancel(scope.lastError);
                                   }
                                   
-                                  
-                                  if (newValue) {
+                                  if (newValue && newValue !== oldValue) {
                                     
                                     var validatingRexep = (<any>typesMetadata)[scope.type].regexp;
-                                    if (!validatingRexep.test(scope.model)) {
-                                           scope.reportTypeError();
-                                           return;  
+                                    if (!validatingRexep.test(scope.encodedbuffer)) {
+                                        scope.reportTypeError();
+                                        return;  
                                     }
                                     try {
-                                         var buf = new buffer.Buffer(newValue,scope.type);
-                                         size = buf.length;
-                                         charsNum = newValue.length;
-                                         
+                                        scope.model = new buffer.Buffer(newValue,scope.type);
+                                        charsNum = newValue.length;
                                     }
                                     catch(e) {
                                         scope.reportTypeError();  
                                     } 
                                   }
+                                  else if (!newValue) {
+                                      scope.model = new Buffer('');
+                                  }
                                   scope.typeErrorMsg = '';
-                                  scope.size = size;
+                                  scope.size = scope.model.length;
                                   scope.charsNum = charsNum;
-
                              });
-           
                         }
                              
                      }
-           
-                  
                   }]);
 
           cryptoCalcCommonModule.directive('pan', 
