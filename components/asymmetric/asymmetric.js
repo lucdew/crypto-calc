@@ -16,6 +16,14 @@ var typesMetadata = {
         desc: 'PKCS#8 PEM'
     }
 };
+var cipherAlgos = {
+    'RSA-OAEP': {
+        name: 'RSA-OAEP'
+    },
+    'RSAES-PKCS1-V1#5': {
+        name: 'RSAES-PKCS1-V1_5'
+    }
+};
 asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', AsymmetricController])
     .directive('dropzone', function () {
     return {
@@ -130,7 +138,7 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', As
                 });
                 tpl += "</div>";
             }
-            tpl += "</div>    \n                                   <div class=\"col-md-8 col-sm-4 noside-padding red bold\"> {{errorMsg || typeErrorMsg}}</div>\n                                </div>\n                                \n\n                                        <div ng-show=\"model.type==='RAWPBKEY'\">\n                                                \n                                           <div class=\"bottom5\">\n                                                <databox types=\"hex\" name=\"modulus\" show-chars-num=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        model=\"model.value.modulus\" rows=\"4\" label=\"Modulus\" required >\n                                                </databox>\n                                           </div>\n                                                \n                                           <databox types=\"hex,int\" name=\"exponent\" width-in-cols=\"col-md-2 col-sm-4\"\n                                                        model=\"model.value.exponent\" rows=\"1\" label=\"Exponent\"  show-chars-num=\"false\" show-size=\"false\" required>\n                                           </databox>\n                                        </div>\n                                        \n                                        <div ng-show=\"model.type==='RAWPRKEY'\">\n                                           <div class=\"bottom5\">\n                                                <databox types=\"hex\" name=\"p\" show-chars-num=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        model=\"model.value.p\" rows=\"4\" label=\"First Prime p\" required >\n                                                </databox>\n                                                 <databox types=\"hex\" name=\"q\" show-chars-num=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        model=\"model.value.q\" rows=\"4\" label=\"Second Prime q\" required >\n                                                </databox>\n                                                <databox types=\"hex,int\" name=\"e\" width-in-cols=\"col-md-2 col-sm-4\"\n                                                        model=\"model.value.e\" rows=\"1\" label=\"Public Exponent e\"  \n                                                        show-chars-num=\"false\" show-size=\"false\" required>\n                                                </databox>                                                                                             \n                                           </div>\n                                        </div>\n                                        \n                                        <div class=\"row vertical-align bottom5\" ng-show=\"model.type!=='RAWPBKEY' && model.type!=='RAWPRKEY'\">                                   \n                                                <div class=\"col-md-6 col-sm-8 noright-padding\">\n                                                        <div class=\"dropbox form-control resizable\">\n                                                                <div contenteditable ng-model=\"model.value\" ></div>\n\n                                                        </div>\n                                                </div>\n                                        </div>\n                               \n                          </div>";
+            tpl += "</div>    \n                                   <div class=\"col-md-8 col-sm-4 noside-padding red bold\"> {{errorMsg || typeErrorMsg}}</div>\n                                </div>\n                                \n\n                                        <div ng-show=\"model.type==='RAWPBKEY'\">\n                                                \n                                           <div class=\"bottom5\">\n                                                <databox types=\"hex\" name=\"modulus\" show-chars-num=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        model=\"model.value.modulus\" rows=\"4\" label=\"Modulus\" required >\n                                                </databox>\n                                           </div>\n                                                \n                                           <databox types=\"hex,int\" name=\"exponent\" width-in-cols=\"col-md-2 col-sm-4\"\n                                                        model=\"model.value.exponent\" rows=\"1\" label=\"Exponent\"  show-chars-num=\"false\" show-size=\"false\" required>\n                                           </databox>\n                                        </div>\n                                        \n                                        <div ng-show=\"model.type==='RAWPRKEY'\">\n                                           <div class=\"bottom5\">\n                                                <databox types=\"hex\" name=\"p\" show-chars-num=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        model=\"model.value.p\" rows=\"4\" label=\"First Prime p\" required >\n                                                </databox>\n                                                 <databox types=\"hex\" name=\"q\" show-chars-num=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        model=\"model.value.q\" rows=\"4\" label=\"Second Prime q\" required >\n                                                </databox>\n                                                <databox types=\"hex,int\" name=\"e\" width-in-cols=\"col-md-2 col-sm-4\"\n                                                        model=\"model.value.e\" rows=\"1\" label=\"Public Exponent e\"  \n                                                        show-chars-num=\"false\" show-size=\"false\" required>\n                                                </databox>                                                                                             \n                                           </div>\n                                        </div>\n                                        \n                                        <div class=\"row vertical-align bottom5\" ng-show=\"model.type!=='RAWPBKEY' && model.type!=='RAWPRKEY'\">                                   \n                                                <div class=\"col-md-6 col-sm-8 noright-padding\">\n                                                        <div class=\"dropbox form-control resizable\">\n                                                                <div contenteditable ng-model=\"model.value.pem\" ></div>\n\n                                                        </div>\n                                                </div>\n                                        </div>\n                               \n                          </div>";
             console.log(tpl);
             return tpl;
         },
@@ -182,8 +190,8 @@ function AsymmetricController($timeout, cryptolib) {
     self.cipher = {};
     self.cipher.errors = {};
     self.cipher.keyPair = { type: 'RAWPBKEY', value: null };
-    self.cipher.cipherAlgos = ['RSAES-PKCS1-V1#5', 'RSA-OAEP'];
-    self.cipher.cipherAlgo = 'RSAES-PKCS1-V1#5';
+    self.cipher.cipherAlgos = Object.keys(cipherAlgos);
+    self.cipher.cipherAlgo = self.cipher.cipherAlgos[0];
     self.registeredModalCallback = false;
     self.cipher.askPassword = function (cipherMode) {
         self.cipher.cipherMode = cipherMode;
@@ -202,14 +210,16 @@ function AsymmetricController($timeout, cryptolib) {
     self.cipher.savePassword = function (form) {
         self.cipher.errors['asymmetric.cipher.keyPair.password'] = null;
         try {
-            var privateKey = forge.pki.decryptRsaPrivateKey(self.cipher.keyPair.value, self.cipher.keyPair.password);
+            var privateKey = forge.pki.decryptRsaPrivateKey(self.cipher.keyPair.value.pem, self.cipher.keyPair.password);
             if (null != privateKey) {
                 $jq('#passwordmodal').modal('hide');
+                self.cipher.privateKey = privateKey;
                 self.cipher.cipher(form, self.cipher.cipherMode);
                 return;
             }
         }
         catch (e) {
+            console.log(e);
         }
         self.cipher.errors['asymmetric.cipher.keyPair.password'] = 'Invalid password';
         form['asymmetric.cipher.keyPair.password'].$setValidity('server', false);
@@ -224,37 +234,42 @@ function AsymmetricController($timeout, cryptolib) {
             var pubKey = null;
             var privateKey = null;
             if (self.cipher.keyPair.type === 'RAWPBKEY') {
-                var exp = new BigInteger(keyPair.value.exponent, 16);
-                var modulus = new BigInteger(keyPair.value.modulus, 16);
+                var exp = new BigInteger(keyPair.value.exponent.toString('hex'), 16);
+                var modulus = new BigInteger(keyPair.value.modulus.toString('hex'), 16);
                 pubKey = forge.pki.setRsaPublicKey(modulus, exp);
             }
             else if (self.cipher.keyPair.type === 'RAWPRKEY') {
-                privateKey = extractPrivateKey(keyPair.value.p, keyPair.value.q, keyPair.value.e);
+                privateKey = extractPrivateKey(keyPair.value.p.toString('hex'), keyPair.value.q.toString('hex'), keyPair.value.e.toString('hex'));
                 pubKey = forge.pki.setRsaPublicKey(privateKey.n, privateKey.e);
             }
             else if (self.cipher.keyPair.type === 'X509') {
                 pubKey = forge.pki.publicKeyFromPem(keyPair.value);
             }
             else if (self.cipher.keyPair.type === 'PKCS8_PEM') {
-                var rawPem = keyPair.value;
+                var rawPem = keyPair.value.pem;
                 var isEncrypted = rawPem.match(/ENCRYPTED/i) != null;
                 if (isEncrypted) {
-                    if (!self.cipher.keyPair.password) {
+                    var pemHash = cryptolib.messageDigest.digest(cryptolib.messageDigest.messageDigestType.SHA1, new Buffer(rawPem)).toString('hex');
+                    if (pemHash !== self.cipher.pemHash) {
+                        self.cipher.privateKey = undefined;
+                    }
+                    self.cipher.pemHash = pemHash;
+                    if (!self.cipher.privateKey) {
                         self.cipher.askPassword(cipherMode);
                         return;
                     }
                 }
-                privateKey = isEncrypted ? forge.pki.decryptRsaPrivateKey(keyPair.value, self.cipher.keyPair.password) :
+                privateKey = isEncrypted ? self.cipher.privateKey :
                     forge.pki.privateKeyFromPem(rawPem);
                 pubKey = forge.pki.setRsaPublicKey(privateKey.n, privateKey.e);
             }
             var fBuffer = forge.util.createBuffer(cryptolib.util.toArrayBuffer(self.cipher.data));
             var forgeResult = null;
             if (cipherMode) {
-                forgeResult = pubKey.encrypt(fBuffer.getBytes(), self.cipher.cipherAlgo);
+                forgeResult = pubKey.encrypt(fBuffer.getBytes(), cipherAlgos[self.cipher.cipherAlgo].scheme);
             }
             else {
-                forgeResult = privateKey.decrypt(fBuffer.getBytes(), self.cipher.cipherAlgo);
+                forgeResult = privateKey.decrypt(fBuffer.getBytes(), cipherAlgos[self.cipher.cipherAlgo].scheme);
             }
             var result = forge.util.createBuffer(forgeResult).toHex();
             self.cipher.result = new Buffer(result, 'hex');

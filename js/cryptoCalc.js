@@ -238,7 +238,16 @@ var CryptoCalcModule;
                                 return;
                             }
                             try {
-                                scope.model = new buffer.Buffer(newValue, scope.type);
+                                if (scope.type === 'int') {
+                                    var valAsHex = parseInt(newValue).toString(16);
+                                    if (valAsHex.length % 2 !== 0) {
+                                        valAsHex = '0' + valAsHex;
+                                    }
+                                    scope.model = new buffer.Buffer(valAsHex, 'hex');
+                                }
+                                else {
+                                    scope.model = new buffer.Buffer(newValue, scope.type);
+                                }
                                 charsNum = newValue.length;
                             }
                             catch (e) {

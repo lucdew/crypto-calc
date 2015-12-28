@@ -16,7 +16,7 @@ module.exports = function (grunt) {
     var certificateFile = grunt.option('certificateFile');
     
     var BASENAME = 'crypto-calc';
-    var APPNAME = 'CrypotCalc';
+    var APPNAME = 'CryptoCalc';
     
     if (alpha) {
         APPNAME += ' (Alpha)';
@@ -240,7 +240,6 @@ module.exports = function (grunt) {
                   platform: 'darwin',
                   arch: 'x64',
                   asar: true,
-                  'app-bundle-id': 'lucdew.cryptocalc',
                   'app-version': packagejson.version
                 }
               }
@@ -271,9 +270,7 @@ module.exports = function (grunt) {
                   exe: BASENAME + '.exe',
                   version: packagejson.version
                   //,signWithParams: '/f ' + certificateFile + ' /p <%= certificatePassword %> /tr http://timestamp.comodoca.com/rfc3161'
-             }
-    
-        ,
+        },
         compress: {
               main: {
                 options: {
@@ -341,7 +338,7 @@ module.exports = function (grunt) {
         'copy:base',
         'copy:components',
         'copy:electron',
-        'electron:windows',
+        'electron',
         'create-windows-installer'       
     ]);
     
@@ -361,12 +358,7 @@ module.exports = function (grunt) {
         'compress'     
     ]);
     
-    grunt.registerTask('default', [ 'buildelectron']);
-
-    grunt.registerTask('fullbuild', [
-        'clean',
-        ''       
-    ]);
+    grunt.registerTask('default', [ 'buildweb']);
 
 
 };

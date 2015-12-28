@@ -56,10 +56,5 @@ ipc.on('application:open-url', function(opts) {
 
 
 app.on('ready', function () {
-	var protocol = require('protocol');
-    protocol.registerProtocol('atom', function(request) {
-      var url = request.url.substr(7)
-      return new protocol.RequestFileJob(path.normalize(__dirname + '/' + url));
-    });
 	mainWindow = createMainWindow();
 });

@@ -33,6 +33,15 @@ var typesMetadata = {
         
 };
 
+var cipherAlgos = {
+    'RSA-OAEP': {
+        name: 'RSA-OAEP'
+    },
+    'RSAES-PKCS1-V1#5': {
+        name: 'RSAES-PKCS1-V1_5'
+    }
+}
+
 
 asymmetricModule.controller('AsymmetricController',['$timeout','cryptolib',AsymmetricController])
 
@@ -226,7 +235,7 @@ asymmetricModule.controller('AsymmetricController',['$timeout','cryptolib',Asymm
                                         <div class="row vertical-align bottom5" ng-show="model.type!=='RAWPBKEY' && model.type!=='RAWPRKEY'">                                   
                                                 <div class="col-md-6 col-sm-8 noright-padding">
                                                         <div class="dropbox form-control resizable">
-                                                                <div contenteditable ng-model="model.value" ></div>
+                                                                <div contenteditable ng-model="model.value.pem" ></div>
 
                                                         </div>
                                                 </div>
@@ -340,8 +349,8 @@ function AsymmetricController($timeout:angular.ITimeoutService,cryptolib:Cryptol
     self.cipher = {};
     self.cipher.errors={};
     self.cipher.keyPair={type:'RAWPBKEY',value: null};
-    self.cipher.cipherAlgos=['RSAES-PKCS1-V1#5','RSA-OAEP'];
-    self.cipher.cipherAlgo='RSAES-PKCS1-V1#5';
+    self.cipher.cipherAlgos=Object.keys(cipherAlgos);
+    self.cipher.cipherAlgo=self.cipher.cipherAlgos[0];
 
     self.registeredModalCallback=false;
 
@@ -368,16 +377,17 @@ function AsymmetricController($timeout:angular.ITimeoutService,cryptolib:Cryptol
     self.cipher.savePassword = (form:any) => {
         self.cipher.errors['asymmetric.cipher.keyPair.password'] = null;
         try {
-            var privateKey = forge.pki.decryptRsaPrivateKey(self.cipher.keyPair.value,self.cipher.keyPair.password);
+            var privateKey = forge.pki.decryptRsaPrivateKey(self.cipher.keyPair.value.pem,self.cipher.keyPair.password);
             
             if (null!=privateKey) {
                 $jq('#passwordmodal').modal('hide');
+                self.cipher.privateKey=privateKey;
                 self.cipher.cipher(form,self.cipher.cipherMode); 
                 return;
             }    
         }
         catch(e) {
-            
+            console.log(e);
         }
         self.cipher.errors['asymmetric.cipher.keyPair.password'] = 'Invalid password';
         form['asymmetric.cipher.keyPair.password'].$setValidity('server',false)
@@ -398,15 +408,14 @@ function AsymmetricController($timeout:angular.ITimeoutService,cryptolib:Cryptol
 
             if (self.cipher.keyPair.type==='RAWPBKEY') {
                     
-                // TODO : handle exponent numeric
-                var exp = new BigInteger(keyPair.value.exponent,16);
+                var exp = new BigInteger(keyPair.value.exponent.toString('hex'),16);
                 
-                var modulus = new BigInteger(keyPair.value.modulus,16);
+                var modulus = new BigInteger(keyPair.value.modulus.toString('hex'),16);
                 pubKey = forge.pki.setRsaPublicKey(modulus, exp);
             }
             else if (self.cipher.keyPair.type === 'RAWPRKEY') {
-                // TODO : handle e numeric
-                privateKey = extractPrivateKey(keyPair.value.p,keyPair.value.q,keyPair.value.e);
+                privateKey = extractPrivateKey(keyPair.value.p.toString('hex'),keyPair.value.q.toString('hex'),
+                                               keyPair.value.e.toString('hex'));
                 pubKey = forge.pki.setRsaPublicKey(privateKey.n,privateKey.e);
 
             }
@@ -414,17 +423,23 @@ function AsymmetricController($timeout:angular.ITimeoutService,cryptolib:Cryptol
                 pubKey = forge.pki.publicKeyFromPem (keyPair.value);
             }
             else if (self.cipher.keyPair.type === 'PKCS8_PEM') {
-                var rawPem = keyPair.value;
+                var rawPem = keyPair.value.pem;
 
                 var isEncrypted = rawPem.match(/ENCRYPTED/i) != null;
                 if (isEncrypted) {
-                    if (! self.cipher.keyPair.password) {
+                    var pemHash = cryptolib.messageDigest.digest(
+                        cryptolib.messageDigest.messageDigestType.SHA1,new Buffer(rawPem)).toString('hex');
+                    if (pemHash!==self.cipher.pemHash) {
+                        self.cipher.privateKey=undefined;
+                    }
+                    self.cipher.pemHash=pemHash;
+                    if (! self.cipher.privateKey) {
                         self.cipher.askPassword(cipherMode);
                         return;
                     }
                 }
                 
-                privateKey  = isEncrypted ? forge.pki.decryptRsaPrivateKey(keyPair.value,self.cipher.keyPair.password): 
+                privateKey  = isEncrypted ? self.cipher.privateKey: 
                                             forge.pki.privateKeyFromPem(rawPem);
                     
                 pubKey = forge.pki.setRsaPublicKey(privateKey.n, privateKey.e);
@@ -435,10 +450,10 @@ function AsymmetricController($timeout:angular.ITimeoutService,cryptolib:Cryptol
             var forgeResult = null;
             
             if (cipherMode) {
-                forgeResult = pubKey.encrypt(fBuffer.getBytes(), self.cipher.cipherAlgo);                
+                forgeResult = pubKey.encrypt(fBuffer.getBytes(), cipherAlgos[self.cipher.cipherAlgo].scheme);                
             }
             else {
-                forgeResult = privateKey.decrypt(fBuffer.getBytes(), self.cipher.cipherAlgo);         
+                forgeResult = privateKey.decrypt(fBuffer.getBytes(), cipherAlgos[self.cipher.cipherAlgo].scheme);         
             }
             var result = forge.util.createBuffer(forgeResult).toHex();
             self.cipher.result = new Buffer(result,'hex');
