@@ -1,5 +1,4 @@
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var error = require('./cryptolib-error');
 var util = require('./cryptolib-util');
 function mod10ComputeCheckDigit(apan) {
@@ -56,7 +55,7 @@ var Pan = (function () {
         return aPan;
     };
     return Pan;
-})();
+}());
 var issuingNetwork = {
     Amex: {
         name: 'American Express',

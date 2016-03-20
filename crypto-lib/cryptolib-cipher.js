@@ -1,5 +1,4 @@
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var error = require('./cryptolib-error');
 var util = require('./cryptolib-util');
 var padding = require('./cryptolib-padding');
@@ -8,20 +7,72 @@ var cryptojslib = require('./cryptojslib');
 var random = require('./cryptolib-random');
 var CryptoJS = cryptojslib.CryptoJS;
 var blockCipherMode = {
-    ecb: { name: 'ECB', cryptoName: 'ecb', hasIV: false, isAuthenticatedEncryption: false, isStreaming: false },
-    cbc: { name: 'CBC', cryptoName: 'cbc', hasIV: true, isAuthenticatedEncryption: false, isStreaming: false },
-    cfb: { name: 'CFB', cryptoName: 'cfb', hasIV: true, isAuthenticatedEncryption: false, isStreaming: false },
-    ofb: { name: 'OFB', cryptoName: 'ofb', hasIV: true, isAuthenticatedEncryption: false, isStreaming: true },
-    ctr: { name: 'CTR', cryptoName: 'ctr', hasIV: true, isAuthenticatedEncryption: false, isStreaming: true },
-    gcm: { name: 'GCM', cryptoName: 'gcm', hasIV: true, isAuthenticatedEncryption: true, isStreaming: true, supportedBlockSizes: [16] }
+    ecb: {
+        name: 'ECB',
+        cryptoName: 'ecb',
+        hasIV: false,
+        isAuthenticatedEncryption: false,
+        isStreaming: false
+    },
+    cbc: {
+        name: 'CBC',
+        cryptoName: 'cbc',
+        hasIV: true,
+        isAuthenticatedEncryption: false,
+        isStreaming: false
+    },
+    cfb: {
+        name: 'CFB',
+        cryptoName: 'cfb',
+        hasIV: true,
+        isAuthenticatedEncryption: false,
+        isStreaming: false
+    },
+    ofb: {
+        name: 'OFB',
+        cryptoName: 'ofb',
+        hasIV: true,
+        isAuthenticatedEncryption: false,
+        isStreaming: true
+    },
+    ctr: {
+        name: 'CTR',
+        cryptoName: 'ctr',
+        hasIV: true,
+        isAuthenticatedEncryption: false,
+        isStreaming: true
+    },
+    gcm: {
+        name: 'GCM',
+        cryptoName: 'gcm',
+        hasIV: true,
+        isAuthenticatedEncryption: true,
+        isStreaming: true,
+        supportedBlockSizes: [16]
+    }
 };
 var cipherAlgo = {
-    aes: { blockSize: 16, name: 'AES', cryptoName: 'aes', keyLengths: [128, 192, 256],
-        modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr, blockCipherMode.gcm] },
-    des: { blockSize: 8, name: 'DES', cryptoName: 'des', keyLengths: [64],
-        modes: [blockCipherMode.ecb, blockCipherMode.cbc] },
-    desede: { blockSize: 8, name: '3DES', cryptoName: 'des-ede', keyLengths: [64, 128, 192],
-        modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr] }
+    aes: {
+        blockSize: 16,
+        name: 'AES',
+        cryptoName: 'aes',
+        keyLengths: [128, 192, 256],
+        modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr, blockCipherMode.gcm]
+    },
+    des: {
+        blockSize: 8,
+        name: 'DES',
+        cryptoName: 'des',
+        keyLengths: [64],
+        modes: [blockCipherMode.ecb, blockCipherMode.cbc]
+    },
+    desede: {
+        blockSize: 8,
+        name: '3DES',
+        cryptoName: 'des-ede',
+        keyLengths: [64, 128, 192],
+        modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr]
+    }
 };
 function genNullIv(length) {
     var iv = new Buffer(length);
@@ -51,7 +102,7 @@ function toDoubleLengthKey(key) {
 }
 function doCryptoJSCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, cipherOpts) {
     if (aBlockCipherMode === blockCipherMode.gcm) {
-        error.raiseInvalidArg("GCM block cipher mode of operation is not supported by CryptoJS library");
+        error.raiseInvalidArg('GCM block cipher mode of operation is not supported by CryptoJS library');
     }
     var keyHex;
     if (aCipherAlgo == cipherAlgo.desede && key.length == 16) {
@@ -64,7 +115,7 @@ function doCryptoJSCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, 
     var keyWord = CryptoJS.enc.Hex.parse(keyHex);
     var algo = aCipherAlgo.name;
     if (aCipherAlgo === cipherAlgo.desede) {
-        algo = "TripleDES";
+        algo = 'TripleDES';
     }
     var cryptoJsOpts = {};
     cryptoJsOpts.mode = CryptoJS.mode[aBlockCipherMode.name];
@@ -79,7 +130,10 @@ function doCryptoJSCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, 
         };
     }
     else {
-        var decrypted = CryptoJS[algo].decrypt({ ciphertext: dataWord, salt: "" }, keyWord, cryptoJsOpts);
+        var decrypted = CryptoJS[algo].decrypt({
+            ciphertext: dataWord,
+            salt: ''
+        }, keyWord, cryptoJsOpts);
         return {
             data: new Buffer(decrypted.toString(CryptoJS.enc.Hex), 'hex')
         };
@@ -88,13 +142,13 @@ function doCryptoJSCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, 
 function getForgeCryptoAlgo(aCipherAlgo, aBlockCipherMode) {
     var forgeCryptoAlgo = null;
     if (aCipherAlgo == cipherAlgo.aes) {
-        forgeCryptoAlgo = "AES-";
+        forgeCryptoAlgo = 'AES-';
     }
     else if (aCipherAlgo == cipherAlgo.des || aCipherAlgo == cipherAlgo.desede) {
-        forgeCryptoAlgo = "DES-";
+        forgeCryptoAlgo = 'DES-';
     }
     else {
-        error.raiseInvalidArg("Unexpected cipher algo " + cipherAlgo);
+        error.raiseInvalidArg('Unexpected cipher algo ' + cipherAlgo);
     }
     forgeCryptoAlgo += aBlockCipherMode.name;
     return forgeCryptoAlgo;
@@ -121,7 +175,7 @@ function doForgeCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, cip
         forgeOpts.additionalData = forgelib.toForgeBuffer(cipherOpts.additionalAuthenticatedData);
         if (!cipherMode) {
             if (!cipherOpts.authenticationTag) {
-                error.raiseInvalidArg("Authentication tag is missing for block cipher mode " + aBlockCipherMode.name);
+                error.raiseInvalidArg('Authentication tag is missing for block cipher mode ' + aBlockCipherMode.name);
             }
             forgeOpts.tag = forgelib.toForgeBuffer(cipherOpts.authenticationTag);
         }
@@ -163,7 +217,7 @@ function decipher(key, data, aCipherAlgo, aBlockCipherMode, cipherOpts) {
 }
 function doCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, cipherOpts) {
     if (aCipherAlgo.modes.indexOf(aBlockCipherMode) < 0) {
-        error.raiseInvalidArg("The block cipher " + aBlockCipherMode.name + " is not valid for cipher algo " + aCipherAlgo.name);
+        error.raiseInvalidArg('The block cipher ' + aBlockCipherMode.name + ' is not valid for cipher algo ' + aCipherAlgo.name);
     }
     var dataToProcess = data;
     var iv = cipherOpts && cipherOpts.iv ? cipherOpts.iv : null;
@@ -171,8 +225,7 @@ function doCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, cipherOp
         dataToProcess = cipherOpts.padding.pad(data, aCipherAlgo.blockSize);
     }
     if (!iv && aBlockCipherMode.hasIV) {
-        if (aBlockCipherMode === blockCipherMode.cbc || aBlockCipherMode === blockCipherMode.cfb
-            || aBlockCipherMode === blockCipherMode.ofb || aBlockCipherMode === blockCipherMode.ctr) {
+        if (aBlockCipherMode === blockCipherMode.cbc || aBlockCipherMode === blockCipherMode.cfb || aBlockCipherMode === blockCipherMode.ofb || aBlockCipherMode === blockCipherMode.ctr) {
             iv = genNullIv(aCipherAlgo.blockSize);
             cipherOpts.iv = iv;
         }
@@ -205,7 +258,9 @@ function computeKcv(key, cipherAlgo, length) {
     }
     var data = new Buffer(cipherAlgo.blockSize);
     data.fill(0);
-    var encData = doCipher(true, key, data, cipherAlgo, blockCipherMode.ecb, { padding: padding.noPadding });
+    var encData = doCipher(true, key, data, cipherAlgo, blockCipherMode.ecb, {
+        padding: padding.noPadding
+    });
     var result = util.toHex(encData.data);
     return length ? result.substr(0, length * 2) : result;
 }

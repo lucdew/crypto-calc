@@ -6,11 +6,12 @@
 </head>
 <body>
   <div id="mocha"></div>
-  
-  
+
+
   <script src="../../bower_components/buffer/buffer.min.js"></script>
   <script src="../../bower_components/js-yaml/dist/js-yaml.min.js"></script>
-  
+  <script src="../../bower_components/lodash/lodash.js"></script>
+
   <!-- endbower -->
   <!-- forge -->
   <script src="../../bower_components/forge/js/debug.js"></script>
@@ -24,16 +25,17 @@
   <script src="../../bower_components/forge/js/cipher.js"></script>
   <script src="../../bower_components/forge/js/cipherModes.js"></script>
   <script src="../../bower_components/forge/js/aes.js"></script>
-  
+
   <!-- cryptojs -->
   <script src="../../bower_components/crypto-js/crypto-js.js"></script>
 
-  
+
   <!-- application -->
   <script type="text/javascript" src="../../crypto-lib/cryptolib-web.js"></script>
-  
+
 
   <script src="../../bower_components/jquery/dist/jquery.js"></script>
+
   <script src="../../node_modules/chai/chai.js"></script>
   <script src="../../node_modules/mocha/mocha.js"></script>
 
@@ -48,14 +50,14 @@
             dataType: "text",
             processData: false
         });
-      
+
     };
 	  window.Buffer = buffer.Buffer;
-   
+
     function getFixtureFiles() {
       var promises = [];
        Array.prototype.slice.call(arguments).forEach(function(val) {
-          promises.push(getYamlFilePromise(val));   
+          promises.push(getYamlFilePromise(val));
       });
       return promises;
     }

@@ -1,5 +1,4 @@
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var nodejs = (typeof process !== 'undefined' && process.versions && process.versions.node);
 var webCrypto = typeof window !== 'undefined' && (window.crypto || window.msCrypto);
 function generate(length) {

@@ -1,14 +1,17 @@
 {
   "name": "crypto-calc",
   "productName": "Crypto Calc",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Crypto calculator",
   "license": "MIT",
   "main": "index.js",
-  "repository": "http://github.com/lucdew/crypto-calc",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucdew/crypto-calc"
+  },
   "author": {
     "name": "Luc Dewavrin",
-    "url": "http://github.com/lucdew/crypto-calc"
+    "url": "https://github.com/lucdew/crypto-calc"
   },
   "engines": {
     "node": ">=0.12.0"
@@ -23,15 +26,16 @@
   ],
   "electron-version": "0.36.2",
   "dependencies": {
-    "chai": "^3.4.1",
     "crypto-js": "^3.1.5",
     "electron-debug": "^0.5.1",
     "jquery": "^2.1.4",
     "js-yaml": "^3.4.6",
+    "lodash": "^4.6.1",
     "node-forge": "^0.6.38"
   },
   "devDependencies": {
     "bower-files": "^3.11.3",
+    "chai": "^3.4.1",
     "electron-packager": "^5.2.0",
     "electron-prebuilt": "^0.36.2",
     "express": "^4.13.3",
@@ -48,11 +52,11 @@
     "grunt-nodemon": "^0.4.0",
     "grunt-prompt": "^1.3.3",
     "grunt-ts": "~5.2.0",
-    "grunt-tsd": "^0.1.0",
     "grunt-wiredep": "^2.0.0",
     "load-grunt-tasks": "^3.3.0",
     "mocha": "^2.3.4",
     "time-grunt": "^1.3.0",
+    "tslint": "^3.3.0",
     "underscore": "^1.8.3",
     "wiredep": "^3.0.0"
   }

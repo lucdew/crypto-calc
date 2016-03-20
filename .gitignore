@@ -1,9 +1,8 @@
-.DS_Store
 node_modules
 bower_components
-d.ts
 .tscache
 build
 dist
 npm-debug.log
 installer
+.DS_Store

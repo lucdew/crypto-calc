@@ -1,58 +1,57 @@
 <div class="content-wrapper">
 
-	<div class="panel panel-primary">
-	  <div class="panel-heading">
-	    <h3 class="panel-title">Digest & HMAC</h3>
-	  </div>
-      
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">Digest & HMAC</h3>
+    </div>
+
     <div class="panel-body">
-        
-         <form name="digestForm" class="form left" role="form" novalidate> 
-            <div class="bottom15">
-              <databox type="digest.dataType" types="hex,base64,utf8" name="data" model="digest.data" rows="2" width-in-cols="col-md-6 col-sm-8" label="Data" autofocus required error-msg="digest.errors.data" >
-              </databox>
+
+      <form name="digestForm" class="form left" role="form" novalidate>
+        <div class="bottom15">
+
+          <databox2 types="hex,base64,utf8" name="data" ng-model="digest.data" rows="2" label="Data" width-in-cols="col-md-6 col-sm-8" autofocus required error-msg="digest.errors.data">
+          </databox2>
+        </div>
+
+        <div class="btn-group bottom15 btn-group-default" data-toggle="buttons">
+          <label class="btn btn-default" ng-class="{'active':digest.mode=='digest'}" ng-click="digest.setMode('digest')">
+            <input type="radio" name="options" autocomplete="off"> Digest
+          </label>
+          <label class="btn btn-default" ng-class="{ 'active':digest.mode=='hmac' }" ng-click="digest.setMode( 'hmac') ">
+            <input type="radio" name="options" autocomplete="off"> HMac
+          </label>
+        </div>
+
+        <div class="row valign bottom15">
+          <div class="col-md-1 col-sm-3 left bold">Digest Algorithm</div>
+          <div class="col-md-3 col-sm-3" style="padding-left: 0;">
+            <div class="dropdown " dropdown>
+              <button class="btn btn-default dropdown-toggle" name="padding" type="button" dropdown-toggle id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                {{(digest.messageDigestType.name|nodash) || 'ALL'}}
+                <span class="caret "></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li ng-click="digest.setMessageDigestType( 'ALL')"><a href="#" prevent-default>ALL</a></li>
+                <li class="divider" role="separator"></li>
+                <li ng-repeat="messageDigestType in digest.messageDigestTypes" ng-click="digest.setMessageDigestType(messageDigestType)"><a href="#" prevent-default>{{messageDigestType.name|nodash}}</a></li>
+              </ul>
             </div>
-            
-            
-            <div class="btn-group bottom15 btn-group-default" data-toggle="buttons">
-              <label class="btn btn-default" ng-class="{'active':digest.mode=='digest'}" ng-click="digest.setMode('digest')">
-                <input type="radio" name="options" autocomplete="off" "> Digest
-              </label>
-              <label class="btn btn-default" ng-class="{'active':digest.mode=='hmac'}" ng-click="digest.setMode('hmac')">
-                <input type="radio" name="options" autocomplete="off" > HMac
-              </label>
-            </div>
-            
-            <div class="row valign bottom15">
-              <div class="col-md-1 col-sm-3 left bold">Digest Algorithm</div>
-              <div class="col-md-3 col-sm-3" style="padding-left: 0;">
-                 <div class="dropdown" dropdown >
-                      <button class="btn btn-default dropdown-toggle" name="padding" type="button"  dropdown-toggle  id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        {{(digest.messageDigestType.name|nodash) || 'ALL'}}
-                        <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" >
-                        <li ng-click="digest.setMessageDigestType('ALL')"><a href="#" prevent-default>ALL</a></li>
-                        <li class="divider" role="separator"></li>
-                        <li ng-repeat="messageDigestType in digest.messageDigestTypes" ng-click="digest.setMessageDigestType(messageDigestType)"><a href="#" prevent-default>{{messageDigestType.name|nodash}}</a></li>
-                      </ul>
-                  </div>
-              </div>
           </div>
-          
-          <div class="bottom15" ng-show="digest.mode=='hmac'">
-              <databox type="digest.keyType" types="hex,base64,utf8" name="key" model="digest.key" rows="1" label="Key"  width-in-cols="col-md-6 col-sm-8" error-msg="digest.errors.key" >
-              </databox>
-          </div>
-          <hr/>
-          <div ng-repeat="(resultType,resultValue) in digest.results" class="bottom10">
-                <databox types="hex,base64,utf8" name="result" model="resultValue" rows="1"  width-in-cols="col-md-8 col-sm-10" label="{{resultType|nodash}}"></databox>
-          </div>
-       </form>
+        </div>
+
+        <div class="bottom15" ng-show="digest.mode=='hmac'">
+          <databox2 types="hex,base64,utf8" name="key" ng-model="digest.key" rows="1" label="Key" width-in-cols="col-md-6 col-sm-8" error-msg="digest.errors.key">
+          </databox2>
+        </div>
+        <hr/>
+        <div ng-repeat="(resultType,resultValue) in digest.results" class="bottom10">
+          <!--databox types="hex,base64,utf8 " name="result " model="resultValue " rows="1 "  width-in-cols="col-md-8 col-sm-10 " label="{{resultType|nodash}} "></databox-->
+          <databox2 types="hex,base64,utf8" name="result" ng-model="resultValue" rows="1" label="{{resultType|nodash}}" width-in-cols="col-md-8 col-sm-10" with-menu>
+          </databox2>
+        </div>
+      </form>
     </div>
   </div>
 
-
 </div>
-
-

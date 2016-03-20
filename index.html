@@ -1,25 +1,26 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Crypto Calc</title>
+   <head>
+      <meta charset="utf-8">
+      <title>Crypto Calc</title>
 
-        <link href="styles/main.css" rel="stylesheet"/>
-		<script type="text/javascript">
-	  	   window.$=window.jQuery=require('jquery');
+      <link href="styles/main.css" rel="stylesheet"/>
+      <script type="text/javascript">
+           window.$=window.jQuery=require('jquery');
            window.cryptolib = require('./crypto-lib/cryptolib-nodejs').cryptolib;
-	   </script>
-        <script src="bower_components/spin.js/spin.min.js"></script>
-	    <!-- build:css styles/vendor.css -->
-	    <!-- bower:css -->
-	    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-	    <!-- endbower -->
-	    <link rel="stylesheet" href="styles/index.css">
-	    <!-- endbuild -->
-         <link href="styles/main.css" rel="stylesheet"/>
-        <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css">
-	</head>
-	<body ng-controller="AppController as app">
+      </script>
+      <script src="bower_components/spin.js/spin.min.js"></script>
+       <!-- build:css styles/vendor.css -->
+       <!-- bower:css -->
+       <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+       <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
+       <!-- endbower -->
+       <link rel="stylesheet" href="styles/index.css">
+       <!-- endbuild -->
+       <link href="styles/main.css" rel="stylesheet"/>
+       <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css">
+   </head>
+   <body ng-controller="AppController as app">
 
       <script type="text/javascript">
             var opts = {
@@ -44,10 +45,10 @@
                 , hwaccel: false // Whether to use hardware acceleration
                 , position: 'absolute' // Element positioning
                 };
-                
-                var spinner = new Spinner(opts);                
+
+                var spinner = new Spinner(opts);
                 spinner.spin(document.body);
-                
+
                 $(window).load(function(){
                     // Once the page is fully loaded, stop spinning
                     spinner.stop();
@@ -56,7 +57,7 @@
 
         <nav class="navbar  navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
-                 
+
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-left">
                         <li><a ng-link="home" ng-class="{menuselected: app.activeState ==='symencrypt'}" >Sym Encrypt</a></li>
@@ -64,14 +65,14 @@
                         <li><a ng-link="banking" class="left5" ng-class="{menuselected: app.activeState ==='banking'}">Banking</a></li>
                         <li><a ng-link="digest" class="left5" ng-class="{menuselected: app.activeState ==='digest'}">Digest & HMAC</a></li>
                         <li role="presentation" class="dropdown" ng-class="{menuselected: app.activeState === 'utils'}">
-                            <a class="dropdown-toggle" data-toggle="dropdown" 
+                            <a class="dropdown-toggle" data-toggle="dropdown"
                                href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                 Utils
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a ng-link="utils.encoding" class="left5">Data Encoding/Decoding</a></li>
                                 <li><a ng-link="utils.bitwise" class="left5">Bitwise operations</a></li>
-                            </ul>                     
+                            </ul>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
@@ -86,11 +87,11 @@
                 </div>
             </div>
         </nav>
-        
 
-		<div ui-view="content" ng-viewport></div>
+
+      <div ui-view="content" ng-viewport></div>
         <!-- build:js lib/cryptoCalc.js -->
-    
+
         <!-- bower:js -->
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -99,6 +100,7 @@
         <script src="bower_components/underscore/underscore.js"></script>
         <script src="bower_components/buffer/buffer.min.js"></script>
         <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+        <script src="bower_components/lodash/lodash.js"></script>
         <!-- endbower -->
         <script type="text/javascript" src="js/router.es5.js"></script>
         <script type="text/javascript" src="js/cryptoCalc.js"></script>
@@ -110,14 +112,13 @@
 
         <!-- endbuild -->
           <script type="text/javascript">
-       
+
            var doc = angular.element(document),
                docEl = angular.element(document.documentElement);
                angular.bootstrap(doc,['CryptoCalcModule']);
-             
+
           </script>
-    
 
     </script>
-	</body>
+   </body>
 </html>

@@ -1,5 +1,4 @@
 /// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
 
 import random = require('./cryptolib-random');
 
@@ -33,7 +32,7 @@ function bitwiseBuffers(a:Buffer,b:Buffer,bitwiseOperation: (aNum:number,bNum:nu
         }
       }
       return new Buffer(res);
-}	
+}
 
 function rightPad(aString:string,length:number,padChar:string) {
     var result = aString;
@@ -115,4 +114,4 @@ var util:Cryptolib.Util.IUtilStatic = {
     }
 }
 
-export = util;	
+export = util;

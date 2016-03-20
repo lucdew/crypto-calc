@@ -1,60 +1,59 @@
-
-
 <div class="content-wrapper">
 
-	<div class="panel panel-primary">
-	  <div class="panel-heading">
-	    <h3 class="panel-title">Bitwise operation</h3>
-	  </div>
-	  <div class="panel-body">
-      		<div class="row valign bottom7">
-                  <div class="col-md-2 col-sm-3 bold">Bitwise operation</div>
-                  
-                  <div class="col-md-2 col-sm-2 noside-padding">
-                     <div class="dropdown" dropdown >
-                          <button class="btn btn-default dropdown-toggle"  name="bitwiseOperator" type="button"  
-                            dropdown-toggle  id="bitwiseOperatorMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            {{bitwise.bitwiseOperator.name}}
-                            <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu" aria-labelledby="bitwiseOperatorMenu" >
-                            <li ng-repeat="bitwiseOperator in bitwise.bitwiseOperators" ng-click="bitwise.setBitwiseOperator(bitwiseOperator)"><a href="#" prevent-default>{{bitwiseOperator.name}}</a></li>
-                          </ul>
-                      </div>
-                  </div>
-                   
-           </div>
-           <div ng-show="bitwise.bitwiseOperator.name == 'NOT'" class="bottom7"> 
-             <databox types="hex" name="bitwise.data1" model="bitwise.dataList[0].value" rows="2"  width-in-cols="col-md-6 col-sm-8" label="Data 1" 
-               error-msg="utils.errors.data0" >
-             </databox>
-           </div>
-           <div ng-show="bitwise.bitwiseOperator.name != 'NOT'">
-              <div ng-repeat="dataElt in bitwise.dataList" class="bottom7"> 
-                <databox types="hex" name="bitwise.data{{$index+1}}" model="dataElt.value" rows="2"  width-in-cols="col-md-6 col-sm-8" label="Data {{$index+1}}" 
-                  error-msg="utils.errors.data$index" >
-                </databox>
-              </div>
-              <div class="bottom5">
-                <button ng-click="bitwise.addDataElt()" type="button" class="btn btn-default" aria-label="Left Align">
-                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                </button>
-                <button ng-show="bitwise.dataList.length > 2" ng-click="bitwise.removeDataElt()" type="button" class="btn btn-default left5" aria-label="Left Align">
-                  <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                </button>
-              </div>
-            </div>        
-            <div class="row bottom7">
-                 <div class="col-md-2 col-sm-2"><button class="btn btn-lg btn-primary" type="submit" ng-click="bitwise.executeBitwiseOperation()">Execute</button></div>
-            </div>
-           <div class="top15">
-             <databox types="hex" name="bitwise.result" model="bitwise.result" rows="2"  width-in-cols="col-md-6 col-sm-8" label="Result" >
-             </databox>
-           </div>
-	  </div>
-    
-	</div>
-	
+  <div class="panel panel-primary">
 
+    <div class="panel-heading">
+      <h3 class="panel-title">Bitwise operation</h3>
+    </div>
+
+    <div class="panel-body">
+      <form name="utils-bitwise">
+        <div class="row valign bottom7">
+          <div class="col-md-2 col-sm-3 bold">Bitwise operation</div>
+
+          <div class="col-md-2 col-sm-2 noside-padding">
+            <div class="dropdown" dropdown>
+              <button class="btn btn-default dropdown-toggle" name="bitwiseOperator" type="button" dropdown-toggle id="bitwiseOperatorMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                {{bitwise.bitwiseOperator.name}}
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="bitwiseOperatorMenu">
+                <li ng-repeat="bitwiseOperator in bitwise.bitwiseOperators" ng-click="bitwise.setBitwiseOperator(bitwiseOperator)"><a href="#" prevent-default>{{bitwiseOperator.name}}</a></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+        <div ng-show="bitwise.bitwiseOperator.name == 'NOT'" class="bottom7">
+          <databox2 types="hex" name="bitwise.data1" ng-model="bitwise.dataList[0].value" rows="2" width-in-cols="col-md-6 col-sm-8" label="Data 1" error-msg="utils.errors.data0">
+          </databox2>
+        </div>
+        <div ng-show="bitwise.bitwiseOperator.name != 'NOT'">
+          <div ng-repeat="dataElt in bitwise.dataList" class="bottom7">
+            <databox2 types="hex" name="bitwise.data{{$index+1}}" ng-model="dataElt.value" rows="2" width-in-cols="col-md-6 col-sm-8" label="Data {{$index+1}}" error-msg="utils.errors.data$index">
+            </databox2>
+          </div>
+          <div class="bottom5">
+            <button ng-click="bitwise.addDataElt()" type="button" class="btn btn-default" aria-label="Left Align">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+            <button ng-show="bitwise.dataList.length > 2" ng-click="bitwise.removeDataElt()" type="button" class="btn btn-default left5" aria-label="Left Align">
+              <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+        <div class="row bottom7">
+          <div class="col-md-2 col-sm-2">
+            <button class="btn btn-lg btn-primary" type="submit" ng-click="bitwise.executeBitwiseOperation()">Execute</button>
+          </div>
+        </div>
+        <div class="top15">
+          <databox2 types="hex" name="bitwise.result" ng-model="bitwise.result" rows="2" width-in-cols="col-md-6 col-sm-8" label="Result">
+          </databox2>
+        </div>
+      </form>
+    </div>
+
+  </div>
 
 </div>

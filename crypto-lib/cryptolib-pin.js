@@ -1,14 +1,27 @@
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var error = require('./cryptolib-error');
 var util = require('./cryptolib-util');
 var random = require('./cryptolib-random');
 var isoPinType = {
-    format0: { name: 'ISO_9564_Format_0', value: 0 },
-    format1: { name: 'ISO_9564_Format_1', value: 1 },
-    format2: { name: 'ISO_9564_Format_2', value: 2 },
-    format3: { name: 'ISO_9564_Format_3', value: 3 },
-    getAll: function () { return [isoPinType.format0, isoPinType.format1, isoPinType.format2, isoPinType.format3]; }
+    format0: {
+        name: 'ISO_9564_Format_0',
+        value: 0
+    },
+    format1: {
+        name: 'ISO_9564_Format_1',
+        value: 1
+    },
+    format2: {
+        name: 'ISO_9564_Format_2',
+        value: 2
+    },
+    format3: {
+        name: 'ISO_9564_Format_3',
+        value: 3
+    },
+    getAll: function () {
+        return [isoPinType.format0, isoPinType.format1, isoPinType.format2, isoPinType.format3];
+    }
 };
 function generateIsoPinRandomPadding(length) {
     var result = '';
@@ -99,7 +112,10 @@ var IsoPin = (function () {
         if (type.value === 0 || type.value === 3) {
             if (!pan) {
                 var e = new error.CryptoError(error.PAN_MISSING, 'Pan is missing');
-                e.additionalInfo = { pinLength: pinLength, pinType: type };
+                e.additionalInfo = {
+                    pinLength: pinLength,
+                    pinType: type
+                };
                 throw e;
             }
             var paddedPan = '0000' + pan;
@@ -111,7 +127,7 @@ var IsoPin = (function () {
         }
     };
     return IsoPin;
-})();
+}());
 var pin = {
     createIsoPin: function (isoPinType, pin, additionalData) {
         return new IsoPin(isoPinType, pin, additionalData);

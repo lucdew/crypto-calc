@@ -1,6 +1,3 @@
-/// <reference path="../../d.ts/mocha/mocha.d.ts"/>
-/// <reference path="../../d.ts/chai/chai.d.ts"/>
-/// <reference path="../../crypto-lib/cryptolib.d.ts"/>
 var _this = this;
 if (typeof window === 'undefined') {
     fixtures = {};
@@ -8,15 +5,16 @@ if (typeof window === 'undefined') {
     var fs = require('fs');
     var yaml = require('js-yaml');
     try {
-        fixtures['padding'] = yaml.load(fs.readFileSync(__dirname + '/padding-fixtures.yml', 'utf-8'));
-        fixtures['cipher'] = yaml.load(fs.readFileSync(__dirname + '/cipher-fixtures.yml', 'utf-8'));
-        fixtures['messageDigest'] = yaml.load(fs.readFileSync(__dirname + '/messageDigest-fixtures.yml', 'utf-8'));
+        fixtures.padding = yaml.load(fs.readFileSync(__dirname + '/padding-fixtures.yml', 'utf-8'));
+        fixtures.cipher = yaml.load(fs.readFileSync(__dirname + '/cipher-fixtures.yml', 'utf-8'));
+        fixtures.messageDigest = yaml.load(fs.readFileSync(__dirname + '/messageDigest-fixtures.yml', 'utf-8'));
     }
     catch (e) {
         console.log("Failed loading YAML :" + e);
         throw e;
     }
     chai = require('chai');
+    _ = require('lodash');
 }
 else {
     cryptolib = window.webcryptolib.cryptolib;
@@ -41,47 +39,47 @@ function assertCryptoError(fn, errorCode) {
     assert.fail('Should have thrown a crypto error ');
 }
 describe('Padding', function () {
-    for (var aPadding in fixtures.padding) {
-        function assertPad(padding, testName) {
-            var _this = this;
-            var pad = cryptolib.padding[padding].pad;
-            return function () {
-                var test = fixtures.padding[padding]['pad'][testName];
-                if (test.expectedError) {
-                    assertCryptoError(pad.bind(_this, test.data, test.size ? test.size : 8), cryptolib.error[test.expectedError]);
+    function assertPad(paddingName, padding, testName) {
+        var _this = this;
+        var pad = cryptolib.padding[paddingName].pad;
+        return function () {
+            var test = padding.pad[testName];
+            if (test.expectedError) {
+                assertCryptoError(pad.bind(_this, test.data, test.size ? test.size : 8), cryptolib.error[test.expectedError]);
+            }
+            else {
+                if (test.expected instanceof RegExp) {
+                    assert.match(pad(b(test.data), test.size ? test.size : 8, test.optional).toString('hex'), test.expected);
                 }
                 else {
-                    if (test.expected instanceof RegExp) {
-                        assert.match(pad(b(test.data), test.size ? test.size : 8, test.optional).toString('hex'), test.expected);
-                    }
-                    else {
-                        assert.equal(pad(b(test.data), test.size ? test.size : 8, test.optional).toString('hex'), test.expected);
-                    }
+                    assert.equal(pad(b(test.data), test.size ? test.size : 8, test.optional).toString('hex'), test.expected);
                 }
-            };
-        }
-        function assertUnpad(padding, testName) {
-            var _this = this;
-            var unpad = cryptolib.padding[padding].unpad;
-            return function () {
-                var test = fixtures.padding[padding]['unpad'][testName];
-                if (test.expectedError) {
-                    assertCryptoError(unpad.bind(_this, test.data), cryptolib.error[test.expectedError]);
-                }
-                else {
-                    assert.equal(unpad(b(test.data)).toString('hex'), test.expected);
-                }
-            };
-        }
-        describe('pad/unpad ' + aPadding, function () {
-            for (var testName in fixtures.padding[aPadding]['pad']) {
-                it(testName, assertPad(aPadding, testName));
             }
-            for (var testName in fixtures.padding[aPadding]['unpad']) {
-                it(testName, assertUnpad(aPadding, testName));
-            }
-        });
+        };
     }
+    function assertUnpad(paddingName, padding, testName) {
+        var _this = this;
+        var unpad = cryptolib.padding[paddingName].unpad;
+        return function () {
+            var test = padding.unpad[testName];
+            if (test.expectedError) {
+                assertCryptoError(unpad.bind(_this, test.data), cryptolib.error[test.expectedError]);
+            }
+            else {
+                assert.equal(unpad(b(test.data)).toString('hex'), test.expected);
+            }
+        };
+    }
+    _.forEach(fixtures.padding, function (aPadding, aPaddingName) {
+        describe('pad/unpad ' + aPaddingName, function () {
+            _.forEach(aPadding.pad, function (testOpts, testName) {
+                it(testName, assertPad(aPaddingName, aPadding, testName));
+            });
+            _.forEach(aPadding.unpad, function (testOpts, testName) {
+                it(testName, assertUnpad(aPaddingName, aPadding, testName));
+            });
+        });
+    });
     describe('getPaddingTypes', function () {
         it('should return list of padding types', function () {
             var result = util.values(cryptolib.padding);
@@ -211,8 +209,6 @@ describe('Cipher', function () {
         describe(cipherAlgo, createCipherTestsfunc(cipherAlgo));
     }
     describe('Check Parity', function () {
-        it('Check Parity'), function () {
-        };
     });
 });
 describe('Pin', function () {

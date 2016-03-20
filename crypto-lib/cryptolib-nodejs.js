@@ -1,5 +1,4 @@
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var error = require('./cryptolib-error');
 var random = require('./cryptolib-random');
 var padding = require('./cryptolib-padding');

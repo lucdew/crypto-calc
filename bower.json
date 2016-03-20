@@ -18,19 +18,25 @@
   ],
   "dependencies": {
     "spin.js": "~2.3.2",
-    "angular": "~1.4.0",
+    "angular": "1.4.10",
     "bootstrap": "3.3.4",
     "jquery": "~1.11.2",
-    "angular-animate": "~1.4.1",
-    "angular-bootstrap": "~0.13.0",
+    "angular-animate": "1.4.10",
+    "angular-bootstrap": "0.13.1",
     "underscore": "~1.8.3",
     "buffer": "~3.46.1",
     "forge": "~0.6.33",
     "crypto-js": "~3.1.5",
     "jsrsasign": "~4.8.6",
-    "jquery-ui": "~1.11.4"
+    "jquery-ui": "~1.11.4",
+    "lodash": "~4.6.1",
+    "components-font-awesome": "~4.5.0"
   },
   "devDependencies": {
     "js-yaml": "~3.3.1"
+  },
+  "resolutions": {
+    "angular": "1.4.10"
   }
+
 }

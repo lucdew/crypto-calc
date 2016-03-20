@@ -1,25 +1,37 @@
-/// <reference path="../../d.ts/angularjs/angular.d.ts"/>
-/// <reference path="../../crypto-lib/cryptolib.d.ts"/>
 angular.module('CryptoCalcModule.utils', ['CryptoCalcModule.common'])
-    .controller('UtilsBitwiseController', ['cryptolib', BitwiseController])
+    .controller('UtilsBitwiseController', ['cryptolib', 'SendToMenuService', BitwiseController])
     .controller('UtilsEncodingController', [EncodingController]);
 function EncodingController() {
 }
-function BitwiseController(cryptolib) {
+function BitwiseController(cryptolib, sendToMenuService) {
     var _this = this;
-    this.bitwiseOperators = [
-        { name: 'XOR', func: cryptolib.util.xor },
-        { name: 'AND', func: cryptolib.util.and },
-        { name: 'OR', func: cryptolib.util.or },
-        { name: 'NOT', func: cryptolib.util.not }
-    ];
+    this.bitwiseOperators = [{
+            name: 'XOR',
+            func: cryptolib.util.xor
+        }, {
+            name: 'AND',
+            func: cryptolib.util.and
+        }, {
+            name: 'OR',
+            func: cryptolib.util.or
+        }, {
+            name: 'NOT',
+            func: cryptolib.util.not
+        }];
     this.bitwiseOperator = this.bitwiseOperators[0];
-    this.dataList = [{ value: new Buffer('') }, { value: new Buffer('') }];
+    this.dataList = [{
+            value: new Buffer('')
+        }, {
+            value: new Buffer('')
+        }];
+    sendToMenuService.updateContext('bitwise', this);
     this.setBitwiseOperator = function (aBitwiseOperator) {
         _this.bitwiseOperator = aBitwiseOperator;
     };
     this.addDataElt = function () {
-        _this.dataList.push({ value: new Buffer('') });
+        _this.dataList.push({
+            value: new Buffer('')
+        });
     };
     this.removeDataElt = function () {
         if (_this.dataList.length > 2) {

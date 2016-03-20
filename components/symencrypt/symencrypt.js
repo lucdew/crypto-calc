@@ -1,20 +1,18 @@
-/// <reference path="../../d.ts/angularjs/angular.d.ts"/>
-/// <reference path="../../crypto-lib/cryptolib.d.ts"/>
 var symEncryptModule = angular.module('CryptoCalcModule.symencrypt', ['CryptoCalcModule.common']);
-symEncryptModule.controller('SymencryptController', ['$timeout', 'cryptolib', 'CryptoCalc', SymencryptController]);
-function SymencryptController($timeout, cryptolib, CryptoCalc) {
-    this.model = CryptoCalc.encrypt;
+symEncryptModule.controller('SymencryptController', ['$timeout', 'cryptolib', 'SendToMenuService', SymencryptController]);
+function SymencryptController($timeout, cryptolib, sendToMenuService, $scope) {
     var self = this;
+    sendToMenuService.updateContext('symencrypt', self);
     $timeout(function () {
         self.errors = {};
         self.cipherAlgos = cryptolib.util.values(cryptolib.cipher.cipherAlgo);
         self.setCipherAlgo(self.cipherAlgos[0]);
         self.paddingTypes = cryptolib.util.values(cryptolib.padding);
-        self.padding = self['paddingTypes'][0];
+        self.padding = self.paddingTypes[0];
     });
     self.setCipherAlgo = function (cipherAlgo) {
         self.cipherAlgo = cipherAlgo;
-        self.errors['cipherAlgo'] = null;
+        self.errors.cipherAlgo = null;
         self.blockCipherModes = cryptolib.util.values(cipherAlgo.modes);
         if (!self.blockCipherMode || self.blockCipherModes.indexOf(self.blockCipherMode) < 0) {
             self.setBlockCipherMode(self.blockCipherModes[0]);
@@ -26,7 +24,7 @@ function SymencryptController($timeout, cryptolib, CryptoCalc) {
         }
         if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.cbc ||
             self.blockCipherMode === cryptolib.cipher.blockCipherMode.cfb) {
-            return Array(2 * self.cipherAlgo.blockSize + 1).join("0");
+            return Array(2 * self.cipherAlgo.blockSize + 1).join('0');
         }
         else if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.ofb ||
             self.blockCipherMode === cryptolib.cipher.blockCipherMode.ctr) {
@@ -62,7 +60,7 @@ function SymencryptController($timeout, cryptolib, CryptoCalc) {
         if (!self.cipherAlgo) {
             self.setFieldError('cipherAlgo', 'Choose a cryptographic algorithm');
         }
-        return !(self.errors && Object.keys(self.errors).length != 0);
+        return !(self.errors && Object.keys(self.errors).length !== 0);
     };
     self.cipher = function (form, cipherMode) {
         self.submitted = true;
@@ -72,12 +70,11 @@ function SymencryptController($timeout, cryptolib, CryptoCalc) {
             return;
         }
         try {
-            var ivBuffer = null;
-            if (self.iv) {
-                ivBuffer = new Buffer(self.iv, 'hex');
-            }
             var bKey = new Buffer(self.key, 'hex');
-            var cipherOpts = { padding: self.padding, iv: ivBuffer };
+            var cipherOpts = {
+                padding: self.padding,
+                iv: self.iv
+            };
             if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.gcm) {
                 cipherOpts.additionalAuthenticatedData = self.aad;
             }
@@ -87,13 +84,13 @@ function SymencryptController($timeout, cryptolib, CryptoCalc) {
             }
             else {
                 if (self.blockCipherMode === cryptolib.cipher.blockCipherMode.gcm) {
-                    cipherOpts.authenticationTag = new Buffer(self.authTag, 'hex');
+                    cipherOpts.authenticationTag = self.authTag;
                 }
                 cipherResult = cryptolib.cipher.decipher(bKey, self.data, self.cipherAlgo, self.blockCipherMode, cipherOpts);
             }
             self.result.data = cipherResult.data;
             if (cipherMode && self.blockCipherMode === cryptolib.cipher.blockCipherMode.gcm) {
-                self.result.authTag = cipherResult.authenticationTag.toString('hex');
+                self.result.authTag = cipherResult.authenticationTag;
             }
         }
         catch (e) {
@@ -102,14 +99,14 @@ function SymencryptController($timeout, cryptolib, CryptoCalc) {
                 var cryptoError = e;
                 msg = cryptoError.message || cryptoError.code.description;
                 if (cryptoError.code === cryptolib.error.AUTHENTICATED_TAG_INVALID) {
-                    self.errors['authTag'] = 'Invalid';
+                    self.errors.authTag = 'Invalid';
                 }
             }
             else {
                 msg = e.message;
             }
             msg = msg || 'Unexpected error';
-            self.errors['result'] = msg;
+            self.errors.result = msg;
         }
     };
 }

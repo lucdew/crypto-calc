@@ -1,172 +1,177 @@
 <!doctype html>
 <html>
-	<head>
-	    <meta charset="utf-8">
-	    <title>Crypto Calc</title>
 
-        <meta name="description" lang="en" content="Cryptographic Calculator" />
-        <meta name="keywords" content="Cryptography,DES,AES,3DES,KCV,HMac,SHA1,SHA256,SHA3,SHA512,TripleDES,PIN,PAN,ISO-7816-4" />
-        <meta itemprop="creator" content="Luc Dewavrin">
-        <meta itemprop="name" content="Cryptocalc - A cryptographic calculator" />
-        <meta itemprop="description" content="Cryptocalc: app to perform some cryptographic operation" />
-        <meta name="google-site-verification" content="D9Bfvp5z0Vw9kNKA-LyiC3hWxz8W3Kg_qI-RsjWM184" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<head>
+  <meta charset="utf-8">
+  <title>Crypto Calc</title>
 
-        <link rel="shortcut icon" href="images/lock_2x.ico" type="image/x-icon" />
+  <meta name="description" lang="en" content="Cryptographic Calculator" />
+  <meta name="keywords" content="Cryptography,DES,AES,3DES,KCV,HMac,SHA1,SHA256,SHA3,SHA512,TripleDES,PIN,PAN,ISO-7816-4" />
+  <meta itemprop="creator" content="Luc Dewavrin">
+  <meta itemprop="name" content="Cryptocalc - A cryptographic calculator" />
+  <meta itemprop="description" content="Cryptocalc: app to perform some cryptographic operation" />
+  <meta name="google-site-verification" content="D9Bfvp5z0Vw9kNKA-LyiC3hWxz8W3Kg_qI-RsjWM184" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-        <script src="bower_components/spin.js/spin.min.js"></script>
-        <script src="bower_components/jquery/dist/jquery.min.js"></script>  
-        
-	    <!-- build:css styles/vendor.css -->
-	    <!-- bower:css -->
-	    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-	    <!-- endbower -->
-	    <link rel="stylesheet" href="styles/index.css">
-	    <!-- endbuild -->
-         <link href="styles/main.css" rel="stylesheet"/>
-        <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css">
-	</head>
-	<body ng-controller="AppController as app">
-        
-        <script type="text/javascript">
-            var opts = {
-                lines: 13 // The number of lines to draw
-                , length: 28 // The length of each line
-                , width: 14 // The line thickness
-                , radius: 42 // The radius of the inner circle
-                , scale: 1 // Scales overall size of the spinner
-                , corners: 1 // Corner roundness (0..1)
-                , color: '#000' // #rgb or #rrggbb or array of colors
-                , opacity: 0.25 // Opacity of the lines
-                , rotate: 0 // The rotation offset
-                , direction: 1 // 1: clockwise, -1: counterclockwise
-                , speed: 1 // Rounds per second
-                , trail: 60 // Afterglow percentage
-                , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
-                , zIndex: 2e9 // The z-index (defaults to 2000000000)
-                , className: 'spinner' // The CSS class to assign to the spinner
-                , top: '50%' // Top position relative to parent
-                , left: '50%' // Left position relative to parent
-                , shadow: false // Whether to render a shadow
-                , hwaccel: false // Whether to use hardware acceleration
-                , position: 'absolute' // Element positioning
-                };
-                
-                var spinner = new Spinner(opts);                
-                spinner.spin(document.body);
-                
-                $(window).load(function(){
-                    // Once the page is fully loaded, stop spinning
-                    spinner.stop();
-                });
-        </script>
+  <link rel="shortcut icon" href="images/lock_2x.ico" type="image/x-icon" />
 
-        <nav class="navbar  navbar-default navbar-fixed-top" role="navigation">
-            <div class="container">
-                 
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li><a ng-link="home" ng-class="{menuselected: app.activeState ==='symencrypt'}" >Sym Encrypt</a></li>
-                        <li><a ng-link="asymmetric" class="left5" ng-class="{menuselected: app.activeState ==='asymmetric'}">Asymmetric</a></li>
-                        <li><a ng-link="banking" class="left5" ng-class="{menuselected: app.activeState ==='banking'}">Banking</a></li>
-                        <li><a ng-link="digest" class="left5" ng-class="{menuselected: app.activeState ==='digest'}">Digest & HMAC</a></li>
-                        <li role="presentation" class="dropdown" ng-class="{menuselected: app.activeState === 'utils'}">
-                            <a class="dropdown-toggle" data-toggle="dropdown" 
-                               href="#" role="button" aria-haspopup="true" aria-expanded="false">
+  <script src="bower_components/spin.js/spin.min.js"></script>
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+
+  <!-- build:css styles/vendor.css -->
+  <!-- bower:css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
+  <!-- endbower -->
+  <link rel="stylesheet" href="styles/index.css">
+  <!-- endbuild -->
+  <link href="styles/main.css" rel="stylesheet" />
+  <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css">
+</head>
+
+<body ng-controller="AppController as app">
+
+  <script type="text/javascript">
+    var opts = {
+      lines: 13, // The number of lines to draw
+      length: 28, // The length of each line
+      width: 14, // The line thickness
+      radius: 42, // The radius of the inner circle
+      scale: 1, // Scales overall size of the spinner
+      corners: 1, // Corner roundness (0..1)
+      color: '#000', // #rgb or #rrggbb or array of colors
+      opacity: 0.25, // Opacity of the lines
+      rotate: 0, // The rotation offset
+      direction: 1, // 1: clockwise, -1: counterclockwise
+      speed: 1, // Rounds per second
+      trail: 60, // Afterglow percentage
+      fps: 20, // Frames per second when using setTimeout() as a fallback for CSS
+      zIndex: 2e9, // The z-index (defaults to 2000000000)
+      className: 'spinner', // The CSS class to assign to the spinner
+      top: '50%', // Top position relative to parent
+      left: '50%', // Left position relative to parent
+      shadow: false, // Whether to render a shadow
+      hwaccel: false, // Whether to use hardware acceleration
+      position: 'absolute' // Element positioning
+    };
+
+    var spinner = new Spinner(opts);
+    spinner.spin(document.body);
+
+    $(window).load(function() {
+      // Once the page is fully loaded, stop spinning
+      spinner.stop();
+    });
+  </script>
+
+  <nav class="navbar  navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-left">
+          <li><a ng-link="home" ng-class="{menuselected: app.activeState ==='symencrypt'}">Sym Encrypt</a></li>
+          <li><a ng-link="asymmetric" class="left5" ng-class="{menuselected: app.activeState ==='asymmetric'}">Asymmetric</a></li>
+          <li><a ng-link="banking" class="left5" ng-class="{menuselected: app.activeState ==='banking'}">Banking</a></li>
+          <li><a ng-link="digest" class="left5" ng-class="{menuselected: app.activeState ==='digest'}">Digest & HMAC</a></li>
+          <li role="presentation" class="dropdown" ng-class="{menuselected: app.activeState === 'utils'}">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                 Utils
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a ng-link="utils.encoding" class="left5">Data Encoding/Decoding</a></li>
-                                <li><a ng-link="utils.bitwise" class="left5">Bitwise operations</a></li>
-                            </ul>                     
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                       <li><a ng-link="about" class="left5" ng-class="{menuselected: app.activeState ==='about'}">
-                               <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-                           </a>
-                        </li>
-                        <li class="loader" ng-if="router.isNavigating">
-                          <i class="fa fa-spinner fa-spin fa-2x"></i>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        
+            <ul class="dropdown-menu">
+              <li><a ng-link="utils.encoding" class="left5">Data Encoding/Decoding</a></li>
+              <li><a ng-link="utils.bitwise" class="left5">Bitwise operations</a></li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a ng-link="about" class="left5" ng-class="{menuselected: app.activeState ==='about'}">
+              <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li class="loader" ng-if="router.isNavigating">
+            <i class="fa fa-spinner fa-spin fa-2x"></i>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-		<div ui-view="content" ng-viewport></div>
 
-        <!-- build:js lib/cryptoCalc.js -->  
-        <!-- bower:js -->
-        <script src="bower_components/angular/angular.js"></script>
-        <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="bower_components/angular-animate/angular-animate.js"></script>
-        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-        <script src="bower_components/underscore/underscore.js"></script>
-        <script src="bower_components/buffer/buffer.min.js"></script>
-        <script src="bower_components/jquery-ui/jquery-ui.js"></script>
-        <!-- endbower -->
-        <!-- forge -->
-        <script src="bower_components/forge/js/debug.js"></script>
-        <script src="bower_components/forge/js/md.js"></script>
-        <script src="bower_components/forge/js/sha1.js"></script>
-        <script src="bower_components/forge/js/sha256.js"></script>
-        <script src="bower_components/forge/js/sha512.js"></script>
-        <script src="bower_components/forge/js/util.js"></script>
-        <script src="bower_components/forge/js/prng.js"></script>
-        <script src="bower_components/forge/js/random.js"></script>
-        <script src="bower_components/forge/js/cipher.js"></script>
-        <script src="bower_components/forge/js/cipherModes.js"></script>
-        <script src="bower_components/forge/js/aes.js"></script>
-        <script src="bower_components/forge/js/aes.js"></script>
-        <script src="bower_components/forge/js/asn1.js"></script>
-        <script src="bower_components/forge/js/jsbn.js"></script>
-        <script src="bower_components/forge/js/pkcs1.js"></script>
-        <script src="bower_components/forge/js/des.js"></script> 
-        <script src="bower_components/forge/js/md5.js"></script>
-        <script src="bower_components/forge/js/hmac.js"></script> 
-        <script src="bower_components/forge/js/oids.js"></script>
-        <script src="bower_components/forge/js/pbe.js"></script>
-        <script src="bower_components/forge/js/pbkdf2.js"></script>
-        <script src="bower_components/forge/js/pem.js"></script>
-        <script src="bower_components/forge/js/rsa.js"></script>
-        <script src="bower_components/forge/js/x509.js"></script>
-        <script src="bower_components/forge/js/pki.js"></script>
-     
-        <!-- cryptojs -->
-        <script src="bower_components/crypto-js/crypto-js.js"></script>
-        
-        <!-- jsrsasign -->
-        <script src="bower_components/jsrsasign/jsrsasign-latest-all-min.js"></script>
+  <div ui-view="content" ng-viewport></div>
 
-        
-        <!-- application -->
-        <script type="text/javascript" src="crypto-lib/cryptolib-web.js"></script>
-        <script type="text/javascript" src="js/router.es5.js"></script>
-        <script type="text/javascript" src="js/cryptoCalc.js"></script>
-        <script type="text/javascript" src="components/symencrypt/symencrypt.js"></script>
-        <script type="text/javascript" src="components/asymmetric/asymmetric.js"></script>
-        <script type="text/javascript" src="components/utils/utils.js"></script>
-        <script type="text/javascript" src="components/banking/banking.js"></script>
-        <script type="text/javascript" src="components/digest/digest.js"></script>
-        
-        
 
-        <!-- endbuild -->
-          <script type="text/javascript">
-           window.cryptolib = window.webcryptolib.cryptolib;
-           var $jq = jQuery.noConflict();
-           window.CryptoJS = CryptoJS;
-           window.Buffer = buffer.Buffer;
-           var doc = angular.element(document),
-               docEl = angular.element(document.documentElement);
-               angular.bootstrap(doc,['CryptoCalcModule']);
-             
-          </script>
-    
 
-    </script>
-	</body>
+  <!-- build:js lib/cryptoCalc.js -->
+  <!-- bower:js -->
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="bower_components/angular-animate/angular-animate.js"></script>
+  <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+  <script src="bower_components/underscore/underscore.js"></script>
+  <script src="bower_components/buffer/buffer.min.js"></script>
+  <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+  <script src="bower_components/lodash/lodash.js"></script>
+  <!-- endbower -->
+  <!-- forge -->
+  <script src="bower_components/forge/js/debug.js"></script>
+  <script src="bower_components/forge/js/md.js"></script>
+  <script src="bower_components/forge/js/sha1.js"></script>
+  <script src="bower_components/forge/js/sha256.js"></script>
+  <script src="bower_components/forge/js/sha512.js"></script>
+  <script src="bower_components/forge/js/util.js"></script>
+  <script src="bower_components/forge/js/prng.js"></script>
+  <script src="bower_components/forge/js/random.js"></script>
+  <script src="bower_components/forge/js/cipher.js"></script>
+  <script src="bower_components/forge/js/cipherModes.js"></script>
+  <script src="bower_components/forge/js/aes.js"></script>
+  <script src="bower_components/forge/js/aes.js"></script>
+  <script src="bower_components/forge/js/asn1.js"></script>
+  <script src="bower_components/forge/js/jsbn.js"></script>
+  <script src="bower_components/forge/js/pkcs1.js"></script>
+  <script src="bower_components/forge/js/des.js"></script>
+  <script src="bower_components/forge/js/md5.js"></script>
+  <script src="bower_components/forge/js/hmac.js"></script>
+  <script src="bower_components/forge/js/oids.js"></script>
+  <script src="bower_components/forge/js/pbe.js"></script>
+  <script src="bower_components/forge/js/pbkdf2.js"></script>
+  <script src="bower_components/forge/js/pem.js"></script>
+  <script src="bower_components/forge/js/rsa.js"></script>
+  <script src="bower_components/forge/js/x509.js"></script>
+  <script src="bower_components/forge/js/pki.js"></script>
+
+  <!-- cryptojs -->
+  <script src="bower_components/crypto-js/crypto-js.js"></script>
+
+  <!-- jsrsasign -->
+  <script src="bower_components/jsrsasign/jsrsasign-latest-all-min.js"></script>
+
+
+  <!-- application -->
+  <script type="text/javascript" src="crypto-lib/cryptolib-web.js"></script>
+  <script type="text/javascript" src="js/router.es5.js"></script>
+  <script type="text/javascript" src="js/cryptoCalc.js"></script>
+  <script type="text/javascript" src="components/symencrypt/symencrypt.js"></script>
+  <script type="text/javascript" src="components/asymmetric/asymmetric.js"></script>
+  <script type="text/javascript" src="components/utils/utils.js"></script>
+  <script type="text/javascript" src="components/banking/banking.js"></script>
+  <script type="text/javascript" src="components/digest/digest.js"></script>
+
+
+  <!-- endbuild -->
+  <script type="text/javascript">
+    window.cryptolib = window.webcryptolib.cryptolib;
+    var $jq = jQuery.noConflict();
+    window.CryptoJS = CryptoJS;
+    window.Buffer = buffer.Buffer;
+    var doc = angular.element(document),
+      docEl = angular.element(document.documentElement);
+    angular.bootstrap(doc, ['CryptoCalcModule']);
+  </script>
+
+
+  </script>
+</body>
+
 </html>

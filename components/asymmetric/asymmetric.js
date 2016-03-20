@@ -1,5 +1,3 @@
-/// <reference path="../../d.ts/angularjs/angular.d.ts"/>
-/// <reference path="../../crypto-lib/cryptolib.d.ts"/>
 var asymmetricModule = angular.module('CryptoCalcModule.asymmetric', ['CryptoCalcModule.common']);
 var BigInteger = forge.jsbn.BigInteger;
 var typesMetadata = {
@@ -24,7 +22,7 @@ var cipherAlgos = {
         name: 'RSAES-PKCS1-V1_5'
     }
 };
-asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', AsymmetricController])
+asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', 'SendToMenuService', AsymmetricController])
     .directive('dropzone', function () {
     return {
         restrict: 'A',
@@ -58,7 +56,9 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', As
             var executed = false;
             element.on('blur keyup change focus', function () {
                 if (!executed) {
-                    element.css({ 'background-image': 'none' });
+                    element.css({
+                        'background-image': 'none'
+                    });
                     executed = true;
                 }
             });
@@ -70,10 +70,13 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', As
             restrict: 'A',
             require: '?ngModel',
             link: function (scope, element, attrs, ngModel) {
-                if (!ngModel)
+                if (!ngModel) {
                     return;
+                }
                 var clearBg = function () {
-                    element.css({ 'background-image': 'none' });
+                    element.css({
+                        'background-image': 'none'
+                    });
                 };
                 ngModel.$render = function () {
                     element.html(ngModel.$viewValue || '');
@@ -88,7 +91,7 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', As
                 read();
                 function read() {
                     var html = element.html();
-                    if (attrs.stripBr && html == '<br>') {
+                    if (attrs.stripBr && html === '<br>') {
                         html = '';
                     }
                     ngModel.$setViewValue(html);
@@ -105,7 +108,9 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', As
                     for (var i = 0; i < filesArray.length; i++) {
                         var reader = new FileReader();
                         reader.onloadend = function (loadevent) {
-                            element.parent().css({ 'height': 'auto' });
+                            element.parent().css({
+                                'height': 'auto'
+                            });
                             ngModel.$setViewValue(reader.result);
                             ngModel.$render();
                         };
@@ -124,12 +129,12 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', As
         },
         template: function (element, attrs) {
             var types = attrs.types ? attrs.types.split(',') : Object.keys(typesMetadata);
-            var tpl = "\n                           <div class=\"container-fluid\" style=\"padding:0\">\n                                <div class=\"row vertical-align bottom5\">                                   \n                                   <div class=\"col-md-6 col-sm-6 noright-padding\">\n                                           <span class=\"bold\">{{label}}</span>";
+            var tpl = "\n                           <div class=\"container-fluid\" style=\"padding:0\">\n                                <div class=\"row vertical-align bottom5\">\n                                   <div class=\"col-md-6 col-sm-6 noright-padding\">\n                                           <span class=\"bold\">{{label}}</span>";
             if (types) {
                 tpl += "<div class=\"btn-group left5 btn-group-default\" data-toggle=\"buttons\">";
                 types.forEach(function (val, idx) {
                     tpl += "<label class=\"btn btn-xs btn-default";
-                    if (idx == 0) {
+                    if (idx === 0) {
                         tpl += " active ";
                     }
                     tpl += "\" ng-click=\"toggleType($event,'" + val + "')\">\n                                                            <input type=\"radio\" name=\"options\" id=\"option1\" autocomplete=\"off\" checked>";
@@ -138,7 +143,7 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', As
                 });
                 tpl += "</div>";
             }
-            tpl += "</div>    \n                                   <div class=\"col-md-8 col-sm-4 noside-padding red bold\"> {{errorMsg || typeErrorMsg}}</div>\n                                </div>\n                                \n\n                                        <div ng-show=\"model.type==='RAWPBKEY'\">\n                                                \n                                           <div class=\"bottom5\">\n                                                <databox types=\"hex\" name=\"modulus\" show-chars-num=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        model=\"model.value.modulus\" rows=\"4\" label=\"Modulus\" required >\n                                                </databox>\n                                           </div>\n                                                \n                                           <databox types=\"hex,int\" name=\"exponent\" width-in-cols=\"col-md-2 col-sm-4\"\n                                                        model=\"model.value.exponent\" rows=\"1\" label=\"Exponent\"  show-chars-num=\"false\" show-size=\"false\" required>\n                                           </databox>\n                                        </div>\n                                        \n                                        <div ng-show=\"model.type==='RAWPRKEY'\">\n                                           <div class=\"bottom5\">\n                                                <databox types=\"hex\" name=\"p\" show-chars-num=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        model=\"model.value.p\" rows=\"4\" label=\"First Prime p\" required >\n                                                </databox>\n                                                 <databox types=\"hex\" name=\"q\" show-chars-num=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        model=\"model.value.q\" rows=\"4\" label=\"Second Prime q\" required >\n                                                </databox>\n                                                <databox types=\"hex,int\" name=\"e\" width-in-cols=\"col-md-2 col-sm-4\"\n                                                        model=\"model.value.e\" rows=\"1\" label=\"Public Exponent e\"  \n                                                        show-chars-num=\"false\" show-size=\"false\" required>\n                                                </databox>                                                                                             \n                                           </div>\n                                        </div>\n                                        \n                                        <div class=\"row vertical-align bottom5\" ng-show=\"model.type!=='RAWPBKEY' && model.type!=='RAWPRKEY'\">                                   \n                                                <div class=\"col-md-6 col-sm-8 noright-padding\">\n                                                        <div class=\"dropbox form-control resizable\">\n                                                                <div contenteditable ng-model=\"model.value.pem\" ></div>\n\n                                                        </div>\n                                                </div>\n                                        </div>\n                               \n                          </div>";
+            tpl += "</div>\n                                   <div class=\"col-md-8 col-sm-4 noside-padding red bold\"> {{errorMsg || typeErrorMsg}}</div>\n                                </div>\n                                        <div ng-show=\"model.type==='RAWPBKEY'\">\n\n                                           <div class=\"bottom5\">\n                                                <databox2 types=\"hex\"\n                                                        name=\"modulus\" show-charsnum=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        ng-model=\"model.value.modulus\" rows=\"4\" label=\"Modulus\" required >\n                                                </databox2>\n                                           </div>\n\n                                           <databox2 types=\"hex,int\" name=\"exponent\" width-in-cols=\"col-md-2 col-sm-4\"\n                                                        ng-model=\"model.value.exponent\" rows=\"1\" label=\"Exponent\"\n                                                        show-charsnum=\"false\" show-size=\"false\" required>\n                                           </databox2>\n                                        </div>\n\n                                        <div ng-show=\"model.type==='RAWPRKEY'\">\n                                           <div class=\"bottom5\">\n                                                <databox2 types=\"hex\" name=\"p\" show-charsnum=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        ng-model=\"model.value.p\" rows=\"4\" label=\"First Prime p\" required >\n                                                </databox2>\n                                                 <databox2 types=\"hex\" name=\"q\" show-charsnum=\"false\" width-in-cols=\"col-md-6 col-sm-8\"\n                                                        ng-model=\"model.value.q\" rows=\"4\" label=\"Second Prime q\" required >\n                                                </databox2>\n                                                <databox2 types=\"hex,int\" name=\"e\" width-in-cols=\"col-md-2 col-sm-4\"\n                                                        ng-model=\"model.value.e\" rows=\"1\" label=\"Public Exponent e\"\n                                                        show-charsnum=\"false\" show-size=\"false\" required>\n                                                </databox2>\n                                           </div>\n                                        </div>\n\n                                        <div class=\"row vertical-align bottom5\"\n                                             ng-show=\"model.type!=='RAWPBKEY' && model.type!=='RAWPRKEY'\">\n                                                <div class=\"col-md-6 col-sm-8 noright-padding\">\n                                                        <div class=\"dropbox form-control resizable\">\n                                                                <div contenteditable ng-model=\"model.value.pem\" ></div>\n\n                                                        </div>\n                                                </div>\n                                        </div>\n\n                          </div>";
             console.log(tpl);
             return tpl;
         },
@@ -149,7 +154,10 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'cryptolib', As
             });
             if (!scope.model || !scope.model.type) {
                 console.log('Resetting model');
-                scope.model = { type: 'RAWPBKEY', value: null };
+                scope.model = {
+                    type: 'RAWPBKEY',
+                    value: null
+                };
             }
             scope.toggleType = function ($event, type) {
                 var oldtype = scope.type;
@@ -165,31 +173,35 @@ function extractPrivateKey(pHex, qHex, eHex) {
     var q = new BigInteger(qHex, 16);
     var e = new BigInteger(eHex, 16);
     if (p.compareTo(q) < 0) {
-        throw "Prime p is smaller than q";
+        throw 'Prime p is smaller than q';
     }
     if (p.subtract(BigInteger.ONE).gcd(e)
         .compareTo(BigInteger.ONE) !== 0) {
-        throw "Prime p is not coprime with e";
+        throw 'Prime p is not coprime with e';
     }
     if (q.subtract(BigInteger.ONE).gcd(e)
         .compareTo(BigInteger.ONE) !== 0) {
-        throw "Prime p is not coprime with e";
+        throw 'Prime p is not coprime with e';
     }
     var p1 = p.subtract(BigInteger.ONE);
     var q1 = q.subtract(BigInteger.ONE);
     var phi = p1.multiply(q1);
     if (phi.gcd(e).compareTo(BigInteger.ONE) !== 0) {
-        throw "e is not coprime of phi";
+        throw 'e is not coprime of phi';
     }
     var n = p.multiply(q);
     var d = e.modInverse(phi);
     return forge.pki.setRsaPrivateKey(n, e, d, p, q, d.mod(p1), d.mod(q1), q.modInverse(p));
 }
-function AsymmetricController($timeout, cryptolib) {
+function AsymmetricController($timeout, cryptolib, sendToMenuService) {
     var self = this;
+    sendToMenuService.updateContext('asymmetric', self);
     self.cipher = {};
     self.cipher.errors = {};
-    self.cipher.keyPair = { type: 'RAWPBKEY', value: null };
+    self.cipher.keyPair = {
+        type: 'RAWPBKEY',
+        value: null
+    };
     self.cipher.cipherAlgos = Object.keys(cipherAlgos);
     self.cipher.cipherAlgo = self.cipher.cipherAlgos[0];
     self.registeredModalCallback = false;

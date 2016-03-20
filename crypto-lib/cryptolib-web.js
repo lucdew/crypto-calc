@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.webcryptolib = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (process){
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var nodejs = (typeof process !== 'undefined' && process.versions && process.versions.node);
 if (nodejs) {
     exports.CryptoJS = require('crypto-js');
@@ -11,8 +11,7 @@ else {
 
 }).call(this,require('_process'))
 },{"_process":17,"crypto-js":undefined}],2:[function(require,module,exports){
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var error = require('./cryptolib-error');
 var util = require('./cryptolib-util');
 function mod10ComputeCheckDigit(apan) {
@@ -69,7 +68,7 @@ var Pan = (function () {
         return aPan;
     };
     return Pan;
-})();
+}());
 var issuingNetwork = {
     Amex: {
         name: 'American Express',
@@ -288,8 +287,7 @@ module.exports = banking;
 
 },{"./cryptolib-error":4,"./cryptolib-util":11}],3:[function(require,module,exports){
 (function (Buffer){
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var error = require('./cryptolib-error');
 var util = require('./cryptolib-util');
 var padding = require('./cryptolib-padding');
@@ -298,20 +296,72 @@ var cryptojslib = require('./cryptojslib');
 var random = require('./cryptolib-random');
 var CryptoJS = cryptojslib.CryptoJS;
 var blockCipherMode = {
-    ecb: { name: 'ECB', cryptoName: 'ecb', hasIV: false, isAuthenticatedEncryption: false, isStreaming: false },
-    cbc: { name: 'CBC', cryptoName: 'cbc', hasIV: true, isAuthenticatedEncryption: false, isStreaming: false },
-    cfb: { name: 'CFB', cryptoName: 'cfb', hasIV: true, isAuthenticatedEncryption: false, isStreaming: false },
-    ofb: { name: 'OFB', cryptoName: 'ofb', hasIV: true, isAuthenticatedEncryption: false, isStreaming: true },
-    ctr: { name: 'CTR', cryptoName: 'ctr', hasIV: true, isAuthenticatedEncryption: false, isStreaming: true },
-    gcm: { name: 'GCM', cryptoName: 'gcm', hasIV: true, isAuthenticatedEncryption: true, isStreaming: true, supportedBlockSizes: [16] }
+    ecb: {
+        name: 'ECB',
+        cryptoName: 'ecb',
+        hasIV: false,
+        isAuthenticatedEncryption: false,
+        isStreaming: false
+    },
+    cbc: {
+        name: 'CBC',
+        cryptoName: 'cbc',
+        hasIV: true,
+        isAuthenticatedEncryption: false,
+        isStreaming: false
+    },
+    cfb: {
+        name: 'CFB',
+        cryptoName: 'cfb',
+        hasIV: true,
+        isAuthenticatedEncryption: false,
+        isStreaming: false
+    },
+    ofb: {
+        name: 'OFB',
+        cryptoName: 'ofb',
+        hasIV: true,
+        isAuthenticatedEncryption: false,
+        isStreaming: true
+    },
+    ctr: {
+        name: 'CTR',
+        cryptoName: 'ctr',
+        hasIV: true,
+        isAuthenticatedEncryption: false,
+        isStreaming: true
+    },
+    gcm: {
+        name: 'GCM',
+        cryptoName: 'gcm',
+        hasIV: true,
+        isAuthenticatedEncryption: true,
+        isStreaming: true,
+        supportedBlockSizes: [16]
+    }
 };
 var cipherAlgo = {
-    aes: { blockSize: 16, name: 'AES', cryptoName: 'aes', keyLengths: [128, 192, 256],
-        modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr, blockCipherMode.gcm] },
-    des: { blockSize: 8, name: 'DES', cryptoName: 'des', keyLengths: [64],
-        modes: [blockCipherMode.ecb, blockCipherMode.cbc] },
-    desede: { blockSize: 8, name: '3DES', cryptoName: 'des-ede', keyLengths: [64, 128, 192],
-        modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr] }
+    aes: {
+        blockSize: 16,
+        name: 'AES',
+        cryptoName: 'aes',
+        keyLengths: [128, 192, 256],
+        modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr, blockCipherMode.gcm]
+    },
+    des: {
+        blockSize: 8,
+        name: 'DES',
+        cryptoName: 'des',
+        keyLengths: [64],
+        modes: [blockCipherMode.ecb, blockCipherMode.cbc]
+    },
+    desede: {
+        blockSize: 8,
+        name: '3DES',
+        cryptoName: 'des-ede',
+        keyLengths: [64, 128, 192],
+        modes: [blockCipherMode.ecb, blockCipherMode.cbc, blockCipherMode.cfb, blockCipherMode.ofb, blockCipherMode.ctr]
+    }
 };
 function genNullIv(length) {
     var iv = new Buffer(length);
@@ -341,7 +391,7 @@ function toDoubleLengthKey(key) {
 }
 function doCryptoJSCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, cipherOpts) {
     if (aBlockCipherMode === blockCipherMode.gcm) {
-        error.raiseInvalidArg("GCM block cipher mode of operation is not supported by CryptoJS library");
+        error.raiseInvalidArg('GCM block cipher mode of operation is not supported by CryptoJS library');
     }
     var keyHex;
     if (aCipherAlgo == cipherAlgo.desede && key.length == 16) {
@@ -354,7 +404,7 @@ function doCryptoJSCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, 
     var keyWord = CryptoJS.enc.Hex.parse(keyHex);
     var algo = aCipherAlgo.name;
     if (aCipherAlgo === cipherAlgo.desede) {
-        algo = "TripleDES";
+        algo = 'TripleDES';
     }
     var cryptoJsOpts = {};
     cryptoJsOpts.mode = CryptoJS.mode[aBlockCipherMode.name];
@@ -369,7 +419,10 @@ function doCryptoJSCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, 
         };
     }
     else {
-        var decrypted = CryptoJS[algo].decrypt({ ciphertext: dataWord, salt: "" }, keyWord, cryptoJsOpts);
+        var decrypted = CryptoJS[algo].decrypt({
+            ciphertext: dataWord,
+            salt: ''
+        }, keyWord, cryptoJsOpts);
         return {
             data: new Buffer(decrypted.toString(CryptoJS.enc.Hex), 'hex')
         };
@@ -378,13 +431,13 @@ function doCryptoJSCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, 
 function getForgeCryptoAlgo(aCipherAlgo, aBlockCipherMode) {
     var forgeCryptoAlgo = null;
     if (aCipherAlgo == cipherAlgo.aes) {
-        forgeCryptoAlgo = "AES-";
+        forgeCryptoAlgo = 'AES-';
     }
     else if (aCipherAlgo == cipherAlgo.des || aCipherAlgo == cipherAlgo.desede) {
-        forgeCryptoAlgo = "DES-";
+        forgeCryptoAlgo = 'DES-';
     }
     else {
-        error.raiseInvalidArg("Unexpected cipher algo " + cipherAlgo);
+        error.raiseInvalidArg('Unexpected cipher algo ' + cipherAlgo);
     }
     forgeCryptoAlgo += aBlockCipherMode.name;
     return forgeCryptoAlgo;
@@ -411,7 +464,7 @@ function doForgeCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, cip
         forgeOpts.additionalData = forgelib.toForgeBuffer(cipherOpts.additionalAuthenticatedData);
         if (!cipherMode) {
             if (!cipherOpts.authenticationTag) {
-                error.raiseInvalidArg("Authentication tag is missing for block cipher mode " + aBlockCipherMode.name);
+                error.raiseInvalidArg('Authentication tag is missing for block cipher mode ' + aBlockCipherMode.name);
             }
             forgeOpts.tag = forgelib.toForgeBuffer(cipherOpts.authenticationTag);
         }
@@ -453,7 +506,7 @@ function decipher(key, data, aCipherAlgo, aBlockCipherMode, cipherOpts) {
 }
 function doCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, cipherOpts) {
     if (aCipherAlgo.modes.indexOf(aBlockCipherMode) < 0) {
-        error.raiseInvalidArg("The block cipher " + aBlockCipherMode.name + " is not valid for cipher algo " + aCipherAlgo.name);
+        error.raiseInvalidArg('The block cipher ' + aBlockCipherMode.name + ' is not valid for cipher algo ' + aCipherAlgo.name);
     }
     var dataToProcess = data;
     var iv = cipherOpts && cipherOpts.iv ? cipherOpts.iv : null;
@@ -461,8 +514,7 @@ function doCipher(cipherMode, key, data, aCipherAlgo, aBlockCipherMode, cipherOp
         dataToProcess = cipherOpts.padding.pad(data, aCipherAlgo.blockSize);
     }
     if (!iv && aBlockCipherMode.hasIV) {
-        if (aBlockCipherMode === blockCipherMode.cbc || aBlockCipherMode === blockCipherMode.cfb
-            || aBlockCipherMode === blockCipherMode.ofb || aBlockCipherMode === blockCipherMode.ctr) {
+        if (aBlockCipherMode === blockCipherMode.cbc || aBlockCipherMode === blockCipherMode.cfb || aBlockCipherMode === blockCipherMode.ofb || aBlockCipherMode === blockCipherMode.ctr) {
             iv = genNullIv(aCipherAlgo.blockSize);
             cipherOpts.iv = iv;
         }
@@ -495,7 +547,9 @@ function computeKcv(key, cipherAlgo, length) {
     }
     var data = new Buffer(cipherAlgo.blockSize);
     data.fill(0);
-    var encData = doCipher(true, key, data, cipherAlgo, blockCipherMode.ecb, { padding: padding.noPadding });
+    var encData = doCipher(true, key, data, cipherAlgo, blockCipherMode.ecb, {
+        padding: padding.noPadding
+    });
     var result = util.toHex(encData.data);
     return length ? result.substr(0, length * 2) : result;
 }
@@ -530,7 +584,7 @@ module.exports = cipherModule;
 
 }).call(this,require("buffer").Buffer)
 },{"./cryptojslib":1,"./cryptolib-error":4,"./cryptolib-padding":8,"./cryptolib-random":10,"./cryptolib-util":11,"./forgelib":12,"buffer":13,"crypto":undefined}],4:[function(require,module,exports){
-/// <reference path="./cryptolib.d.ts"/>
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -553,38 +607,40 @@ var CryptoError = (function (_super) {
         return this.name + ': ' + this.message;
     };
     return CryptoError;
-})(Error);
+}(Error));
+var INVALID_ARGUMENT = {
+    value: 0,
+    name: 'INVALID_ARGUMENT',
+    description: 'Invalid argument'
+};
+var INVALID_PADDING = {
+    value: 1,
+    name: 'INVALID_PADDING',
+    description: 'Invalid padding'
+};
+var INVALID_BLOCK_SIZE = {
+    value: 2,
+    name: 'INVALID_BLOCK_SIZE',
+    description: 'Invalid block size'
+};
+var INVALID_KEY_SIZE = {
+    value: 3,
+    name: 'INVALID_KEY_SIZE',
+    description: 'Invalid key size'
+};
+var PAN_MISSING = {
+    value: 4,
+    name: 'PAN_MISSING',
+    description: 'Pan is missing'
+};
+var AUTHENTICATED_TAG_INVALID = {
+    value: 5,
+    name: 'AUTHENTICATED_TAG_INVALID',
+    description: 'Authenticated tag is invalid'
+};
 function raiseInvalidArg(msg) {
     throw new CryptoError(INVALID_ARGUMENT, msg);
 }
-var INVALID_ARGUMENT = {
-    value: 0,
-    name: "INVALID_ARGUMENT",
-    description: "Invalid argument" };
-var INVALID_PADDING = {
-    value: 1,
-    name: "INVALID_PADDING",
-    description: "Invalid padding" };
-var INVALID_BLOCK_SIZE = {
-    value: 2,
-    name: "INVALID_BLOCK_SIZE",
-    description: "Invalid block size" };
-var INVALID_KEY_SIZE = {
-    value: 3,
-    name: "INVALID_KEY_SIZE",
-    description: "Invalid key size" };
-var PAN_MISSING = {
-    value: 4,
-    name: "PAN_MISSING",
-    description: "Pan is missing" };
-var PAN_MISSING = {
-    value: 5,
-    name: "PAN_MISSING",
-    description: "Pan is missing" };
-var AUTHENTICATED_TAG_INVALID = {
-    value: 6,
-    name: "AUTHENTICATED_TAG_INVALID",
-    description: "Authenticated tag is invalid" };
 var error = {
     CryptoError: CryptoError,
     INVALID_ARGUMENT: INVALID_ARGUMENT,
@@ -599,8 +655,7 @@ module.exports = error;
 
 },{}],5:[function(require,module,exports){
 (function (Buffer){
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var util = require('./cryptolib-util');
 var messageDigest = require('./cryptolib-message-digest');
 function blockCipherMac(key, data) {
@@ -636,63 +691,124 @@ module.exports = mac;
 }).call(this,require("buffer").Buffer)
 },{"./cryptolib-message-digest":6,"./cryptolib-util":11,"buffer":13}],6:[function(require,module,exports){
 (function (Buffer){
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var error = require('./cryptolib-error');
 var forgelib = require('./forgelib');
 var cryptojslib = require('./cryptojslib');
 var CryptoJS = cryptojslib.CryptoJS;
 var messageDigestType = {
-    MD5: { name: 'MD5', digestSize: 128, blockSize: 512, security: 64 },
-    SHA1: { name: 'SHA1', digestSize: 160, blockSize: 512, security: 80 },
-    SHA2_224: { name: 'SHA2_224', digestSize: 224, blockSize: 512, security: 112 },
-    SHA2_256: { name: 'SHA2_256', digestSize: 256, blockSize: 512, security: 128 },
-    SHA2_384: { name: 'SHA2_384', digestSize: 384, blockSize: 1024, security: 192 },
-    SHA2_512: { name: 'SHA2_512', digestSize: 512, blockSize: 1024, security: 256 },
-    SHA2_512_224: { name: 'SHA2_512_224', digestSize: 224, blockSize: 1024, security: 112 },
-    SHA2_512_256: { name: 'SHA2_512_256', digestSize: 256, blockSize: 1024, security: 128 },
-    SHA3_224: { name: 'SHA3_224', digestSize: 224, blockSize: 1152, security: 112 },
-    SHA3_256: { name: 'SHA3_256', digestSize: 256, blockSize: 1088, security: 128 },
-    SHA3_384: { name: 'SHA3_384', digestSize: 384, blockSize: 832, security: 192 },
-    SHA3_512: { name: 'SHA3_512', digestSize: 512, blockSize: 576, security: 256 }
+    MD5: {
+        name: 'MD5',
+        digestSize: 128,
+        blockSize: 512,
+        security: 64
+    },
+    SHA1: {
+        name: 'SHA1',
+        digestSize: 160,
+        blockSize: 512,
+        security: 80
+    },
+    SHA2_224: {
+        name: 'SHA2_224',
+        digestSize: 224,
+        blockSize: 512,
+        security: 112
+    },
+    SHA2_256: {
+        name: 'SHA2_256',
+        digestSize: 256,
+        blockSize: 512,
+        security: 128
+    },
+    SHA2_384: {
+        name: 'SHA2_384',
+        digestSize: 384,
+        blockSize: 1024,
+        security: 192
+    },
+    SHA2_512: {
+        name: 'SHA2_512',
+        digestSize: 512,
+        blockSize: 1024,
+        security: 256
+    },
+    SHA2_512_224: {
+        name: 'SHA2_512_224',
+        digestSize: 224,
+        blockSize: 1024,
+        security: 112
+    },
+    SHA2_512_256: {
+        name: 'SHA2_512_256',
+        digestSize: 256,
+        blockSize: 1024,
+        security: 128
+    },
+    SHA3_224: {
+        name: 'SHA3_224',
+        digestSize: 224,
+        blockSize: 1152,
+        security: 112
+    },
+    SHA3_256: {
+        name: 'SHA3_256',
+        digestSize: 256,
+        blockSize: 1088,
+        security: 128
+    },
+    SHA3_384: {
+        name: 'SHA3_384',
+        digestSize: 384,
+        blockSize: 832,
+        security: 192
+    },
+    SHA3_512: {
+        name: 'SHA3_512',
+        digestSize: 512,
+        blockSize: 576,
+        security: 256
+    }
 };
 var messageDigest = {
     digest: function (messageDigest, data) {
         var word = CryptoJS.enc.Hex.parse(data.toString('hex'));
         var hash;
-        if (messageDigest == messageDigestType.MD5) {
+        if (messageDigest === messageDigestType.MD5) {
             hash = CryptoJS.MD5(word);
         }
-        else if (messageDigest == messageDigestType.SHA1) {
+        else if (messageDigest === messageDigestType.SHA1) {
             hash = CryptoJS.SHA1(word);
         }
-        else if (messageDigest == messageDigestType.SHA2_224) {
+        else if (messageDigest === messageDigestType.SHA2_224) {
             hash = CryptoJS.SHA224(word);
         }
-        else if (messageDigest == messageDigestType.SHA2_256) {
+        else if (messageDigest === messageDigestType.SHA2_256) {
             hash = CryptoJS.SHA256(word);
         }
-        else if (messageDigest == messageDigestType.SHA2_384) {
+        else if (messageDigest === messageDigestType.SHA2_384) {
             hash = CryptoJS.SHA384(word);
         }
-        else if (messageDigest == messageDigestType.SHA2_512) {
+        else if (messageDigest === messageDigestType.SHA2_512) {
             hash = CryptoJS.SHA512(word);
         }
-        else if (messageDigest == messageDigestType.SHA2_512_224) {
+        else if (messageDigest === messageDigestType.SHA2_512_224) {
             var md = forgelib.forge.sha512.sha224.create();
             md.update(forgelib.bufferToString(data));
             return new Buffer(md.digest().toHex(), 'hex');
         }
-        else if (messageDigest == messageDigestType.SHA2_512_256) {
+        else if (messageDigest === messageDigestType.SHA2_512_256) {
             var md = forgelib.forge.sha512.sha256.create();
             md.update(forgelib.bufferToString(data));
             return new Buffer(md.digest().toHex(), 'hex');
         }
-        else if (messageDigest.name.indexOf('SHA3') == 0) {
-            hash = CryptoJS.SHA3(word, { outputLength: messageDigest.digestSize });
+        else if (messageDigest.name.indexOf('SHA3') === 0) {
+            hash = CryptoJS.SHA3(word, {
+                outputLength: messageDigest.digestSize
+            });
         }
         else {
-            error.raiseInvalidArg("Unsupported message digest " + messageDigest.name ? messageDigest.name : 'null');
+            error.raiseInvalidArg('Unsupported message digest ' + messageDigest.name ? messageDigest.name : 'null');
         }
         return new Buffer(hash.toString(CryptoJS.enc.Hex), 'hex');
     },
@@ -702,8 +818,7 @@ module.exports = messageDigest;
 
 }).call(this,require("buffer").Buffer)
 },{"./cryptojslib":1,"./cryptolib-error":4,"./forgelib":12,"buffer":13}],7:[function(require,module,exports){
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var error = require('./cryptolib-error');
 var random = require('./cryptolib-random');
 var padding = require('./cryptolib-padding');
@@ -727,7 +842,7 @@ exports.cryptolib = {
 
 },{"./cryptolib-banking":2,"./cryptolib-cipher":3,"./cryptolib-error":4,"./cryptolib-mac":5,"./cryptolib-message-digest":6,"./cryptolib-padding":8,"./cryptolib-pin":9,"./cryptolib-random":10,"./cryptolib-util":11}],8:[function(require,module,exports){
 (function (Buffer){
-/// <reference path="./cryptolib-nodejs.ts"/>
+"use strict";
 var error = require('./cryptolib-error');
 var random = require('./cryptolib-random');
 function extendBuffer(data, optionally, blockSize, filler) {
@@ -747,7 +862,7 @@ function extendBuffer(data, optionally, blockSize, filler) {
 }
 var NoPadding = (function () {
     function NoPadding() {
-        this.name = "NO_PADDING";
+        this.name = 'NO_PADDING';
     }
     NoPadding.prototype.pad = function (data, blockSize, optionally) {
         return data;
@@ -756,10 +871,10 @@ var NoPadding = (function () {
         return data;
     };
     return NoPadding;
-})();
+}());
 var ZeroPadding = (function () {
     function ZeroPadding() {
-        this.name = "ZERO_PADDING";
+        this.name = 'ZERO_PADDING';
     }
     ZeroPadding.prototype.pad = function (data, blockSize, optionally) {
         return extendBuffer(data, optionally, blockSize, function (bufferToFill) {
@@ -776,14 +891,14 @@ var ZeroPadding = (function () {
         return new Buffer(0);
     };
     return ZeroPadding;
-})();
+}());
 var Iso10126 = (function () {
     function Iso10126() {
-        this.name = "ISO_10126";
+        this.name = 'ISO_10126';
     }
     Iso10126.prototype.pad = function (data, blockSize, optionally) {
         if (blockSize > 255 || blockSize < 1) {
-            throw new error.CryptoError(error.INVALID_BLOCK_SIZE, "Cannot pad block size of " + blockSize);
+            throw new error.CryptoError(error.INVALID_BLOCK_SIZE, 'Cannot pad block size of ' + blockSize);
         }
         return extendBuffer(data, optionally, blockSize, function (bufferToFill) {
             var randomData = random.generate(bufferToFill.length - 1);
@@ -801,14 +916,14 @@ var Iso10126 = (function () {
         return data.slice(0, data.length - padLength);
     };
     return Iso10126;
-})();
+}());
 var AnsiX923 = (function () {
     function AnsiX923() {
-        this.name = "ANSI_X.923";
+        this.name = 'ANSI_X.923';
     }
     AnsiX923.prototype.pad = function (data, blockSize, optionally) {
         if (blockSize > 255 || blockSize < 1) {
-            throw new error.CryptoError(error.INVALID_BLOCK_SIZE, "Cannot pad block size of " + blockSize);
+            throw new error.CryptoError(error.INVALID_BLOCK_SIZE, 'Cannot pad block size of ' + blockSize);
         }
         return extendBuffer(data, optionally, blockSize, function (bufferToFill) {
             bufferToFill.fill(0, 0, bufferToFill.length);
@@ -829,15 +944,15 @@ var AnsiX923 = (function () {
         return data.slice(0, data.length - padLength);
     };
     return AnsiX923;
-})();
+}());
 var Iso78164Padding = (function () {
     function Iso78164Padding() {
-        this.name = "ISO_7816_4";
+        this.name = 'ISO_7816_4';
     }
     Iso78164Padding.prototype.pad = function (data, blockSize, optionally) {
         if (optionally === void 0) { optionally = false; }
         return extendBuffer(data, optionally, blockSize, function (bufferToFill) {
-            bufferToFill.write("80", 0, 1, "hex");
+            bufferToFill.write('80', 0, 1, 'hex');
             bufferToFill.fill(0, 1, bufferToFill.length);
         });
     };
@@ -854,15 +969,15 @@ var Iso78164Padding = (function () {
         throw new error.CryptoError(error.INVALID_PADDING);
     };
     return Iso78164Padding;
-})();
+}());
 var PKCS7Padding = (function () {
     function PKCS7Padding() {
-        this.name = "PKCS7";
+        this.name = 'PKCS7';
     }
     PKCS7Padding.prototype.pad = function (data, blockSize, optionally) {
         if (optionally === void 0) { optionally = false; }
         if (blockSize > 255 || blockSize < 1) {
-            throw new error.CryptoError(error.INVALID_BLOCK_SIZE, "Cannot pad block size of " + blockSize);
+            throw new error.CryptoError(error.INVALID_BLOCK_SIZE, 'Cannot pad block size of ' + blockSize);
         }
         return extendBuffer(data, optionally, blockSize, function (bufferToFill) {
             bufferToFill.fill(bufferToFill.length, 0, bufferToFill.length);
@@ -884,7 +999,7 @@ var PKCS7Padding = (function () {
         }
     };
     return PKCS7Padding;
-})();
+}());
 var padding = {
     noPadding: new NoPadding(),
     pkcs7: new PKCS7Padding(),
@@ -898,17 +1013,30 @@ module.exports = padding;
 }).call(this,require("buffer").Buffer)
 },{"./cryptolib-error":4,"./cryptolib-random":10,"buffer":13}],9:[function(require,module,exports){
 (function (Buffer){
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var error = require('./cryptolib-error');
 var util = require('./cryptolib-util');
 var random = require('./cryptolib-random');
 var isoPinType = {
-    format0: { name: 'ISO_9564_Format_0', value: 0 },
-    format1: { name: 'ISO_9564_Format_1', value: 1 },
-    format2: { name: 'ISO_9564_Format_2', value: 2 },
-    format3: { name: 'ISO_9564_Format_3', value: 3 },
-    getAll: function () { return [isoPinType.format0, isoPinType.format1, isoPinType.format2, isoPinType.format3]; }
+    format0: {
+        name: 'ISO_9564_Format_0',
+        value: 0
+    },
+    format1: {
+        name: 'ISO_9564_Format_1',
+        value: 1
+    },
+    format2: {
+        name: 'ISO_9564_Format_2',
+        value: 2
+    },
+    format3: {
+        name: 'ISO_9564_Format_3',
+        value: 3
+    },
+    getAll: function () {
+        return [isoPinType.format0, isoPinType.format1, isoPinType.format2, isoPinType.format3];
+    }
 };
 function generateIsoPinRandomPadding(length) {
     var result = '';
@@ -999,7 +1127,10 @@ var IsoPin = (function () {
         if (type.value === 0 || type.value === 3) {
             if (!pan) {
                 var e = new error.CryptoError(error.PAN_MISSING, 'Pan is missing');
-                e.additionalInfo = { pinLength: pinLength, pinType: type };
+                e.additionalInfo = {
+                    pinLength: pinLength,
+                    pinType: type
+                };
                 throw e;
             }
             var paddedPan = '0000' + pan;
@@ -1011,7 +1142,7 @@ var IsoPin = (function () {
         }
     };
     return IsoPin;
-})();
+}());
 var pin = {
     createIsoPin: function (isoPinType, pin, additionalData) {
         return new IsoPin(isoPinType, pin, additionalData);
@@ -1026,8 +1157,7 @@ module.exports = pin;
 }).call(this,require("buffer").Buffer)
 },{"./cryptolib-error":4,"./cryptolib-random":10,"./cryptolib-util":11,"buffer":13}],10:[function(require,module,exports){
 (function (process,Buffer){
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var nodejs = (typeof process !== 'undefined' && process.versions && process.versions.node);
 var webCrypto = typeof window !== 'undefined' && (window.crypto || window.msCrypto);
 function generate(length) {
@@ -1045,8 +1175,7 @@ exports.generate = generate;
 }).call(this,require('_process'),require("buffer").Buffer)
 },{"_process":17,"buffer":13,"crypto":undefined}],11:[function(require,module,exports){
 (function (Buffer){
-/// <reference path="./cryptolib.d.ts"/>
-/// <reference path="../d.ts/node/node.d.ts"/>
+"use strict";
 var random = require('./cryptolib-random');
 function generateRandomNumberString(length) {
     var buffer = random.generate(length);
@@ -1156,8 +1285,7 @@ module.exports = util;
 }).call(this,require("buffer").Buffer)
 },{"./cryptolib-random":10,"buffer":13}],12:[function(require,module,exports){
 (function (process){
-/// <reference path="../d.ts/node/node.d.ts"/>
-/// <reference path="./cryptolib.d.ts"/>
+"use strict";
 var util = require('./cryptolib-util');
 var nodejs = (typeof process !== 'undefined' && process.versions && process.versions.node);
 if (nodejs) {
@@ -1190,9 +1318,11 @@ exports.toForgeBuffer = toForgeBuffer;
  */
 /* eslint-disable no-proto */
 
+'use strict'
+
 var base64 = require('base64-js')
 var ieee754 = require('ieee754')
-var isArray = require('is-array')
+var isArray = require('isarray')
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -1272,8 +1402,10 @@ function Buffer (arg) {
     return new Buffer(arg)
   }
 
-  this.length = 0
-  this.parent = undefined
+  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+    this.length = 0
+    this.parent = undefined
+  }
 
   // Common case.
   if (typeof arg === 'number') {
@@ -1404,6 +1536,10 @@ function fromJsonObject (that, object) {
 if (Buffer.TYPED_ARRAY_SUPPORT) {
   Buffer.prototype.__proto__ = Uint8Array.prototype
   Buffer.__proto__ = Uint8Array
+} else {
+  // pre-set for values that may exist in the future
+  Buffer.prototype.length = undefined
+  Buffer.prototype.parent = undefined
 }
 
 function allocate (that, length) {
@@ -1553,10 +1689,6 @@ function byteLength (string, encoding) {
   }
 }
 Buffer.byteLength = byteLength
-
-// pre-set for values that may exist in the future
-Buffer.prototype.length = undefined
-Buffer.prototype.parent = undefined
 
 function slowToString (encoding, start, end) {
   var loweredCase = false
@@ -2728,7 +2860,7 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":14,"ieee754":15,"is-array":16}],14:[function(require,module,exports){
+},{"base64-js":14,"ieee754":15,"isarray":16}],14:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -2941,38 +3073,10 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 }
 
 },{}],16:[function(require,module,exports){
+var toString = {}.toString;
 
-/**
- * isArray
- */
-
-var isArray = Array.isArray;
-
-/**
- * toString
- */
-
-var str = Object.prototype.toString;
-
-/**
- * Whether or not the given `val`
- * is an array.
- *
- * example:
- *
- *        isArray([]);
- *        // > true
- *        isArray(arguments);
- *        // > false
- *        isArray('');
- *        // > false
- *
- * @param {mixed} val
- * @return {bool}
- */
-
-module.exports = isArray || function (val) {
-  return !! val && '[object Array]' == str.call(val);
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
 };
 
 },{}],17:[function(require,module,exports){

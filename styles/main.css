@@ -7,8 +7,6 @@
     color: #5a5a5a;
 }*/
 
-
-
 .border1 {
   border: 1px black solid;
 }
@@ -20,12 +18,11 @@ body {
 
 .vertical-align {
   display: flex;
-  align-items: center;  
+  align-items: center;
 }
 
 .valign > [class*="col"] {
   display: inline-block;
-  float: none;
   vertical-align: middle;
 }
 
@@ -53,27 +50,6 @@ body {
 
 .bold {
     font-weight: bold;
-}
-
-form.submitted .ng-invalid {
-    border:1px solid #f00;
-}
-
-input.field-error {
-    border:1px solid #f00;
-}
-
-input.field-error:focus {
-    border:1px solid #f00;
-    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 0, 66, 0.2);
-}
-
-textarea.field-error {
-    border:1px solid #f00;
-}
-textarea.field-error:focus {
-    border:1px solid #f00;
-    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 0, 66, 0.2);
 }
 
 .panel-small {
@@ -118,7 +94,62 @@ textarea.field-error:focus {
     padding: 30px 30px;
 }
 
+.left {
+    text-align: left;
+}
 
+/* Drop box
+-------------------------------------------------------- */
+div.dropbox {
+    min-height: 150px;
+    /*overflow: hidden;*/
+    width: auto;
+}
+
+
+.dropbox > div[contenteditable] {
+  border: 2px dashed lightgray;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='35px' width='300px'><text x='0' y='15' fill='rgb(211,211,211)' font-size='20'>Write content or drag and drop file</text></svg>");
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+
+form.submitted .ng-invalid {
+    border:1px solid #f00;
+}
+
+input.field-error {
+    border:1px solid #f00;
+}
+
+input.field-error:focus {
+    border:1px solid #f00;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 0, 66, 0.2);
+}
+
+textarea.field-error {
+    border:1px solid #f00;
+}
+textarea.field-error:focus {
+    border:1px solid #f00;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 0, 66, 0.2);
+}
+
+databox2.ng-invalid-databox-data textarea {
+    border:1px solid #f00;
+}
+
+databox2.ng-invalid-databox-data textarea:focus {
+    border:1px solid #f00;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 0, 66, 0.2);
+}
+
+/* Forms
+------------------------------------------------------------ */
 .btn-group-default label.active {
     background-color: #337AB7;;
     color: #FFF;
@@ -138,33 +169,24 @@ textarea.field-error:focus {
     padding: 10px 10px ;
 }
 
-.left {
-    text-align: left;
-}
-
 
 .form-warning {
     font-weight: normal;
     text-align: left;
 }
 
-div.dropbox {
-    min-height: 150px;
-    /*overflow: hidden;*/
-    width: auto;
+
+.buttons > .btn input[type="radio"] {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+    pointer-events: none;
 }
 
 
-.dropbox > div[contenteditable] {
-  border: 2px dashed lightgray;
-  height: 100%;
-  width: 100%;
-  padding: 10px;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='35px' width='300px'><text x='0' y='15' fill='rgb(211,211,211)' font-size='20'>Write content or drag and drop file</text></svg>");
-  background-repeat: no-repeat;
-  background-position: center center;
-}
 
+
+/* CUSTOMIZE THE NAVBAR
+-------------------------------------------------- */
 
 .navbar-default .navbar-nav > li > a{
   border-bottom: 1px solid transparent ;
@@ -175,8 +197,6 @@ div.dropbox {
   transition: border 1s linear;
   outline: none;
 }
-/* CUSTOMIZE THE NAVBAR
--------------------------------------------------- */
 
 /* Special class on .container surrounding .navbar, used for positioning it into place. */
 .navbar-wrapper {
@@ -330,3 +350,72 @@ div.dropbox {
 .ng-leave.ng-leave-active {
   opacity: 0;
 }*/
+
+/* Contextual Menus
+-------------------------------------------------- */
+.dropdown-submenu {
+    position:relative;
+}
+.dropdown-submenu>.dropdown-menu {
+    top:0;
+    left:100%;
+    margin-top:-6px;
+    margin-left:-1px;
+    -webkit-border-radius:0 6px 6px 6px;
+    -moz-border-radius:0 6px 6px 6px;
+    border-radius:0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+    display:block;
+}
+.dropdown-submenu>a:after {
+    display:block;
+    content:" ";
+    float:right;
+    width:0;
+    height:0;
+    border-color:transparent;
+    border-style:solid;
+    border-width:5px 0 5px 5px;
+    border-left-color:#cccccc;
+    margin-top:5px;
+    margin-right:-10px;
+}
+.dropdown-submenu:hover>a:after {
+    border-left-color:#ffffff;
+}
+.dropdown-submenu.pull-left {
+    float:none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left:-100%;
+}
+
+/* RESPONSIVE CSS
+-------------------------------------------------- */
+.screen-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -30px;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 900;
+}
+
+.bigtitle {
+    font-family:  'DIN Next W01','Helvetica Neue',Helvetica,Arial,sans-serif;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.blue {
+    color: #22B8EB;
+}
+
+#about {
+    background-image: url( ../images/about_bg1.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+}

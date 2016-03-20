@@ -1,7 +1,7 @@
 node_modules
 bower_components
-d.ts
 .tscache
 build
 dist
 .git
+typings

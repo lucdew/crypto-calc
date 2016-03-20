@@ -1,10 +1,9 @@
-/// <reference path="../../d.ts/angularjs/angular.d.ts"/>
-/// <reference path="../../crypto-lib/cryptolib.d.ts"/>
 var digestModule = angular.module('CryptoCalcModule.digest', ['CryptoCalcModule.common']);
-digestModule.controller('DigestController', ['$timeout', 'cryptolib', DigestController]);
-function DigestController($timeout, cryptolib) {
+digestModule.controller('DigestController', ['$timeout', 'cryptolib', 'SendToMenuService', DigestController]);
+function DigestController($timeout, cryptolib, sendToMenuService) {
     var _this = this;
     var self = this;
+    sendToMenuService.updateContext('digest', self);
     this.messageDigestTypes = cryptolib.util.values(cryptolib.messageDigest.messageDigestType);
     this.mode = 'digest';
     this.results = {};

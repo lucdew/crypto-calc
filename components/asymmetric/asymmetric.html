@@ -1,80 +1,72 @@
 <div class="content-wrapper">
 
-	<div class="panel panel-primary">
-	  <div class="panel-heading">
-	    <h3 class="panel-title">Encrypt/Decrypt > RSA </h3>
-	  </div>
-      
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">RSA Encrypt/Decrypt</h3>
+    </div>
+
     <div class="panel-body">
-        
-         <form name="digestForm" class="form left" role="form" novalidate> 
-            <div class="bottom15">
-              <key-pair  name="keyPair" model="asymmetric.cipher.keyPair" rows="2" label="Keypair" 
-                  autofocus required error-msg="asymmetric.cipher.errors.keyPair" >
-              </key-pair>
+
+      <form name="digestForm" class="form left" role="form" novalidate>
+        <div class="bottom15">
+          <key-pair name="keyPair" model="asymmetric.cipher.keyPair" rows="2" label="Keypair" autofocus required error-msg="asymmetric.cipher.errors.keyPair">
+          </key-pair>
+        </div>
+        <div class="bottom15">
+          <databox2 types="hex,base64,utf8" name="data" ng-model="asymmetric.cipher.data" rows="2" label="Data" width-in-cols="col-md-6 col-sm-8" required error-msg="asymmetric.cipher.errors.data">
+          </databox2>
+        </div>
+        <div class="row valign bottom15">
+          <div class="col-md-1 col-sm-3 left bold">Cipher Algo</div>
+          <div class="col-md-3 col-sm-3" style="padding-left: 0;">
+            <div class="dropdown" dropdown>
+              <button class="btn btn-default dropdown-toggle" name="padding" type="button" dropdown-toggle id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                {{asymmetric.cipher.cipherAlgo|nodash}}
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li ng-repeat="cipherAlgo in asymmetric.cipher.cipherAlgos" ng-click="asymmetric.cipher.setCipherAlgo(cipherAlgo)"><a href="#" prevent-default>{{cipherAlgo|nodash}}</a></li>
+              </ul>
             </div>
-            <div class="bottom15">
-              <databox type="asymmetric.cipher.dataType" types="hex,base64,utf8" name="data"
-                        model="asymmetric.cipher.data" rows="2" label="Data" width-in-cols="col-md-6 col-sm-8" required 
-                        error-msg="asymmetric.cipher.errors.data" >
-              </databox> 
-            </div>
-            <div class="row valign bottom15">
-                <div class="col-md-1 col-sm-3 left bold">Cipher Algo</div>
-                <div class="col-md-3 col-sm-3" style="padding-left: 0;">
-                <div class="dropdown" dropdown >
-                        <button class="btn btn-default dropdown-toggle" name="padding" type="button"  dropdown-toggle  id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        {{asymmetric.cipher.cipherAlgo|nodash}}
-                        <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" >
-                            <li ng-repeat="cipherAlgo in asymmetric.cipher.cipherAlgos" ng-click="asymmetric.cipher.setCipherAlgo(cipherAlgo)"><a href="#" prevent-default>{{cipherAlgo|nodash}}</a></li>
-                        </ul>
-                    </div>
+          </div>
+        </div>
+        <div class="bottom15 row">
+          <div class="col-md-1 col-sm-2">
+            <button class="btn btn-lg btn-primary" ng-click="asymmetric.cipher.cipher(digestForm,true)">Encrypt</button>
+          </div>
+          <div class="col-md-1 col-sm-2">
+            <button class="btn btn-lg btn-primary" ng-click="asymmetric.cipher.cipher(digestForm,false)" ng-show="asymmetric.cipher.keyPair.type!=='RAWPBKEY' && asymmetric.cipher.keyPair.type!=='X509'">Decrypt</button>
+          </div>
+        </div>
+        <div class="bottom15">
+          <databox2 types="hex,base64,utf8" name="result" with-menu ng-model="asymmetric.cipher.result" rows="4" label="Result" width-in-cols="col-md-6 col-sm-8" required error-msg="asymmetric.cipher.errors.result">
+          </databox2>
+        </div>
+        <div class="modal" id="passwordmodal" role="dialog">
+          <div class="modal-dialog" id="modaldialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Entrer your password to decrypt the private key:</h4>
+              </div>
+              <div class="modal-body">
+                <input type="password" id="keyPairPassword" ng-keypress="$event.which === 13 && asymmetric.cipher.savePasswordOnEnter($event,digestForm)" ng-class="{'field-error': asymmetric.cipher.errors['asymmetric.cipher.keyPair.password']}" name="asymmetric.cipher.keyPair.password" class="form-control" ng-model="asymmetric.cipher.keyPair.password" />
+                <div class="red bold">
+                  {{asymmetric.cipher.errors['asymmetric.cipher.keyPair.password']}}
                 </div>
-            </div>        
-            <div class="bottom15 row">
-                <div class="col-md-1 col-sm-2"><button class="btn btn-lg btn-primary" 
-                                                ng-click="asymmetric.cipher.cipher(digestForm,true)">Encrypt</button></div>
-                <div class="col-md-1 col-sm-2">
-                    <button class="btn btn-lg btn-primary" 
-                    ng-click="asymmetric.cipher.cipher(digestForm,false)" ng-show="asymmetric.cipher.keyPair.type!=='RAWPBKEY' && asymmetric.cipher.keyPair.type!=='X509'">Decrypt</button></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-click="asymmetric.cipher.savePassword(digestForm)">Ok</button>
+              </div>
             </div>
-            <div class="bottom15">
-                 <databox type="asymmetric.cipher.resultType" types="hex,base64,utf8" name="result"
-                           model="asymmetric.cipher.result" rows="4" label="Result" width-in-cols="col-md-6 col-sm-8" required 
-                           error-msg="asymmetric.cipher.errors.result" >
-                  </databox>
-            </div>
-            <div class="modal" id="passwordmodal" role="dialog">
-                <div class="modal-dialog" id="modaldialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title">Entrer your password to decrypt the private key:</h4>
-                        </div>
-                        <div class="modal-body">
-                            <input type="password"
-                                id="keyPairPassword"
-                                ng-keypress="$event.which === 13 && asymmetric.cipher.savePasswordOnEnter($event,digestForm)"
-                                ng-class="{'field-error': asymmetric.cipher.errors['asymmetric.cipher.keyPair.password']}" 
-                                name="asymmetric.cipher.keyPair.password" class="form-control" 
-                                ng-model="asymmetric.cipher.keyPair.password"/>
-                            <div class="red bold">
-                                {{asymmetric.cipher.errors['asymmetric.cipher.keyPair.password']}}
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" ng-click="asymmetric.cipher.savePassword(digestForm)">Ok</button>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-            </div><!-- /.modal -->
-       </form>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+      </form>
     </div>
   </div>
 
 
 </div>
-
-

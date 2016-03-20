@@ -1,5 +1,4 @@
-/// <reference path="../d.ts/node/node.d.ts"/>
-/// <reference path="./cryptolib.d.ts"/>
+"use strict";
 var util = require('./cryptolib-util');
 var nodejs = (typeof process !== 'undefined' && process.versions && process.versions.node);
 if (nodejs) {

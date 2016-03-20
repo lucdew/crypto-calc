@@ -1,1 +1,1 @@
-{"version":3,"file":"about.js","sourceRoot":"","sources":["about.ts"],"names":["AboutController"],"mappings":"AAAA,yDAAyD;AACzD,uDAAuD;AAEvD,IAAI,WAAW,GAAG,OAAO,CAAC,MAAM,CAAC,wBAAwB,EAAE,CAAC,yBAAyB,CAAC,CAAC,CAAC;AAExF,WAAW,CAAC,UAAU,CAAC,iBAAiB,EAAC,CAAC,eAAe,CAAC,CAAC,CAAC;AAE5D;AAEAA,CAACA"}
+{"version":3,"file":"about.js","sourceRoot":"","sources":["about.ts"],"names":[],"mappings":"AAAA,IAAI,WAAW,GAAG,OAAO,CAAC,MAAM,CAAC,wBAAwB,EAAE,CAAC,yBAAyB,CAAC,CAAC,CAAC;AAExF,WAAW,CAAC,UAAU,CAAC,iBAAiB,EAAC,CAAC,eAAe,CAAC,CAAC,CAAC;AAE5D;AAEA,CAAC"}

@@ -1,6 +1,3 @@
-/// <reference path="../../d.ts/mocha/mocha.d.ts"/>
-/// <reference path="../../d.ts/chai/chai.d.ts"/>
-/// <reference path="../../crypto-lib/cryptolib.d.ts"/>
 var assert = chai.assert;
 var expect = chai.expect;
 cryptolib = window.webcryptolib.cryptolib;
