@@ -6,28 +6,24 @@
   <title>Crypto Calc</title>
 
   <meta name="description" lang="en" content="Cryptographic Calculator" />
-  <meta name="keywords" content="Cryptography,DES,AES,3DES,KCV,HMac,SHA1,SHA256,SHA3,SHA512,TripleDES,PIN,PAN,ISO-7816-4" />
+  <meta name="keywords" content="Cryptography,DES,AES,3DES,KCV,HMac,SHA1,SHA256,SHA3,SHA512,TripleDES,PIN,PAN,ISO-7816-4,cryptocalculator,cryptocalc" />
   <meta itemprop="creator" content="Luc Dewavrin">
   <meta itemprop="name" content="Cryptocalc - A cryptographic calculator" />
-  <meta itemprop="description" content="Cryptocalc: app to perform some cryptographic operation" />
+  <meta itemprop="description" content="Cryptocalc: web application to perform some common cryptographic operations" />
   <meta name="google-site-verification" content="D9Bfvp5z0Vw9kNKA-LyiC3hWxz8W3Kg_qI-RsjWM184" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
   <link rel="shortcut icon" href="images/lock_2x.ico" type="image/x-icon" />
 
-  <script src="bower_components/spin.js/spin.min.js"></script>
-  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="node_modules/spin.js/spin.min.js"></script>
+  <script src="node_modules/jquery/dist/jquery.min.js"></script>
 
-  <!-- build:css styles/vendor.css -->
-  <!-- bower:css -->
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-  <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
-  <!-- endbower -->
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
   <link rel="stylesheet" href="styles/index.css">
-  <!-- endbuild -->
   <link href="styles/main.css" rel="stylesheet" />
-  <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css">
+  <link rel="stylesheet" href="node_modules/jquery-ui-bundle/jquery-ui.min.css">
 </head>
 
 <body ng-controller="AppController as app">
@@ -102,50 +98,40 @@
   <div ui-view="content" ng-viewport></div>
 
 
+  <script src="node_modules/angular/angular.min.js"></script>
+  <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="node_modules/angular-animate/angular-animate.min.js"></script>
+  <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+  <script src="node_modules/jquery-ui-bundle/jquery-ui.js"></script>
+  <script src="node_modules/lodash/lodash.js"></script>
+  <script src="node_modules/node-forge/js/debug.js"></script>
+  <script src="node_modules/node-forge/js/md.js"></script>
+  <script src="node_modules/node-forge/js/sha1.js"></script>
+  <script src="node_modules/node-forge/js/sha256.js"></script>
+  <script src="node_modules/node-forge/js/sha512.js"></script>
+  <script src="node_modules/node-forge/js/util.js"></script>
+  <script src="node_modules/node-forge/js/prng.js"></script>
+  <script src="node_modules/node-forge/js/random.js"></script>
+  <script src="node_modules/node-forge/js/cipher.js"></script>
+  <script src="node_modules/node-forge/js/cipherModes.js"></script>
+  <script src="node_modules/node-forge/js/aes.js"></script>
+  <script src="node_modules/node-forge/js/aes.js"></script>
+  <script src="node_modules/node-forge/js/asn1.js"></script>
+  <script src="node_modules/node-forge/js/jsbn.js"></script>
+  <script src="node_modules/node-forge/js/pkcs1.js"></script>
+  <script src="node_modules/node-forge/js/des.js"></script>
+  <script src="node_modules/node-forge/js/md5.js"></script>
+  <script src="node_modules/node-forge/js/hmac.js"></script>
+  <script src="node_modules/node-forge/js/oids.js"></script>
+  <script src="node_modules/node-forge/js/pbe.js"></script>
+  <script src="node_modules/node-forge/js/pbkdf2.js"></script>
+  <script src="node_modules/node-forge/js/pem.js"></script>
+  <script src="node_modules/node-forge/js/rsa.js"></script>
+  <script src="node_modules/node-forge/js/x509.js"></script>
+  <script src="node_modules/node-forge/js/pki.js"></script>
 
-  <!-- build:js lib/cryptoCalc.js -->
-  <!-- bower:js -->
-  <script src="bower_components/angular/angular.js"></script>
-  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-  <script src="bower_components/angular-animate/angular-animate.js"></script>
-  <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-  <script src="bower_components/underscore/underscore.js"></script>
-  <script src="bower_components/buffer/buffer.min.js"></script>
-  <script src="bower_components/jquery-ui/jquery-ui.js"></script>
-  <script src="bower_components/lodash/lodash.js"></script>
-  <!-- endbower -->
-  <!-- forge -->
-  <script src="bower_components/forge/js/debug.js"></script>
-  <script src="bower_components/forge/js/md.js"></script>
-  <script src="bower_components/forge/js/sha1.js"></script>
-  <script src="bower_components/forge/js/sha256.js"></script>
-  <script src="bower_components/forge/js/sha512.js"></script>
-  <script src="bower_components/forge/js/util.js"></script>
-  <script src="bower_components/forge/js/prng.js"></script>
-  <script src="bower_components/forge/js/random.js"></script>
-  <script src="bower_components/forge/js/cipher.js"></script>
-  <script src="bower_components/forge/js/cipherModes.js"></script>
-  <script src="bower_components/forge/js/aes.js"></script>
-  <script src="bower_components/forge/js/aes.js"></script>
-  <script src="bower_components/forge/js/asn1.js"></script>
-  <script src="bower_components/forge/js/jsbn.js"></script>
-  <script src="bower_components/forge/js/pkcs1.js"></script>
-  <script src="bower_components/forge/js/des.js"></script>
-  <script src="bower_components/forge/js/md5.js"></script>
-  <script src="bower_components/forge/js/hmac.js"></script>
-  <script src="bower_components/forge/js/oids.js"></script>
-  <script src="bower_components/forge/js/pbe.js"></script>
-  <script src="bower_components/forge/js/pbkdf2.js"></script>
-  <script src="bower_components/forge/js/pem.js"></script>
-  <script src="bower_components/forge/js/rsa.js"></script>
-  <script src="bower_components/forge/js/x509.js"></script>
-  <script src="bower_components/forge/js/pki.js"></script>
-
-  <!-- cryptojs -->
-  <script src="bower_components/crypto-js/crypto-js.js"></script>
-
-  <!-- jsrsasign -->
-  <script src="bower_components/jsrsasign/jsrsasign-latest-all-min.js"></script>
+  <!-- browserified deps -->
+  <script src="js/deps-web.js"></script>
 
 
   <!-- application -->
@@ -163,8 +149,6 @@
   <script type="text/javascript">
     window.cryptolib = window.webcryptolib.cryptolib;
     var $jq = jQuery.noConflict();
-    window.CryptoJS = CryptoJS;
-    window.Buffer = buffer.Buffer;
     var doc = angular.element(document),
       docEl = angular.element(document.documentElement);
     angular.bootstrap(doc, ['CryptoCalcModule']);

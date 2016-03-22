@@ -6,47 +6,44 @@
 </head>
 <body>
   <div id="mocha"></div>
-   
-  <script src="../../bower_components/buffer/buffer.min.js"></script>
-  <script src="../../bower_components/js-yaml/dist/js-yaml.min.js"></script>
-  
+
+  <script src="../../node_modules/js-yaml/dist/js-yaml.js"></script>
+  <script src="../../node_modules/lodash/lodash.js"></script>
+
   <!-- endbower -->
   <!-- forge -->
-  <script src="../../bower_components/forge/js/debug.js"></script>
-  <script src="../../bower_components/forge/js/md.js"></script>
-  <script src="../../bower_components/forge/js/sha1.js"></script>
-  <script src="../../bower_components/forge/js/sha256.js"></script>
-  <script src="../../bower_components/forge/js/sha512.js"></script>
-  <script src="../../bower_components/forge/js/util.js"></script>
-  <script src="../../bower_components/forge/js/prng.js"></script>
-  <script src="../../bower_components/forge/js/random.js"></script>
-  <script src="../../bower_components/forge/js/cipher.js"></script>
-  <script src="../../bower_components/forge/js/cipherModes.js"></script>
-  <script src="../../bower_components/forge/js/aes.js"></script>
-  <script src="../../bower_components/forge/js/asn1.js"></script>
-  <script src="../../bower_components/forge/js/jsbn.js"></script>
-  <script src="../../bower_components/forge/js/pkcs1.js"></script>
-  <script src="../../bower_components/forge/js/des.js"></script> 
-  <script src="../../bower_components/forge/js/md5.js"></script>
-  <script src="../../bower_components/forge/js/hmac.js"></script> 
-  <script src="../../bower_components/forge/js/oids.js"></script>
-  <script src="../../bower_components/forge/js/pbe.js"></script>
-  <script src="../../bower_components/forge/js/pbkdf2.js"></script>
-  <script src="../../bower_components/forge/js/pem.js"></script>
-  <script src="../../bower_components/forge/js/rsa.js"></script>
-  <script src="../../bower_components/forge/js/x509.js"></script>
-  <script src="../../bower_components/forge/js/pki.js"></script>
-  
-  <!-- cryptojs -->
-  <script src="../../bower_components/crypto-js/crypto-js.js"></script>
-  
-  <!-- jsrsasign -->
-  <script src="../../bower_components/jsrsasign/jsrsasign-latest-all-min.js"></script>
-  
-    <!-- application -->
+  <script src="../../node_modules/node-forge/js/debug.js"></script>
+  <script src="../../node_modules/node-forge/js/md.js"></script>
+  <script src="../../node_modules/node-forge/js/sha1.js"></script>
+  <script src="../../node_modules/node-forge/js/sha256.js"></script>
+  <script src="../../node_modules/node-forge/js/sha512.js"></script>
+  <script src="../../node_modules/node-forge/js/util.js"></script>
+  <script src="../../node_modules/node-forge/js/prng.js"></script>
+  <script src="../../node_modules/node-forge/js/random.js"></script>
+  <script src="../../node_modules/node-forge/js/cipher.js"></script>
+  <script src="../../node_modules/node-forge/js/cipherModes.js"></script>
+  <script src="../../node_modules/node-forge/js/aes.js"></script>
+  <script src="../../node_modules/node-forge/js/asn1.js"></script>
+  <script src="../../node_modules/node-forge/js/jsbn.js"></script>
+  <script src="../../node_modules/node-forge/js/pkcs1.js"></script>
+  <script src="../../node_modules/node-forge/js/des.js"></script>
+  <script src="../../node_modules/node-forge/js/md5.js"></script>
+  <script src="../../node_modules/node-forge/js/hmac.js"></script>
+  <script src="../../node_modules/node-forge/js/oids.js"></script>
+  <script src="../../node_modules/node-forge/js/pbe.js"></script>
+  <script src="../../node_modules/node-forge/js/pbkdf2.js"></script>
+  <script src="../../node_modules/node-forge/js/pem.js"></script>
+  <script src="../../node_modules/node-forge/js/rsa.js"></script>
+  <script src="../../node_modules/node-forge/js/x509.js"></script>
+  <script src="../../node_modules/node-forge/js/pki.js"></script>
+
+  <!-- deps -->
+  <script src="../../js/deps-web.js"></script>
+
+  <!-- application -->
   <script type="text/javascript" src="../../crypto-lib/cryptolib-web.js"></script>
-  
-  <script src="../../bower_components/jquery/dist/jquery.js"></script>
+
+  <script src="../../node_modules/jquery/dist/jquery.js"></script>
   <script src="../../node_modules/chai/chai.js"></script>
   <script src="../../node_modules/mocha/mocha.js"></script>
 
@@ -62,15 +59,13 @@
             dataType: "text",
             processData: false
         });
-      
+
     };
-	  window.Buffer = buffer.Buffer;
-   
 
      getYamlFilePromise('asymmetric-fixtures.yml').done(function(){
         window.fixtures = {};
         window.fixtures['asymmetric'] = jsyaml.load(arguments[0]);
-       
+
 
         $.getScript('asymmetric-tests.js',function(){
               mocha.checkLeaks();

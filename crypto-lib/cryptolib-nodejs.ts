@@ -12,7 +12,7 @@ import messageDigest = require('./cryptolib-message-digest');
 import mac = require('./cryptolib-mac');
 
 export var cryptolib: Cryptolib.CryptoLibStatic = {
-	cipher: cipher,
+    cipher: cipher,
     padding: padding,
     error :  error,
     util : util,

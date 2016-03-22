@@ -1,8 +1,6 @@
 'use strict';
 
-const packagejson = require('./package.json'),
-    bowerFiles = require('bower-files'),
-    fs = require('fs');
+const packagejson = require('./package.json');
 
 module.exports = function(grunt) {
 
@@ -22,50 +20,7 @@ module.exports = function(grunt) {
         APPNAME += ' (Beta)';
     }
 
-
-    grunt.task.registerTask('addBowerFilesToCopy', 'Copy bower tasks', function() {
-        // Dynamically adding bower deps to copy
-        // Done dynamically because it requires bower install to be performed before
-
-        let originalCopy = grunt.config('copy');
-        let additionalFiles = {
-            expand: true,
-            src: bowerFiles().relative(__dirname).files,
-            dest: 'build/'
-        };
-        let allBowerFiles = [];
-
-        additionalFiles.src.forEach(function(element) {
-
-            allBowerFiles.push(element);
-            if (element.length < 4) {
-                return;
-            }
-            let minifiedFile = element.substring(0, element.length - 3) + '.min.js';
-            if (fs.existsSync(minifiedFile)) {
-                allBowerFiles.push(minifiedFile);
-            }
-        }, this);
-
-        additionalFiles.src = allBowerFiles;
-        grunt.log.writeln("Adding to copy:base the following files\n " + JSON.stringify(additionalFiles));
-        originalCopy.base.files.push(additionalFiles);
-        grunt.config('copy', originalCopy);
-
-    });
-
-
     grunt.initConfig({
-
-        bower: {
-            install: {
-                options: {
-                    targetDir: 'bower_components',
-                    copy: false
-                }
-            }
-        },
-
         ts: {
             options: {
                 sourceMap: true,
@@ -104,7 +59,7 @@ module.exports = function(grunt) {
         browserify: {
             dist: {
                 files: {
-                    'crypto-lib/cryptolib-web.js': ['crypto-lib/cryptolib-nodejs.js'],
+                    'crypto-lib/cryptolib-web.js': ['crypto-lib/cryptolib-nodejs.js']
                 },
                 options: {
                     exclude: ['crypto', 'node-forge', 'crypto-js'],
@@ -113,23 +68,31 @@ module.exports = function(grunt) {
                     }
 
                 }
+            },
+            deps: {
+                files: {
+                    'js/deps-web.js': ['js/deps.js']
+                },
+                options: {
+                 browserifyOptions: {
+                        standalone: 'deps',
+                        debug: true
+                    }
+                }
+                // To export dependencies in their own file
+                // files: {
+                //     'js/buffer.js': []
+                // },
+                // options: {
+                //  require : ['buffer:buffer'],
+                //  browserifyOptions: {
+                //         standalone: 'buffer'
+                //     }
+                // }
             }
 
         },
 
-        wiredep: {
-            app: {
-                src: ['index.html', 'index-web.html'],
-                exclude: [
-                    /jquery\./,
-                    /spin/,
-                    /forge/,
-                    /angular-mocks/,
-                    /crypto-js/,
-                    /jsrsasign/
-                ]
-            }
-        },
         clean: {
             release: ['build/', 'dist/', 'installer/']
         },
@@ -153,10 +116,18 @@ module.exports = function(grunt) {
                     },
                     {
                         expand: true,
-                        src: ['bower_components/forge/js/**',
-                              'bower_components/crypto-js/*.js',
-                              'bower_components/lodash/lodash.js', // lodash (bowerFiles module does not detect it, adding it manually)
-                              'bower_components/jquery-ui/themes/**'
+                        src: [
+                              'node_modules/angular/angular*',
+                              'node_modules/angular-animate/angular-animate*',
+                              'node_modules/angular-ui-bootstrap/dist/**',
+                              'node_modules/bootstrap/dist/**',
+                              'node_modules/crypto-js/*.js',
+                              'node_modules/font-awesome/**',
+                              'node_modules/lodash/lodash.js',
+                              'node_modules/node-forge/js/**',
+                              'node_modules/jquery/dist/**',
+                              'node_modules/jquery-ui-bundle/*',
+                              'node_modules/spin.js/spin*.js'
                             ],
                         dest: 'build/'
                     }
@@ -302,7 +273,6 @@ module.exports = function(grunt) {
 
     //Load NPM tasks
     grunt.loadNpmTasks('grunt-ts');
-    grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-electron-installer');
     grunt.loadNpmTasks('grunt-browserify');
@@ -322,11 +292,8 @@ module.exports = function(grunt) {
 
     grunt.registerTask('buildelectron', [
         'clean',
-        'bower',
-        'wiredep:app',
         'ts',
         'mochaTest',
-        'addBowerFilesToCopy',
         'copy:base',
         'copy:components',
         'copy:electron',
@@ -336,12 +303,9 @@ module.exports = function(grunt) {
 
     grunt.registerTask('buildweb', [
         'clean',
-        'bower',
-        'wiredep:app',
         'ts',
         'mochaTest',
         'browserify',
-        'addBowerFilesToCopy',
         'copy:base',
         'copy:components',
         'copy:webhome',

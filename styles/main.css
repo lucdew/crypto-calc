@@ -419,3 +419,14 @@ databox2.ng-invalid-databox-data textarea:focus {
     background-size: cover;
     background-repeat: no-repeat;
 }
+
+ul.social {
+    list-style: none;
+
+}
+
+ul.social li {
+   display: inline-block;
+   text-decoration: none;
+   margin: 15px 15px;
+}

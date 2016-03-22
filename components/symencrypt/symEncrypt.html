@@ -128,9 +128,14 @@
         </div>
 
         <div ng-show="symencrypt.result.authTag">
-          <!--databox2 with-menu types="hex,base64" name="resultAuthTag" ng-model="symencrypt.result.authTag" width-in-cols="col-md-6 col-sm-8"
-                     label="Auth tag" show-charsnum="false">
-          </databox2-->
+         <databox2 with-menu
+                   types="hex,base64"
+                   name="resultAuthTag"
+                   ng-model="symencrypt.result.authTag"
+                   width-in-cols="col-md-6 col-sm-8"
+                   label="Auth tag"
+                   show-charsnum="false">
+          </databox2>
         </div>
 
       </form>

@@ -6,7 +6,6 @@
 var asymmetricModule = angular.module('CryptoCalcModule.asymmetric', ['CryptoCalcModule.common']);
 
 declare var KEYUTIL: any;
-declare var KJUR: any;
 declare var forge: any;
 declare var $jq: any;
 

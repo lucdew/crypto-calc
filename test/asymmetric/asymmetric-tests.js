@@ -5,7 +5,7 @@ var rsaPrivateKeys = fixtures['asymmetric'].private.rsa;
 var utf16ToHex = function (s) {
     var length = s.length;
     var index = -1;
-    var result = "";
+    var result = '';
     while (++index < length) {
         result += s.charCodeAt(index).toString(16).toUpperCase();
     }
@@ -14,21 +14,21 @@ var utf16ToHex = function (s) {
 describe('Load', function () {
     var createPemLoadTest = function (key, val) {
         var isEncrypted = val.match(/ENCRYPTED/i) != null;
-        it("load " + key + " pem", function () {
-            var rsaKey = isEncrypted ? forge.pki.decryptRsaPrivateKey(val, "cryptocalcpass") :
+        it('load ' + key + ' pem', function () {
+            var rsaKey = isEncrypted ? forge.pki.decryptRsaPrivateKey(val, 'cryptocalcpass') :
                 forge.pki.privateKeyFromPem(val);
             assert.isNotNull(rsaKey.n);
         });
         if (isEncrypted) {
-            it("load " + key + " with invalid password ", function () {
+            it('load ' + key + ' with invalid password ', function () {
                 var rsaKey = null;
                 try {
-                    rsaKey = forge.pki.decryptRsaPrivateKey(val, "dummy");
+                    rsaKey = forge.pki.decryptRsaPrivateKey(val, 'dummy');
                 }
                 catch (e) {
                 }
                 if (null != rsaKey) {
-                    assert.fail("Should have thrown exception for key " + key + "rsa key " + rsaKey);
+                    assert.fail('Should have thrown exception for key ' + key + 'rsa key ' + rsaKey);
                 }
             });
         }
@@ -39,8 +39,10 @@ describe('Load', function () {
 });
 describe('Encrypt', function () {
     it('Encrypt with RAW public key', function () {
-        var params = { n: "00eb6918789b2fc51ef8c5cf3ee7e472b3444b8d2b093e4b44853d3234d9f3fee8c06e5b02c88503d5f1877b992b54f9400eb88cd2556e9da88c702d37258fbb0b",
-            e: "010001" };
+        var params = {
+            n: '00eb6918789b2fc51ef8c5cf3ee7e472b3444b8d2b093e4b44853d3234d9f3fee8c06e5b02c88503d5f1877b992b54f9400eb88cd2556e9da88c702d37258fbb0b',
+            e: '010001'
+        };
         var key = KEYUTIL.getKey(params);
         var BigInteger = forge.jsbn.BigInteger;
         console.log(key.e.toString(16));
