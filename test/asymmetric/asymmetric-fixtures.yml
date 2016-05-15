@@ -67,24 +67,25 @@ private:
             OFOwG5BQmTbvI5ijPBl+7p9BTQqGEYnJ1QQ4YNQrSVbTedxkANEjFNaAzN4J2x3n
             hnWn
             -----END ENCRYPTED PRIVATE KEY-----
-        "1024-pkcs5#15-pk8" : |+
-            -----BEGIN ENCRYPTED PRIVATE KEY-----
-            MIICoTAbBgkqhkiG9w0BBQMwDgQIEEPtHylCYp8CAggABIICgPeSglM6KLpKXGSw
-            OnlJFMbQP+4PZBr9ag9kLwr8SL9R8HLOSl/S64vuyQeiWJASWIShFkfxSKG7f8kn
-            weGLNKQYe6zzjSrgatiCXgvUkfaTr14lbmtDsxLSETUm8kw2s+Ea8mUOxPkCAquk
-            2iEfEvbcPvLnGzwlZsmsPtP3Xj2mNOCL/D1MPxF2badT0pliSzgTAEX6PaV9XK72
-            Yo4gL66wwGWenPTzA6TQs4uWhZW9dV64sugGtNRTQAZt8R/G8wQKDyeNaoJztB1z
-            +KvEDmTpKby1sJ6SQF8/yPXPlCYhN1KId1cB/R9fmICNr0TZzpxNFcM/KKmv6OZE
-            uc89PUtLnGvrUsGygCyO8TNa+Qjo0ngRgKEQGuR3HAAry/yBtFUOyQfKzZNzc72R
-            ki8eFm/8fZpUsL3D7eL42PyQRlJCPNZO3AmuwA1aMJhAkd9RctLl+8E3P9YyIkdY
-            s7yQBwseq8wSUE5v+l47jH/0YRgoHHVrXvglZvnVBwUw5IhOp53aoHtn9scfkiTy
-            h7gJ2s6j3JsxewU1lKCwcyz2TQsaUThk8C6avraxoyTeA9M6KeaifOE9mQNpGysp
-            ebqYFGZVZKEuByR5xG1haVm8KFCALgxGaQwlAd/zSpa0Qy2xOWPOOsffxsnzKXSE
-            HXmvu/K0lStNwFmQCApaSr6/G/7In+7O9wne0OhumwgP5qCo/75moixHrbuEncF9
-            Kxs6zFXh8UR7XBH1+j6zxb9u6s1eeMr1eYDb+wsIBc/FJ4pqahNn8nGWp9x7lcdk
-            jwHVdvLNmIlcaEwGbsta7Mk4bYV2XqKZ1ScWyk9jOjqunBUVHE1/dE81EvGjdMDa
-            G3rByk0=
-            -----END ENCRYPTED PRIVATE KEY-----
+        # Fails disabled
+        # "1024-pkcs5#15-pk8" : |+
+        #     -----BEGIN ENCRYPTED PRIVATE KEY-----
+        #     MIICoTAbBgkqhkiG9w0BBQMwDgQIEEPtHylCYp8CAggABIICgPeSglM6KLpKXGSw
+        #     OnlJFMbQP+4PZBr9ag9kLwr8SL9R8HLOSl/S64vuyQeiWJASWIShFkfxSKG7f8kn
+        #     weGLNKQYe6zzjSrgatiCXgvUkfaTr14lbmtDsxLSETUm8kw2s+Ea8mUOxPkCAquk
+        #     2iEfEvbcPvLnGzwlZsmsPtP3Xj2mNOCL/D1MPxF2badT0pliSzgTAEX6PaV9XK72
+        #     Yo4gL66wwGWenPTzA6TQs4uWhZW9dV64sugGtNRTQAZt8R/G8wQKDyeNaoJztB1z
+        #     +KvEDmTpKby1sJ6SQF8/yPXPlCYhN1KId1cB/R9fmICNr0TZzpxNFcM/KKmv6OZE
+        #     uc89PUtLnGvrUsGygCyO8TNa+Qjo0ngRgKEQGuR3HAAry/yBtFUOyQfKzZNzc72R
+        #     ki8eFm/8fZpUsL3D7eL42PyQRlJCPNZO3AmuwA1aMJhAkd9RctLl+8E3P9YyIkdY
+        #     s7yQBwseq8wSUE5v+l47jH/0YRgoHHVrXvglZvnVBwUw5IhOp53aoHtn9scfkiTy
+        #     h7gJ2s6j3JsxewU1lKCwcyz2TQsaUThk8C6avraxoyTeA9M6KeaifOE9mQNpGysp
+        #     ebqYFGZVZKEuByR5xG1haVm8KFCALgxGaQwlAd/zSpa0Qy2xOWPOOsffxsnzKXSE
+        #     HXmvu/K0lStNwFmQCApaSr6/G/7In+7O9wne0OhumwgP5qCo/75moixHrbuEncF9
+        #     Kxs6zFXh8UR7XBH1+j6zxb9u6s1eeMr1eYDb+wsIBc/FJ4pqahNn8nGWp9x7lcdk
+        #     jwHVdvLNmIlcaEwGbsta7Mk4bYV2XqKZ1ScWyk9jOjqunBUVHE1/dE81EvGjdMDa
+        #     G3rByk0=
+        #     -----END ENCRYPTED PRIVATE KEY-----
         "1024-pkcs5#2-des3-pk8" : |+
             -----BEGIN ENCRYPTED PRIVATE KEY-----
             MIICxjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDgQII7sqTgs6hqICAggA

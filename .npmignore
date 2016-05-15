@@ -1,6 +1,4 @@
 node_modules
-.tscache
 build
 dist
 .git
-typings

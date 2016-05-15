@@ -3,8 +3,8 @@
     "angular": "registry:dt/angular#1.4.0+20160308171320",
     "chai": "registry:dt/chai#3.4.0+20160216071402",
     "jquery": "registry:dt/jquery#1.10.0+20160303223636",
+    "js-yaml": "registry:dt/js-yaml#3.5.2+20160316171810",
     "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#7de6c3dd94feaeb21f20054b9f30d5dabc5efabd",
-    "mocha": "registry:dt/mocha#2.2.5+20151023103246",
-    "node": "registry:dt/node#4.0.0+20160316042000"
+    "mocha": "registry:dt/mocha#2.2.5+20151023103246"
   }
 }

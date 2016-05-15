@@ -12,11 +12,11 @@ iso78164:
       "Should pad 3 bytes when data is greater than padding size":
         data: "01020304050607080102030405"
         expected: "01020304050607080102030405800000"
-      "Should not padd if optional and not padding is required":
+      "Should not pad if optional and not padding is required":
         optional: true
         data: "0102030405060708"
         expected: "0102030405060708"
-      "should throw an error if padding if data is empty":
+      "should throw an error if padding when data is empty":
         data: ""
         expectedError: "INVALID_ARGUMENT"
    unpad:
@@ -54,7 +54,7 @@ pkcs7:
         optional: true
         data: "0102030405"
         expected: "0102030405030303"
-      "should throw an error if padding if data is empty":
+      "should throw an error if padding when data is empty":
         data: ""
         expectedError: "INVALID_ARGUMENT"
    unpad:
@@ -95,7 +95,7 @@ ansiX923:
         optional: true
         data: "0102030405"
         expected: "0102030405000003"
-      "should throw an error if padding if data is empty":
+      "should throw an error if padding when data is empty":
         data: ""
         expectedError: "INVALID_ARGUMENT"
    unpad:
@@ -115,28 +115,28 @@ iso10126:
    pad:
       "Should pad 3 bytes":
         data: "0102030405"
-        expected: !!js/regexp 0102030405[a-fA-F0-9]{4}03
+        expectedRegex: '0102030405[a-fA-F0-9]{4}03'
       "Should pad 1 byte":
         data: "01020304050607"
-        expected: !!js/regexp 0102030405060701
+        expectedRegex: '0102030405060701'
       "Should pad 2 bytes":
         data: "010203040506"
-        expected: !!js/regexp 010203040506[a-fA-F0-9]{2}02
+        expectedRegex: '010203040506[a-fA-F0-9]{2}02'
       "Should pad 8 bytes":
         data: "0102030405060700"
-        expected: !!js/regexp 0102030405060700[a-fA-F0-9]{14}08
+        expectedRegex: '0102030405060700[a-fA-F0-9]{14}08'
       "Should pad 3 bytes when data is greater than padding size":
         data: "01020304050607080102030405"
-        expected: !!js/regexp 01020304050607080102030405[a-fA-F0-9]{4}03
+        expectedRegex: '01020304050607080102030405[a-fA-F0-9]{4}03'
       "Should not padd if optional and not padding is required":
         optional: true
         data: "0102030405060708"
-        expected: !!js/regexp 0102030405060708
+        expectedRegex: '0102030405060708'
       "Should padd if optional and padding is required":
         optional: true
         data: "0102030405"
-        expected: !!js/regexp 0102030405[a-fA-F0-9]{4}03
-      "should throw an error if padding if data is empty":
+        expectedRegex: '0102030405[a-fA-F0-9]{4}03'
+      "should throw an error if padding when data is empty":
         data: ""
         expectedError: "INVALID_ARGUMENT"
    unpad:
@@ -174,7 +174,7 @@ zeroPadding:
         optional: true
         data: "0102030405"
         expected: "0102030405000000"
-      "should throw an error if padding if data is empty":
+      "should throw an error if padding when data is empty":
         data: ""
         expectedError: "INVALID_ARGUMENT"
    unpad:
