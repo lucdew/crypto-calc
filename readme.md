@@ -2,15 +2,12 @@
 
 > Cryptographic Calculator
 
-Crypto-calc is a crypto "swiss army knife" like app that enables to perform some cryptographic operations on small amount of data
-It is developed as web application and should run fine on Chrome/Firefox/Safari (the Internet Explorer has some issues even on IE 11 ). Note that all cryptographic
-operations run locally (no Ajax)
-
-There's also an experimental desktop app based on [atom/electron](https://github.com/atom/electron) for Windows/Mac OS X
-As of Dec 2015, it is no longer maintained. 
+Crypto-calc is a crypto "swiss army knife" like app that enables to perform some cryptographic operations on small amount of data.
+It is developed as web application and should run fine on Chrome/Firefox/Safari (the Internet Explorer has some issues even on IE 11 ). Note that all cryptographic operations run locally (no Ajax).
 
 Project is still in development and should not be used for production.
-To see a live demo go to [cryptocalc.dewavrin.info](https://cryptocalc.dewavrin.info).F
+
+To see a live demo go to [https://cryptocalc.dewavrin.info](https://cryptocalc.dewavrin.info)
 
 ## Features
 
@@ -26,9 +23,8 @@ Currently the following features are implemented.
  * Algos: **RSA-OAEP**/ **PKCS#1.5**
  * Keypair: **raw public key** , **x509 certificate** (only encryption), (encrypted) **pkcs#8**, **raw private key** 
 
-
 * Banking:
-  * **ISO-9564** format 0 to 3 pin block generation and parsing
+  * **ISO-9564** format 0 to 3 PIN block generation and parsing
   * **Primary Account Number (PAN)** parsing detecting the issuing network
 
 
@@ -43,31 +39,6 @@ Currently the following features are implemented.
   * Encoding/Decoding to/from base64,hexa string, ascii...<br/>
   * Bitwise operations
 
-
-
-## Windows Build
-
-* Download and [Microsoft Visual Studio Express 13](https://www.visualstudio.com/en-us/products/visual-studio-express-vs.aspx)
-* Download and install [nodejs](https://nodejs.org/download/)
-
-From the command line,
-
-Install dependencies
-
-```
-$ npm install
-```
-and build
-
-```
-$ npm run-script buildelectron
-```
-### Run
-
-```
-$ npm start
-```
-or execute the binary in the dist folder
 
 
 ## Web Build
