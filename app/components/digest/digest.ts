@@ -5,7 +5,7 @@ let digestModule = angular.module('CryptoCalcModule.digest',[]);
 
 digestModule.controller('DigestController', ['$timeout', 'SendToMenuService', DigestController]);
 
-function DigestController($timeout: angular.ITimeoutService,sendToMenuService: ISendToMenuService) {
+function DigestController($timeout: ng.ITimeoutService,sendToMenuService: ISendToMenuService) {
 
     let self = this;
 
@@ -16,7 +16,7 @@ function DigestController($timeout: angular.ITimeoutService,sendToMenuService: I
     this.mode = 'digest';
     this.results = {};
 
-    this.messageDigestType = this.messageDigestTypes[0];
+    this.messageDigestType = 'ALL';
     this.results[this.messageDigestType] = new Buffer('');
 
     this.setMessageDigestType = (aMessageDigestType: any) => {
@@ -30,7 +30,7 @@ function DigestController($timeout: angular.ITimeoutService,sendToMenuService: I
     };
 
 
-    this.activate = function($scope: angular.IScope) {
+    this.activate = function($scope: ng.IScope) {
 
         $scope.$watch('digest.data', function(newValue: any, oldValue: any) {
             if (self.lastError) {
