@@ -1,23 +1,34 @@
 export interface ISendToMenuService {
   registerMenuItem(receiverName: string, menuPath: string);
   updateContext(contextName: string, context: Object);
-  buildMenuTree(inclusions ? : Array < string > , exclusions ? : Array < string > ): Object;
+  buildMenuTree(inclusions?: Array<string> , exclusions?: Array<string>): Object;
   sendTo(path: string, data: Buffer, scope: any);
 }
 
 export class SendToMenuService implements ISendToMenuService {
-  items: any = {};
-  memory: any = {};
+  public items: any = {};
+  public memory: any = {};
 
-  $timeout: ng.ITimeoutService;
-  $parse: ng.IParseService;
+  private $timeout: ng.ITimeoutService;
+  private $parse: ng.IParseService;
+
+
+  public static Factory() {
+    let service = ($timeout: ng.ITimeoutService, $parse: ng.IParseService) => {
+      return new SendToMenuService($timeout, $parse);
+    };
+
+    service.$inject = ["$timeout", "$parse"];
+
+    return service;
+  }
 
   constructor($timeout: ng.ITimeoutService, $parse: ng.IParseService) {
     this.$timeout = $timeout;
     this.$parse = $parse;
   }
 
-  updateContext(contextName: string, context: Object) {
+  public updateContext(contextName: string, context: Object) {
 
     _.forOwn(this.memory, (cb, propName) => {
       if (propName.indexOf(contextName) !== 0) {
@@ -29,31 +40,33 @@ export class SendToMenuService implements ISendToMenuService {
 
   }
 
-  registerMenuItem(menuItemName: string, menuPath: string) {
+  public registerMenuItem(menuItemName: string, menuPath: string) {
     this.items[menuItemName] = {
       menuPath: menuPath
     };
   };
 
-  buildMenuTree(inclusions ? : Array < string > , exclusions ? : Array < string > ) {
-    let filteredMenuItems = _(this.items).pickBy((value, key) => {
-      return !inclusions || inclusions.length === 0 ||
-        _.find(inclusions, elt => {
-          return _.startsWith(key, elt);
-        }) !== undefined;
-    }).pickBy((value, key) => {
-      return !exclusions || exclusions.length === 0 ||
-        _.find(exclusions, elt => {
-          return _.startsWith(key, elt);
-        }) === undefined;
-    }).value();
+  public buildMenuTree(inclusions?: Array<string> , exclusions?: Array <string> ) {
+
+    // TODO: support filtering
+    // let filteredMenuItems = _(this.items).pickBy((value, key) => {
+    //   return !inclusions || inclusions.length === 0 ||
+    //     _.find(inclusions, elt => {
+    //       return _.startsWith(key, elt);
+    //     }) !== undefined;
+    // }).pickBy((value, key) => {
+    //   return !exclusions || exclusions.length === 0 ||
+    //     _.find(exclusions, elt => {
+    //       return _.startsWith(key, elt);
+    //     }) === undefined;
+    // }).value();
 
     let menu = {};
 
     _.forEach(this.items, (value, key) => {
 
       let parentItem = menu;
-      let pathElts = value.menuPath.split('.');
+      let pathElts = value.menuPath.split(".");
       for (let idx = 0; idx < pathElts.length; idx++) {
         let pathElt = pathElts[idx];
         if (!parentItem[pathElt]) {
@@ -71,9 +84,9 @@ export class SendToMenuService implements ISendToMenuService {
     return menu;
   }
 
-  sendTo(name: string, data: Buffer, scope: any) {
+  public sendTo(name: string, data: Buffer, scope: any) {
 
-    let dotIndex = name.indexOf('.');
+    let dotIndex = name.indexOf(".");
     let scopeName = name.substring(0, dotIndex);
     let propertyName = name.substring(dotIndex + 1);
     let self = this;
@@ -81,7 +94,7 @@ export class SendToMenuService implements ISendToMenuService {
     let updateFunc = function(aScope) {
       self.$timeout(() => {
         let setter = self.$parse(propertyName).assign;
-        setter(aScope, new Buffer(data.toString('hex'), 'hex'));
+        setter(aScope, new Buffer(data.toString("hex"), "hex"));
       });
     };
 
@@ -92,15 +105,4 @@ export class SendToMenuService implements ISendToMenuService {
     }
 
   };
-  
-  public static Factory() {
-    let service = ($timeout:ng.ITimeoutService, $parse:ng.IParseService) => {
-      return new SendToMenuService($timeout,$parse);
-    };
-
-    service['$inject'] = ['$timeout', '$parse'];
-
-    return service;
-  }
-  
 }

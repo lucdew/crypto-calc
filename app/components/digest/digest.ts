@@ -1,23 +1,23 @@
-import {md,util,mac} from '../../../crypto-lib/';
-import {ISendToMenuService} from '../../services';
+import {md, util, mac} from "../../../crypto-lib/";
+import {ISendToMenuService} from "../../services";
 
-let digestModule = angular.module('CryptoCalcModule.digest',[]);
+let digestModule = angular.module("CryptoCalcModule.digest", []);
 
-digestModule.controller('DigestController', ['$timeout', 'SendToMenuService', DigestController]);
+digestModule.controller("DigestController", ["$timeout", "SendToMenuService", DigestController]);
 
-function DigestController($timeout: ng.ITimeoutService,sendToMenuService: ISendToMenuService) {
+function DigestController($timeout: ng.ITimeoutService, sendToMenuService: ISendToMenuService) {
 
     let self = this;
 
-    sendToMenuService.updateContext('digest', self);
+    sendToMenuService.updateContext("digest", self);
 
     this.messageDigestTypes = util.values(md.messageDigestType);
 
-    this.mode = 'digest';
+    this.mode = "digest";
     this.results = {};
 
-    this.messageDigestType = 'ALL';
-    this.results[this.messageDigestType] = new Buffer('');
+    this.messageDigestType = "ALL";
+    this.results[this.messageDigestType] = new Buffer("");
 
     this.setMessageDigestType = (aMessageDigestType: any) => {
         this.messageDigestType = aMessageDigestType;
@@ -32,14 +32,14 @@ function DigestController($timeout: ng.ITimeoutService,sendToMenuService: ISendT
 
     this.activate = function($scope: ng.IScope) {
 
-        $scope.$watch('digest.data', function(newValue: any, oldValue: any) {
+        $scope.$watch("digest.data", function(newValue: any, oldValue: any) {
             if (self.lastError) {
                 $timeout.cancel(self.lastError);
             }
             self.computeDigest();
         });
 
-        $scope.$watch('digest.key', function(newValue: any, oldValue: any) {
+        $scope.$watch("digest.key", function(newValue: any, oldValue: any) {
             if (self.lastError) {
                 $timeout.cancel(self.lastError);
             }
@@ -49,20 +49,19 @@ function DigestController($timeout: ng.ITimeoutService,sendToMenuService: ISendT
 
     self.resetResult = () => {
         self.lastError = $timeout(() => {
-            this.result = '';
+            this.result = "";
         }, 200);
     };
 
 
     this.computeDigest = function(digestData: Buffer, digestKey: Buffer) {
-        let data: Buffer;
         let key: Buffer;
         self.results = {};
         if (!self.data || self.data.length === 0) {
             return;
         }
 
-        if (self.mode === 'hmac') {
+        if (self.mode === "hmac") {
             try {
                 key = new Buffer(self.key, self.keyType);
             } catch (e) {
@@ -70,7 +69,7 @@ function DigestController($timeout: ng.ITimeoutService,sendToMenuService: ISendT
                 self.resetResult();
                 return;
             }
-            if (self.messageDigestType === 'ALL') {
+            if (self.messageDigestType === "ALL") {
                 self.messageDigestTypes.forEach(md => {
                     self.results[md.name] = mac.hmac(md, key, self.data);
                 });
@@ -79,7 +78,7 @@ function DigestController($timeout: ng.ITimeoutService,sendToMenuService: ISendT
             }
 
         } else {
-            if (self.messageDigestType === 'ALL') {
+            if (self.messageDigestType === "ALL") {
                 self.messageDigestTypes.forEach(aMd => {
                     self.results[aMd.name] = md.digest(aMd, self.data);
                 });

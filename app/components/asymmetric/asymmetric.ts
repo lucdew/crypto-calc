@@ -1,58 +1,58 @@
-import * as forge from 'node-forge';
-import {md,util} from '../../../crypto-lib/';
-import {ISendToMenuService} from '../../services';
+import * as forge from "node-forge";
+import {md, util} from "../../../crypto-lib/";
+import {ISendToMenuService} from "../../services";
 
-let asymmetricModule = angular.module('CryptoCalcModule.asymmetric',[]);
+let asymmetricModule = angular.module("CryptoCalcModule.asymmetric", []);
 
 declare let $jq: any;
 
 const BigInteger = forge.jsbn.BigInteger;
 
 const typesMetadata = {
-    'RAWPBKEY': {
-        desc: 'Raw Pub Key'
+    "RAWPBKEY": {
+        desc: "Raw Pub Key"
     },
-    'RAWPRKEY': {
-        desc: 'Raw Private Key'
+    "RAWPRKEY": {
+        desc: "Raw Private Key"
     },
-    'X509': {
-        desc: 'X509 cert or PEM Public Key'
+    "X509": {
+        desc: "X509 cert or PEM Public Key"
     },
-    // 'PKCS8_HEX' : {
-    //         desc: 'PKCS#8 Hex'
+    // "PKCS8_HEX" : {
+    //         desc: "PKCS#8 Hex"
     // },
-    'PKCS8_PEM': {
-        desc: 'PKCS#8 PEM'
+    "PKCS8_PEM": {
+        desc: "PKCS#8 PEM"
     }
     // ,
-    // 'JWK' : {
-    //         desc : 'JWK'
+    // "JWK" : {
+    //         desc : "JWK"
     // }
 
 };
 
 const cipherAlgos = {
-    'RSA-OAEP': {
-        name: 'RSA-OAEP'
+    "RSA-OAEP": {
+        name: "RSA-OAEP"
     },
-    'RSAES-PKCS1-V1#5': {
-        name: 'RSAES-PKCS1-V1_5'
+    "RSAES-PKCS1-V1#5": {
+        name: "RSAES-PKCS1-V1_5"
     }
 };
 
 
-asymmetricModule.controller('AsymmetricController', ['$timeout', 'SendToMenuService', AsymmetricController])
+asymmetricModule.controller("AsymmetricController", ["$timeout", "SendToMenuService", AsymmetricController])
 
-.directive('dropzone', () => {
+.directive("dropzone", () => {
         return {
-            restrict: 'A',
+            restrict: "A",
             link: function(scope, element) {
-                element.on('ondragover ondragenter', (event) => {
+                element.on("ondragover ondragenter", (event) => {
                     event.stopPropagation();
                     event.preventDefault();
-                    ( < any > event.originalEvent).dataTransfer.dropEffect = 'copy';
+                    ( < any > event.originalEvent).dataTransfer.dropEffect = "copy";
                 });
-                element.on('drop', (event) => {
+                element.on("drop", (event) => {
                     event.stopPropagation();
                     event.preventDefault();
 
@@ -61,12 +61,12 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'SendToMenuServ
 
                         let reader = new FileReader();
                         reader.onloadend = (loadevent) => {
-                            //let resultElt = document.getElementById("result");
-                            //resultElt.value=reader.result;
-                            //while(dropzone.firstChild) {
+                            // let resultElt = document.getElementById("result");
+                            // resultElt.value=reader.result;
+                            // while(dropzone.firstChild) {
                             //   dropzone.removeChild(dropzone.firstChild);
-                            //}
-                            //let lines = reader.result.split('\n');
+                            // }
+                            // let lines = reader.result.split("\n");
                             scope.$apply(() => {
                                 element.text(reader.result);
                             });
@@ -78,15 +78,15 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'SendToMenuServ
         };
 
     })
-    .directive('resetBackground', function() {
+    .directive("resetBackground", function() {
         return {
-            restrict: 'A',
+            restrict: "A",
             link: function(scope, element) {
                 let executed = false;
-                element.on('blur keyup change focus', () => {
+                element.on("blur keyup change focus", () => {
                     if (!executed) {
                         element.css({
-                            'background-image': 'none'
+                            "background-image": "none"
                         });
                         executed = true;
                     }
@@ -94,38 +94,37 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'SendToMenuServ
             }
         };
     })
-    .directive('contenteditable', ['$sce', function($sce) {
+    .directive("contenteditable", ["$sce", function($sce) {
         return {
-            restrict: 'A', // only activate on element attribute
-            require: '?ngModel', // get a hold of NgModelController
+            restrict: "A", // only activate on element attribute
+            require: "?ngModel", // get a hold of NgModelController
             link: function(scope, element, attrs, ngModel) {
                 if (!ngModel) {
                     return; // do nothing if no ng-model
                 }
                 let clearBg = () => {
                         element.css({
-                            'background-image': 'none'
+                            "background-image": "none"
                         });
                     };
                     // Specify how UI should be updated
                 ngModel.$render = function() {
                     // TODO: XSS sanitize
-                    //element.html($sce.getTrustedHtml(ngModel.$viewValue || ''));
-                    element.html(ngModel.$viewValue || '');
+                    // element.html($sce.getTrustedHtml(ngModel.$viewValue || ""));
+                    element.html(ngModel.$viewValue || "");
                     if (!ngModel.$isEmpty(ngModel.$viewValue)) {
                         clearBg();
                     }
                 };
 
                 // Listen for change events to enable binding
-                element.on('blur keyup change', function() {
+                element.on("blur keyup change", function() {
                     scope.$evalAsync(read);
                 });
 
-                let executed = false;
-                // element.on('blur keyup change focus', ()=> {
+                // element.on("blur keyup change focus", ()=> {
                 //     if (!executed) {
-                //         element.css({'background-image':'none'});
+                //         element.css({"background-image":"none"});
                 //         executed = true;
                 //     }
                 // });
@@ -137,17 +136,17 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'SendToMenuServ
                     let html = element.html();
                     // When we clear the content editable the browser leaves a <br> behind
                     // If strip-br attribute is provided then we strip this out
-                    if (attrs.stripBr && html === '<br>') {
-                        html = '';
+                    if (attrs.stripBr && html === "<br>") {
+                        html = "";
                     }
                     ngModel.$setViewValue(html);
                 }
-                element.on('dragover dragenter', (event) => {
+                element.on("dragover dragenter", (event) => {
                     event.stopPropagation();
                     event.preventDefault();
-                    ( < any > event.originalEvent).dataTransfer.dropEffect = 'copy';
+                    ( < any > event.originalEvent).dataTransfer.dropEffect = "copy";
                 });
-                element.on('drop', (event) => {
+                element.on("drop", (event) => {
                     event.stopPropagation();
                     event.preventDefault();
 
@@ -158,7 +157,7 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'SendToMenuServ
                         reader.onloadend = (loadevent) => {
 
                             element.parent().css({
-                                'height': 'auto'
+                                "height": "auto"
                             });
                             ngModel.$setViewValue(reader.result);
                             ngModel.$render();
@@ -169,18 +168,18 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'SendToMenuServ
             }
         };
     }])
-    .directive('keyPair', function() {
+    .directive("keyPair", function() {
 
         return {
-            restrict: 'E',
+            restrict: "E",
             scope: {
-                'model': '=',
-                'label': '@'
+                "model": "=",
+                "label": "@"
             },
             template: function(element: angular.IAugmentedJQuery,
                 attrs: any) {
 
-                let types = attrs.types ? attrs.types.split(',') : Object.keys(typesMetadata);
+                let types = attrs.types ? attrs.types.split(",") : Object.keys(typesMetadata);
                 let tpl = `
                            <div class="container-fluid" style="padding:0">
                                 <div class="row vertical-align bottom5">
@@ -248,9 +247,9 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'SendToMenuServ
                           </div>`;
                 //         <!--<textarea
                 //                rows="4"
-                //                ng-show="model.type!=='RAWPBKEY'"
+                //                ng-show="model.type!=="RAWPBKEY""
                 //                class="form-control dropbox" name="{{name}}" type="text" ng-model="model.value" rows="{{rows}}"
-                //                ng-class="{'field-error': errorMsg || typeErrorMsg}"`
+                //                ng-class="{"field-error": errorMsg || typeErrorMsg}"`
 
                 //      if (attrs.$attr.autofocus) {
                 //              tpl+=" autofocus";
@@ -268,22 +267,22 @@ asymmetricModule.controller('AsymmetricController', ['$timeout', 'SendToMenuServ
             link: function(scope: any, element: angular.IAugmentedJQuery,
                 attrs: angular.IAttributes) {
 
-                $jq('.resizable')
+                $jq(".resizable")
                     .resizable({
-                        alsoResize: $jq(this).find('div')
+                        alsoResize: $jq(this).find("div")
                     });
                 if (!scope.model || !scope.model.type) {
-                    console.log('Resetting model');
+                    console.log("Resetting model");
                     scope.model = {
-                        type: 'RAWPBKEY',
+                        type: "RAWPBKEY",
                         value: null
                     };
                 }
 
                 scope.toggleType = function($event: any, type: string) {
-                    let oldtype = scope.type;
-                    let oldvalue = scope.model;
-                    scope.typeErrorMsg = '';
+                    // let oldtype = scope.type;
+                    // let oldvalue = scope.model;
+                    scope.typeErrorMsg = "";
                     scope.model.type = type;
                 };
 
@@ -300,30 +299,30 @@ function extractPrivateKey(pHex: string, qHex: string, eHex: string) {
 
     // ensure p is larger than q (swap them if not)
     if (p.compareTo(q) < 0) {
-        throw 'Prime p is smaller than q';
+        throw "Prime p is smaller than q";
     }
 
     // ensure p is coprime with e
     if (p.subtract(BigInteger.ONE).gcd(e)
         .compareTo(BigInteger.ONE) !== 0) {
-        throw 'Prime p is not coprime with e';
+        throw "Prime p is not coprime with e";
     }
 
     // ensure q is coprime with e
     if (q.subtract(BigInteger.ONE).gcd(e)
         .compareTo(BigInteger.ONE) !== 0) {
-        throw 'Prime p is not coprime with e';
+        throw "Prime p is not coprime with e";
     }
 
-    // compute phi: (p - 1)(q - 1) (Euler's totient function)
+    // compute phi: (p - 1)(q - 1) (Euler"s totient function)
     let p1 = p.subtract(BigInteger.ONE);
     let q1 = q.subtract(BigInteger.ONE);
     let phi = p1.multiply(q1);
 
     // ensure e and phi are coprime
     if (phi.gcd(e).compareTo(BigInteger.ONE) !== 0) {
-        // phi and e aren't coprime, so generate a new p and q
-        throw 'e is not coprime of phi';
+        // phi and e aren"t coprime, so generate a new p and q
+        throw "e is not coprime of phi";
     }
 
     // create n, ensure n is has the right number of bits
@@ -351,12 +350,12 @@ function AsymmetricController($timeout: angular.ITimeoutService,
     let self = this;
 
 
-    sendToMenuService.updateContext('asymmetric', self);
+    sendToMenuService.updateContext("asymmetric", self);
 
     self.cipher = {};
     self.cipher.errors = {};
     self.cipher.keyPair = {
-        type: 'RAWPBKEY',
+        type: "RAWPBKEY",
         value: null
     };
     self.cipher.cipherAlgos = Object.keys(cipherAlgos);
@@ -369,12 +368,12 @@ function AsymmetricController($timeout: angular.ITimeoutService,
 
         if (!self.registeredModalCallback) {
 
-            $jq('#passwordmodal').on('shown.bs.modal', function() {
-                $jq('#keyPairPassword').focus();
+            $jq("#passwordmodal").on("shown.bs.modal", function() {
+                $jq("#keyPairPassword").focus();
             });
             self.registeredModalCallback = true;
         }
-        $jq('#passwordmodal').modal('show');
+        $jq("#passwordmodal").modal("show");
 
 
     };
@@ -385,12 +384,12 @@ function AsymmetricController($timeout: angular.ITimeoutService,
     };
 
     self.cipher.savePassword = (form: any) => {
-        self.cipher.errors['asymmetric.cipher.keyPair.password'] = null;
+        self.cipher.errors["asymmetric.cipher.keyPair.password"] = null;
         try {
             let privateKey = forge.pki.decryptRsaPrivateKey(self.cipher.keyPair.value.pem, self.cipher.keyPair.password);
 
             if (null != privateKey) {
-                $jq('#passwordmodal').modal('hide');
+                $jq("#passwordmodal").modal("hide");
                 self.cipher.privateKey = privateKey;
                 self.cipher.cipher(form, self.cipher.cipherMode);
                 return;
@@ -398,8 +397,8 @@ function AsymmetricController($timeout: angular.ITimeoutService,
         } catch (e) {
             console.log(e);
         }
-        self.cipher.errors['asymmetric.cipher.keyPair.password'] = 'Invalid password';
-        form['asymmetric.cipher.keyPair.password'].$setValidity('server', false)
+        self.cipher.errors["asymmetric.cipher.keyPair.password"] = "Invalid password";
+        form["asymmetric.cipher.keyPair.password"].$setValidity("server", false);
     };
 
     self.cipher.setCipherAlgo = function(cipherAlgo: string) {
@@ -409,32 +408,31 @@ function AsymmetricController($timeout: angular.ITimeoutService,
     self.cipher.cipher = function(form: any, cipherMode: boolean) {
 
         try {
-            let params = {};
             let keyPair = self.cipher.keyPair;
             let pubKey = null;
             let privateKey = null;
 
 
-            if (self.cipher.keyPair.type === 'RAWPBKEY') {
+            if (self.cipher.keyPair.type === "RAWPBKEY") {
 
-                let exp = new BigInteger(keyPair.value.exponent.toString('hex'), 16);
+                let exp = new BigInteger(keyPair.value.exponent.toString("hex"), 16);
 
-                let modulus = new BigInteger(keyPair.value.modulus.toString('hex'), 16);
+                let modulus = new BigInteger(keyPair.value.modulus.toString("hex"), 16);
                 pubKey = forge.pki.setRsaPublicKey(modulus, exp);
-            } else if (self.cipher.keyPair.type === 'RAWPRKEY') {
-                privateKey = extractPrivateKey(keyPair.value.p.toString('hex'), keyPair.value.q.toString('hex'),
-                    keyPair.value.e.toString('hex'));
+            } else if (self.cipher.keyPair.type === "RAWPRKEY") {
+                privateKey = extractPrivateKey(keyPair.value.p.toString("hex"), keyPair.value.q.toString("hex"),
+                    keyPair.value.e.toString("hex"));
                 pubKey = forge.pki.setRsaPublicKey(privateKey.n, privateKey.e);
 
-            } else if (self.cipher.keyPair.type === 'X509') {
+            } else if (self.cipher.keyPair.type === "X509") {
                 pubKey = forge.pki.publicKeyFromPem(keyPair.value);
-            } else if (self.cipher.keyPair.type === 'PKCS8_PEM') {
+            } else if (self.cipher.keyPair.type === "PKCS8_PEM") {
                 let rawPem = keyPair.value.pem;
 
                 let isEncrypted = rawPem.match(/ENCRYPTED/i) != null;
                 if (isEncrypted) {
                     let pemHash = md.digest(
-                        md.messageDigestType.SHA1, new Buffer(rawPem)).toString('hex');
+                        md.messageDigestType.SHA1, new Buffer(rawPem)).toString("hex");
                     if (pemHash !== self.cipher.pemHash) {
                         self.cipher.privateKey = undefined;
                     }
@@ -461,13 +459,13 @@ function AsymmetricController($timeout: angular.ITimeoutService,
                 forgeResult = privateKey.decrypt(fBuffer.getBytes(), cipherAlgos[self.cipher.cipherAlgo].scheme);
             }
             let result = forge.util.createBuffer(forgeResult).toHex();
-            self.cipher.result = new Buffer(result, 'hex');
+            self.cipher.result = new Buffer(result, "hex");
 
         } catch (e) {
             console.log(e);
             return;
         }
-    }
+    };
 }
 
 

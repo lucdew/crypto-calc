@@ -1,9 +1,12 @@
 /// <reference path="main/ambient/angular/index.d.ts" />
+/// <reference path="main/ambient/buffer/index.d.ts"/>
 /// <reference path="main/ambient/chai/index.d.ts" />
 /// <reference path="main/ambient/crypto-js/index.d.ts" />
 /// <reference path="main/ambient/jquery/index.d.ts" />
 /// <reference path="main/ambient/js-yaml/index.d.ts" />
 /// <reference path="main/ambient/lodash/index.d.ts" />
 /// <reference path="main/ambient/mocha/index.d.ts" />
+/// <reference path="node.d.ts"/>
+/// <reference path="main/ambient/node-forge/index.d.ts"/>
 /// <reference path="main/ambient/jsrsasign/index.d.ts" />
 /// <reference path="main/ambient/ng-new-router/index.d.ts" />

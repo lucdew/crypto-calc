@@ -1,9 +1,9 @@
-import {banking,pin,error} from '../../../crypto-lib/';
+import {banking,pin,error} from "../../../crypto-lib/";
 
 
-let bankingModule = angular.module('CryptoCalcModule.banking',[]);
+let bankingModule = angular.module("CryptoCalcModule.banking",[]);
 
-bankingModule.controller('BankingController', ['$timeout', BankingController]);
+bankingModule.controller("BankingController", ["$timeout", BankingController]);
 
 function BankingController($timeout: ng.ITimeoutService) {
     this.isoPinTypes = pin.isoPinType.getAll();
@@ -14,14 +14,14 @@ function BankingController($timeout: ng.ITimeoutService) {
 
     this.activate = function($scope: ng.IScope) {
 
-        $scope.$watch('banking.from.pinBlock', function(newValue: any, oldValue: any) {
+        $scope.$watch("banking.from.pinBlock", function(newValue: any, oldValue: any) {
             if (newValue) {
                 self.fromIsoPinBlock(newValue);
             }
 
         });
 
-        $scope.$watch('banking.from.pan', function(newValue: any, oldValue: any) {
+        $scope.$watch("banking.from.pan", function(newValue: any, oldValue: any) {
             if (newValue && self.from.pinBlock) {
                 try {
 
@@ -45,7 +45,7 @@ function BankingController($timeout: ng.ITimeoutService) {
         if (fromIsoPinBlock) {
 
             try {
-                let isoPin = pin.createIsoPinFromBlock(new Buffer(fromIsoPinBlock, 'hex'), pan);
+                let isoPin = pin.createIsoPinFromBlock(new Buffer(fromIsoPinBlock, "hex"), pan);
                 self.from.pinLength = isoPin.pin.length;
                 self.from.pinType = isoPin.type;
                 self.from.pin = isoPin.pin;
@@ -65,10 +65,10 @@ function BankingController($timeout: ng.ITimeoutService) {
 
         }
 
-        self.from.pinType = '';
-        self.from.pinLength = '';
-        self.from.pan = '';
-        self.from.pin = '';
+        self.from.pinType = "";
+        self.from.pinLength = "";
+        self.from.pan = "";
+        self.from.pin = "";
 
     }
 
@@ -89,7 +89,7 @@ function BankingController($timeout: ng.ITimeoutService) {
             isoPin = pin.createIsoPin(this.to.isoPinType, this.to.pin);
         }
 
-        this.to.pinBlock = isoPin.toBlock().toString('hex').toUpperCase();
+        this.to.pinBlock = isoPin.toBlock().toString("hex").toUpperCase();
 
     }
 

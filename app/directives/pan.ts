@@ -1,17 +1,28 @@
-import { banking } from '../../crypto-lib';
+import { banking } from "../../crypto-lib";
 
 export class Pan {
 
-  public restrict = 'E';
+  public restrict = "E";
   public scope = {
-    'name': '@',
-    'model': '=',
-    'errorMsg': '='
+    "name": "@",
+    "model": "=",
+    "errorMsg": "="
   };
+
+  public link: (scope: any, element: angular.IAugmentedJQuery, attrs: any) => void;
+
+  public static Factory() {
+    let directive = ($timeout: ng.ITimeoutService) => {
+      return new Pan($timeout);
+    };
+
+    directive.$inject = ["$timeout"];
+
+    return directive;
+  }
 
   public template = (element: angular.IAugmentedJQuery, attrs: any) => {
 
-    let errorHtml = element.html();
     let tpl = `
         <div class="container-fluid">
             <div class="row">
@@ -25,19 +36,17 @@ export class Pan {
                     size="19" name="{{name}}" type="text" ng-model="model"`;
 
     if (attrs.ngClass) {
-      tpl += ' ng-class="' + attrs.ngClass + '"';
+      tpl += " ng-class=\"" + attrs.ngClass + "\"";
     }
     if (attrs.$attr.autofocus) {
-      tpl += ' autofocus';
+      tpl += " autofocus";
     }
     if (attrs.$attr.required) {
-      tpl += ' required';
+      tpl += " required";
     }
 
     tpl += `>
         </div>
-
-
             <div class="col-md-3 col-sm-4 noside-padding" style="font-size:11px">
                 <div class="bold">Issuing Network : {{issuingNetwork}}</div>
                 <div class="bold" >Check digit: <span ng-show="valid" >{{checkDigit}}</span></div>
@@ -53,13 +62,10 @@ export class Pan {
     return tpl;
   }
 
-  public link: (scope: any, element: angular.IAugmentedJQuery, attrs: any) => void;
-
-
   constructor($timeout: ng.ITimeoutService) {
 
     Pan.prototype.link = (scope: any, element: angular.IAugmentedJQuery, attrs: any) => {
-      scope.$watch('model', function(newValue: any, oldValue: any) {
+      scope.$watch("model", function(newValue: any, oldValue: any) {
         if (newValue === oldValue) {
           return;
         }
@@ -78,25 +84,14 @@ export class Pan {
         } catch (e) {
           // TODO
         }
-        scope.issuingNetwork = '';
-        scope.accountIdentifier = '';
-        scope.checkDigit = '';
-        scope.issuerIdentificationNumber = '';
-        scope.valid = '';
+        scope.issuingNetwork = "";
+        scope.accountIdentifier = "";
+        scope.checkDigit = "";
+        scope.issuerIdentificationNumber = "";
+        scope.valid = "";
       });
     };
 
-  }
-
-
-  public static Factory() {
-    let directive = ($timeout: ng.ITimeoutService) => {
-      return new Pan($timeout);
-    };
-
-    directive['$inject'] = ['$timeout'];
-
-    return directive;
   }
 
 

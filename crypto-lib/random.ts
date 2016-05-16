@@ -1,8 +1,6 @@
-/// <reference path="../typings/main/ambient/buffer/index.d.ts"/>
-
 export namespace random {
-    
-   let webCrypto = typeof window !== 'undefined' && (( < any > window).crypto || ( < any > window).msCrypto);
+
+   let webCrypto = typeof window !== "undefined" && (( < any > window).crypto || ( < any > window).msCrypto);
 
     export function generate(length: number): Buffer {
         if (webCrypto) {
@@ -10,8 +8,8 @@ export namespace random {
             webCrypto.getRandomValues(res);
             return new Buffer(res);
         } else {
-            return require('crypto').randomBytes(length);
+            return require("crypto").randomBytes(length);
         }
-    }    
-    
+    }
+
 }

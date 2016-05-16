@@ -1,4 +1,4 @@
-import { cipher } from '../../crypto-lib';
+import { cipher } from "../../crypto-lib";
 
 export interface ISymKeyScope extends angular.IScope {
   size: number;
@@ -10,16 +10,22 @@ export interface ISymKeyScope extends angular.IScope {
 }
 
 export class SymKey {
-  
-  public restrict = 'E';
-  //replace : true,
+
+  public restrict = "E";
+  // replace : true,
   public scope = {
-    'name': '@',
-    'label': '@',
-    'model': '=',
-    'cipherAlgo': '=',
-    'errorMsg': '='
+    "name": "@",
+    "label": "@",
+    "model": "=",
+    "cipherAlgo": "=",
+    "errorMsg": "="
   };
+
+  public link: (scope: ISymKeyScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => void;
+
+  public static Factory() {
+    return () => new SymKey();
+  }
 
   public template = (element: angular.IAugmentedJQuery, attrs: any) => {
     let tpl =
@@ -32,7 +38,7 @@ export class SymKey {
               <div class="col-md-3 col-sm-4 bold noside-padding">
                   <span ng-show="cipherAlgo.name=='DES' || cipherAlgo.name=='3DES'">
                     Parity: {{parity.valid}}<span ng-show="parity.adjustedKey && !(parity.valid)">,
-                    Adjusted: {{parity.adjustedKey.toString('hex')}}</span>
+                    Adjusted: {{parity.adjustedKey.toString("hex")}}</span>
                   </span>
               </div>
               <div class="col-md-4 col-sm-2 bold noside-padding red">{{errorMsg}}</div>
@@ -41,27 +47,27 @@ export class SymKey {
           <input class="form-control" name="{{name}}" type="text" ng-model="model"`;
 
     if (attrs.ngClass) {
-      tpl += ' ng-class="' + attrs.ngClass + '"';
+      tpl += " ng-class=\"" + attrs.ngClass + "\"";
     }
     if (attrs.$attr.autofocus) {
-      tpl += ' autofocus';
+      tpl += " autofocus";
     }
     if (attrs.$attr.required) {
-      tpl += ' required';
+      tpl += " required";
     }
 
-    tpl += '></div>';
+    tpl += "></div>";
 
     return tpl;
 
   }
 
-  public link: (scope: ISymKeyScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => void;
+
 
   public constructor() {
     SymKey.prototype.link = function(scope: ISymKeyScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) {
       scope.size = 0;
-      scope.kcv = '';
+      scope.kcv = "";
       scope.parity = undefined;
 
 
@@ -70,31 +76,31 @@ export class SymKey {
           cipherAlgo = scope.cipherAlgo;
 
         // TODO: indexOf not portable
-        if (typeof keySize !== 'number' || (keySize % 2) !== 0 || keySize < 64 ||
+        if (typeof keySize !== "number" || (keySize % 2) !== 0 || keySize < 64 ||
           !cipherAlgo || cipherAlgo.keyLengths.indexOf(keySize) === -1) {
-          scope.kcv = '';
+          scope.kcv = "";
           scope.parity = undefined;
         }
         try {
-          let data: Buffer = new Buffer(scope.model, 'hex');
+          let data: Buffer = new Buffer(scope.model, "hex");
           scope.kcv = cipher.computeKcv(data, cipherAlgo, 3);
           scope.parity = cipher.checkAndAdjustParity(data);
         } catch (e) {
-          scope.kcv = '';
+          scope.kcv = "";
           scope.parity = undefined;
         }
 
 
       }
 
-      scope.$watch('cipherAlgo', function(newValue: any, oldValue: any) {
+      scope.$watch("cipherAlgo", function(newValue: any, oldValue: any) {
         updateKeyInfo();
 
       });
 
-      scope.$watch('model', function(newValue: any, oldValue: any) {
+      scope.$watch("model", function(newValue: any, oldValue: any) {
         let keySize = 0;
-        scope.errorMsg = '';
+        scope.errorMsg = "";
 
         if (newValue && (newValue.length % 2) === 0) {
           keySize = newValue.length * 4;
@@ -105,12 +111,8 @@ export class SymKey {
         scope.size = keySize;
         updateKeyInfo();
       });
-    }
+    };
   };
-  
-  
-  public static Factory() {
-    return () => new SymKey();
-  }
+
 
 }

@@ -1,5 +1,5 @@
-import {error} from './error';
-import {util} from './util';
+import {error} from "./error";
+import {util} from "./util";
 
 export namespace banking {
     export interface IIssuingNetwork {
@@ -10,7 +10,7 @@ export namespace banking {
             min: number;
             max: number;
         };
-        exclusions ? : [RegExp];
+        exclusions?: [RegExp];
     }
 
     export interface IIssuingNetworkStatic {
@@ -21,7 +21,7 @@ export namespace banking {
             DinersClubEnRoute: IIssuingNetwork;
             DinersClubInternational: IIssuingNetwork;
             // see: https://github.com/PawelDecowski/jquery-creditcardvalidator/issues/2
-            //DinersClubUsCanada: IIssuingNetwork;
+            // DinersClubUsCanada: IIssuingNetwork;
             DiscoverCard: IIssuingNetwork;
             InterPayment: IIssuingNetwork;
             InstaPayment: IIssuingNetwork;
@@ -35,98 +35,23 @@ export namespace banking {
             Switch: IIssuingNetwork;
             Visa: IIssuingNetwork;
             UATP: IIssuingNetwork;
-            getAll(): IIssuingNetwork[]
+            getAll(): IIssuingNetwork[];
     }
 
     export interface IPan {
         issuerIdentificationNumber: string;
         majorIndustryIdentifer: string;
         individualAccountIdentifier: string;
-        isValid(): boolean;
         checkDigit: string;
         issuingNetwork: IIssuingNetwork;
+        isValid(): boolean;
         formatForIso9564Pin(): string;
     }
 
 
-    function mod10ComputeCheckDigit(apan: string) {
-        var sum = 0;
-        apan.split('').reverse().forEach(function(value, index) {
-            if (index % 2 === 0) {
-                var doubledDigit = parseInt(value, 10) * 2;
-                sum += (doubledDigit > 9 ? (doubledDigit - 9) : doubledDigit);
-            } else {
-                sum += parseInt(value, 10);
-            }
-
-        });
-        var sumMod10 = sum % 10;
-        return sumMod10 === 0 ? '0' : (10 - sumMod10).toString();
-    }
-
-
-
-    class Pan implements IPan {
-
-        private rawValue: string;
-        issuerIdentificationNumber: string;
-        majorIndustryIdentifer: string;
-        individualAccountIdentifier: string;
-        bankIdentificationNumber: string;
-
-        checkDigit: string;
-        issuingNetwork: IIssuingNetwork;
-
-        constructor() {
-        }
-
-        formatForIso9564Pin(): string {
-            var last13Digits = util.takeLast(this.rawValue, 13);
-            return last13Digits.substring(0, 12);
-        }
-
-        isValid(): boolean {
-            return mod10ComputeCheckDigit(this.rawValue.substring(0, this.rawValue.length - 1)) === this.rawValue.substring(this.rawValue.length - 1);
-        }
-
-        static fromString(pan: string): Pan {
-            var aPan = new Pan();
-            aPan.issuerIdentificationNumber = pan.substring(0, 6);
-            aPan.majorIndustryIdentifer = pan.substring(0, 1);
-            aPan.bankIdentificationNumber = aPan.issuerIdentificationNumber;
-            var panWithoutIssuer = pan.substring(6);
-            aPan.individualAccountIdentifier = panWithoutIssuer.substring(0, panWithoutIssuer.length - 1);
-            aPan.checkDigit = pan.substring(pan.length - 1);
-            aPan.rawValue = pan;
-            var allNetworks = issuingNetwork.getAll();
-            for (var i = 0; i < allNetworks.length; i++) {
-                if (allNetworks[i].iinRegexp.test(pan)) {
-                    var exclusions: RegExp[] = allNetworks[i].exclusions;
-                    var excluded: boolean = false;
-                    for (var j = 0; exclusions && j < exclusions.length && !excluded; j++) {
-                        excluded = exclusions[j].test(pan);
-                    }
-                    if (!excluded) {
-                        aPan.issuingNetwork = allNetworks[i];
-                        break;
-                    }
-
-                }
-            };
-            if (!aPan.issuingNetwork) {
-                error.raiseInvalidArg('PAN is not issued')
-            }
-
-            return aPan;
-        }
-    }
-
-
-
-
-    export var issuingNetwork: IIssuingNetworkStatic = {
+   export let issuingNetwork: IIssuingNetworkStatic = {
         Amex: {
-            name: 'American Express',
+            name: "American Express",
             iinRegexp: /^3[47]\d{13}$/,
             active: true,
             lengths: {
@@ -135,7 +60,7 @@ export namespace banking {
             }
         },
         Bankcard: {
-            name: 'Bankcard',
+            name: "Bankcard",
             iinRegexp: /^(5610\d{12}|56022[1-5]\d{10})$/,
             active: false,
             lengths: {
@@ -144,7 +69,7 @@ export namespace banking {
             }
         },
         ChinaUnionPay: {
-            name: 'China UnionPay',
+            name: "China UnionPay",
             iinRegexp: /^62\d{14,17}$/,
             active: true,
             lengths: {
@@ -154,7 +79,7 @@ export namespace banking {
 
         },
         DinersClubCarteBlanche: {
-            name: 'Diners Club Carte Blanche',
+            name: "Diners Club Carte Blanche",
             iinRegexp: /^30[0-5]\d{11}$/,
             active: true,
             lengths: {
@@ -163,7 +88,7 @@ export namespace banking {
             }
         },
         DinersClubEnRoute: {
-            name: 'Diners Club En Route',
+            name: "Diners Club En Route",
             iinRegexp: /^(2014|2149)\d{11}$/,
             active: false,
             lengths: {
@@ -172,7 +97,7 @@ export namespace banking {
             }
         },
         DinersClubInternational: {
-            name: 'Diners Club International',
+            name: "Diners Club International",
             iinRegexp: /^(30[0-5]\d{11}|309\d{11}|36\d{12}|3[8-9]\d{12})$/,
             active: true,
             lengths: {
@@ -183,7 +108,7 @@ export namespace banking {
         // Commented out overlap with Mastercard
         // see: https://github.com/PawelDecowski/jquery-creditcardvalidator/issues/2
         /*DinersClubUsCanada: {
-                    name : 'Diners Club United States & Canada',
+                    name : "Diners Club United States & Canada",
                     iinRegexp: /^5[4-5]\d{14}$/,
                     active: true,
                     lengths:{
@@ -192,7 +117,7 @@ export namespace banking {
                     }
                 },*/
         DiscoverCard: {
-            name: 'Discover Card',
+            name: "Discover Card",
             iinRegexp: /^(6011\d{12}|62212[6-9]\d{10}|6221[3-9][0-9]\d{10}|622[3-8][0-9][0-9]\d{10}|6229[01][0-9]\d{10}|62292[0-5]\d{10}|64[4-9]\d{13}|65\d{14})$/,
             active: true,
             lengths: {
@@ -201,7 +126,7 @@ export namespace banking {
             }
         },
         InterPayment: {
-            name: 'InterPayment',
+            name: "InterPayment",
             iinRegexp: /^636\d{13,16}$/,
             active: true,
             lengths: {
@@ -210,7 +135,7 @@ export namespace banking {
             }
         },
         InstaPayment: {
-            name: 'InstaPayment',
+            name: "InstaPayment",
             iinRegexp: /^63[7-9]\d{13,16}$/,
             active: true,
             lengths: {
@@ -219,7 +144,7 @@ export namespace banking {
             }
         },
         JCB: {
-            name: 'JCB',
+            name: "JCB",
             iinRegexp: /^(352[8-9]{12}|35[3-8][0-9]\d{12})$/,
             active: true,
             lengths: {
@@ -228,7 +153,7 @@ export namespace banking {
             }
         },
         Laser: {
-            name: 'Laser',
+            name: "Laser",
             iinRegexp: /^(6304\d{12,15}|6706\d{12,15}|6771\d{12,15}|6709\d{12,15})$/,
             active: false,
             lengths: {
@@ -237,7 +162,7 @@ export namespace banking {
             }
         },
         Maestro: {
-            name: 'Maestro',
+            name: "Maestro",
             iinRegexp: /^(50[0-9][0-9][0-9][0-9]\d{6,13}|5[6-9][0-9][0-9][0-9][0-9]\d{6,13}|6[0-9][0-9][0-9][0-9][0-9]\d{6,13})$/,
             active: true,
             exclusions: [
@@ -255,7 +180,7 @@ export namespace banking {
             }
         },
         Dankort: {
-            name: 'Dankort',
+            name: "Dankort",
             iinRegexp: /^5019\d{12}$/,
             active: false,
             lengths: {
@@ -265,7 +190,7 @@ export namespace banking {
 
         },
         MasterCardNotActive: {
-            name: 'Mastercard',
+            name: "Mastercard",
             iinRegexp: /^(222[1-9][0-9][0-9]\d{10}|22[3-6][0-9][0-9][0-9]\d{10}|227[0-1][0-9][0-9]\d{10}|22720[0-9][0-9]\d{10})$/,
             active: false,
             lengths: {
@@ -275,7 +200,7 @@ export namespace banking {
 
         },
         MasterCard: {
-            name: 'MasterCard',
+            name: "MasterCard",
             iinRegexp: /^5[1-5]\d{14}$/,
             active: true,
             lengths: {
@@ -284,7 +209,7 @@ export namespace banking {
             }
         },
         Solo: {
-            name: 'Solo',
+            name: "Solo",
             iinRegexp: /^6334-6767\d{12,15}$/,
             active: false,
             lengths: {
@@ -294,7 +219,7 @@ export namespace banking {
 
         },
         Switch: {
-            name: 'Switch',
+            name: "Switch",
             iinRegexp: /^(4903\d{12,15}|4905\d{12,15}|4911\d{12,15}|4936\d{12,15}|564182\d{10,13}|633110\d{10,13}|6333\d{12,15}|6759\d{12,15})$/,
             active: false,
             lengths: {
@@ -304,7 +229,7 @@ export namespace banking {
 
         },
         Visa: {
-            name: 'Visa',
+            name: "Visa",
             iinRegexp: /^4\d{12,15}$/,
             active: true,
             lengths: {
@@ -313,7 +238,7 @@ export namespace banking {
             }
         },
         UATP: {
-            name: 'UATP',
+            name: "UATP",
             iinRegexp: /^1\d{14}$/,
             active: true,
             lengths: {
@@ -344,17 +269,14 @@ export namespace banking {
                 issuingNetwork.UATP,
                 issuingNetwork.Visa
 
-            ]
+            ];
         }
     };
 
-    export function createPanFromString(pan:string): IPan {
-        return Pan.fromString(pan);
-    }
 
-    export function computeCheckDigit(apan: string): string {
+    function mod10ComputeCheckDigit(apan: string) {
         let sum = 0;
-        apan.split('').reverse().forEach(function(value, index) {
+        apan.split("").reverse().forEach(function(value, index) {
             if (index % 2 === 0) {
                 let doubledDigit = parseInt(value, 10) * 2;
                 sum += (doubledDigit > 9 ? (doubledDigit - 9) : doubledDigit);
@@ -364,10 +286,92 @@ export namespace banking {
 
         });
         let sumMod10 = sum % 10;
-        return sumMod10 === 0 ? '0' : (10 - sumMod10).toString();
-    }  
-    
-    
+        return sumMod10 === 0 ? "0" : (10 - sumMod10).toString();
+    }
+
+
+
+    class Pan implements IPan {
+
+
+        public issuerIdentificationNumber: string;
+        public majorIndustryIdentifer: string;
+        public individualAccountIdentifier: string;
+        public bankIdentificationNumber: string;
+        public checkDigit: string;
+        public issuingNetwork: IIssuingNetwork;
+
+        private rawValue: string;
+
+        public static fromString(pan: string): Pan {
+
+            let aPan = new Pan();
+            aPan.issuerIdentificationNumber = pan.substring(0, 6);
+            aPan.majorIndustryIdentifer = pan.substring(0, 1);
+            aPan.bankIdentificationNumber = aPan.issuerIdentificationNumber;
+
+            let panWithoutIssuer = pan.substring(6);
+            aPan.individualAccountIdentifier = panWithoutIssuer.substring(0, panWithoutIssuer.length - 1);
+            aPan.checkDigit = pan.substring(pan.length - 1);
+            aPan.rawValue = pan;
+
+            let allNetworks = issuingNetwork.getAll();
+            for (let i = 0; i < allNetworks.length; i++) {
+                if (allNetworks[i].iinRegexp.test(pan)) {
+                    let exclusions: RegExp[] = allNetworks[i].exclusions;
+                    let excluded = false;
+                    for (let j = 0; exclusions && j < exclusions.length && !excluded; j++) {
+                        excluded = exclusions[j].test(pan);
+                    }
+                    if (!excluded) {
+                        aPan.issuingNetwork = allNetworks[i];
+                        break;
+                    }
+
+                }
+            };
+            if (!aPan.issuingNetwork) {
+                error.raiseInvalidArg("PAN is not issued");
+            }
+
+            return aPan;
+        }
+
+
+        constructor() {
+            // empty
+        }
+
+        public formatForIso9564Pin(): string {
+            let last13Digits = util.takeLast(this.rawValue, 13);
+            return last13Digits.substring(0, 12);
+        }
+
+        public isValid(): boolean {
+            return mod10ComputeCheckDigit(this.rawValue.substring(0, this.rawValue.length - 1)) ===
+                    this.rawValue.substring(this.rawValue.length - 1);
+        }
+
+    }
+
+    export function createPanFromString(pan: string): IPan {
+        return Pan.fromString(pan);
+    }
+
+    export function computeCheckDigit(apan: string): string {
+        let sum = 0;
+        apan.split("").reverse().forEach(function(value, index) {
+            if (index % 2 === 0) {
+                let doubledDigit = parseInt(value, 10) * 2;
+                sum += (doubledDigit > 9 ? (doubledDigit - 9) : doubledDigit);
+            } else {
+                sum += parseInt(value, 10);
+            }
+
+        });
+        let sumMod10 = sum % 10;
+        return sumMod10 === 0 ? "0" : (10 - sumMod10).toString();
+    }
+
+
 }
-
-

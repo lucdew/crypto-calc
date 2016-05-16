@@ -1,9 +1,9 @@
-let aboutModule = angular.module('CryptoCalcModule.about',[]);
+let aboutModule = angular.module("CryptoCalcModule.about", []);
 
-aboutModule.controller('AboutController',[AboutController]);
+aboutModule.controller("AboutController", [AboutController]);
 
 function AboutController() {
    // Empty
 }
-console.log('registering');
+console.log("registering");
 export default aboutModule.name;

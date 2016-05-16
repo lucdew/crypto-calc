@@ -1,38 +1,38 @@
-import {util} from '../../../crypto-lib/';
-import {ISendToMenuService} from '../../services';
+import {util} from "../../../crypto-lib/";
+import {ISendToMenuService} from "../../services";
 
-let utilsModule = angular.module('CryptoCalcModule.utils', [])
-    .controller('UtilsBitwiseController', ['SendToMenuService', BitwiseController])
-    .controller('UtilsEncodingController', [EncodingController]);
+let utilsModule = angular.module("CryptoCalcModule.utils", [])
+    .controller("UtilsBitwiseController", ["SendToMenuService", BitwiseController])
+    .controller("UtilsEncodingController", [EncodingController]);
 
 function EncodingController() {
-
+    // ignore empty
 }
 
 function BitwiseController(sendToMenuService: ISendToMenuService) {
 
     this.bitwiseOperators = [{
-        name: 'XOR',
+        name: "XOR",
         func: util.xor
     }, {
-        name: 'AND',
+        name: "AND",
         func: util.and
     }, {
-        name: 'OR',
+        name: "OR",
         func: util.or
     }, {
-        name: 'NOT',
+        name: "NOT",
         func: util.not
     }];
     this.bitwiseOperator = this.bitwiseOperators[0];
 
     this.dataList = [{
-        value: new Buffer('')
+        value: new Buffer("")
     }, {
-        value: new Buffer('')
+        value: new Buffer("")
     }];
 
-    sendToMenuService.updateContext('bitwise', this);
+    sendToMenuService.updateContext("bitwise", this);
 
     this.setBitwiseOperator = (aBitwiseOperator: any) => {
         this.bitwiseOperator = aBitwiseOperator;
@@ -40,7 +40,7 @@ function BitwiseController(sendToMenuService: ISendToMenuService) {
 
     this.addDataElt = () => {
         this.dataList.push({
-            value: new Buffer('')
+            value: new Buffer("")
         });
     };
 
@@ -51,15 +51,15 @@ function BitwiseController(sendToMenuService: ISendToMenuService) {
     };
 
     this.executeBitwiseOperation = () => {
-        var result: Buffer;
+        let result: Buffer;
 
         try {
-            if (this.bitwiseOperator.name === 'NOT') {
+            if (this.bitwiseOperator.name === "NOT") {
                 result = this.bitwiseOperator.func.call(null, this.dataList[0]);
             } else {
                 result = this.dataList[0].value;
-                for (var idx = 1; idx < this.dataList.length; idx++) {
-                    console.log(this.dataList[idx].value.toString('hex'));
+                for (let idx = 1; idx < this.dataList.length; idx++) {
+                    // console.log(this.dataList[idx].value.toString("hex"));
                     result = this.bitwiseOperator.func.call(null, result, this.dataList[idx].value);
                 }
 
@@ -74,9 +74,8 @@ function BitwiseController(sendToMenuService: ISendToMenuService) {
 
 export default utilsModule.name;
 
-
 // BitwiseController.prototype.activate = function (scope) {
-//     // Renamed controller's name in the view since it holds a dot and is not well interpreted
-//     scope.bitwise = scope['utils.bitwise'];
+//     // Renamed controller"s name in the view since it holds a dot and is not well interpreted
+//     scope.bitwise = scope["utils.bitwise"];
 // }
-// BitwiseController.prototype.activate.$inject = ['$scope'];
+// BitwiseController.prototype.activate.$inject = ["$scope"];
