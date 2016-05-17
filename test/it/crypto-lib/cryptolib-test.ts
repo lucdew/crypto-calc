@@ -1,4 +1,4 @@
-import {util, padding, error, pin, mac, banking, cipher, md} from "../../crypto-lib/";
+import {util, padding, error, pin, mac, banking, cipher, md} from "../../../crypto-lib/";
 import * as _ from "lodash";
 import * as chai from "chai";
 
@@ -132,7 +132,7 @@ describe("Cipher", () => {
             expect(result).to.have.deep.property("[5].name", "GCM");
         });
 
-    })
+    });
 
 
     describe("computeKCV", () => {

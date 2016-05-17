@@ -1,6 +1,6 @@
 import * as chai from "chai";
 import * as forge from "node-forge";
-import {util} from "../../crypto-lib/";
+import {util} from "../../../crypto-lib/";
 import * as jsrsasign from "jsrsasign";
 
 const assert = chai.assert;

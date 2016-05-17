@@ -35,7 +35,7 @@ export class AppController {
   public static Factory() {
 
     let controller = ($router: any, $scope: ng.IScope, $location: ng.ILocationService, sendToMenuService: ISendToMenuService) =>
-          new AppController($router,$scope,$location,sendToMenuService);
+          new AppController($router, $scope, $location, sendToMenuService);
     controller.$inject = ["$router", "$scope", "$location", "SendToMenuService"];
     (<any>controller).$routeConfig = routeConfig;
     return controller;

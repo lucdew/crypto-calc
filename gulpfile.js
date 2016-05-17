@@ -5,7 +5,7 @@ const gutil = require('gulp-util');
 const webpack = require('webpack');
 const clean = require('gulp-clean');
 const webpackAppCfg = require('./webpack.config');
-const webpackTestCfg = require('./test/webpack.config');
+const webpackTestCfg = require('./test/it/webpack.config');
 const rename = require('gulp-rename');
 const runSequence = require('run-sequence'); // will be useless with gulp 4
 const merge = require('merge-stream');
@@ -13,6 +13,8 @@ const replace = require('gulp-replace');
 const packagejson = require('./package.json');
 const mochaPhantomJS = require('gulp-mocha-phantomjs');
 const zip = require('gulp-zip');
+const cp = require('child_process');
+const path = require('path');
 // const mocha = require('gulp-mocha');
 
 
@@ -86,12 +88,27 @@ gulp.task('dist', () => {
 
 });
 
+
+gulp.task('protractor:run', (done) => {
+  const argv = process.argv.slice(3); // forward args to protractor
+  cp.spawn(path.join('node_modules', 'protractor', 'bin', 'protractor'), ['test/e2e/conf.js'], {
+    stdio: 'inherit'
+  }).once('close', done);
+});
+
 // Fails on error thrown which are not of expected type
 gulp.task('run:test', () => {
 
-  return gulp.src('test/test-all.html')
+  return gulp.src('test/it/test-all.html')
       .pipe(gulp.dest('build/test'))
       .pipe(mochaPhantomJS());
+});
+
+
+gulp.task('protractor:install', (done) => {
+  cp.spawn(path.join('node_modules', 'protractor', 'bin', 'webdriver-manager'), ['update'], {
+    stdio: 'inherit'
+  }).once('close', done);
 });
 
 // Need to compile with ts to make test run

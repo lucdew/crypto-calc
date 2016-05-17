@@ -1,6 +1,6 @@
 import { cipher } from "../../crypto-lib";
 
-export interface ISymKeyScope extends angular.IScope {
+export interface ISymKeyScope extends ng.IScope {
   size: number;
   kcv: string;
   parity: cipher.IParityCheck;
@@ -27,15 +27,15 @@ export class SymKey {
     return () => new SymKey();
   }
 
-  public template = (element: angular.IAugmentedJQuery, attrs: any) => {
+  public template = (element: ng.IAugmentedJQuery, attrs: any) => {
     let tpl =
       `
-      <div class="container-fluid noside-padding">
+      <div class="container-fluid noside-padding" id="symKey-{{name}}">
           <div class="row">
               <div class="col-md-1 col-sm-2 bold noright-padding">{{label}}</div>
-              <div class="col-md-2 col-sm-2 bold noside-padding">KCV: {{kcv}}</div>
+              <div class="col-md-2 col-sm-2 bold noside-padding symKeyKcv">KCV: {{kcv}}</div>
               <div class="col-md-2 col-sm-2 bold noside-padding">Size: {{size}} bits</div>
-              <div class="col-md-3 col-sm-4 bold noside-padding">
+              <div class="col-md-3 col-sm-4 bold noside-padding symKeySize">
                   <span ng-show="cipherAlgo.name=='DES' || cipherAlgo.name=='3DES'">
                     Parity: {{parity.valid}}<span ng-show="parity.adjustedKey && !(parity.valid)">,
                     Adjusted: {{parity.adjustedKey.toString("hex")}}</span>

@@ -11,7 +11,7 @@ function SymencryptController($timeout: angular.ITimeoutService, sendToMenuServi
 
   let self = this;
 
-  sendToMenuService.updateContext("symencrypt",self);
+  sendToMenuService.updateContext("symencrypt", self);
 
 
   $timeout(() => {

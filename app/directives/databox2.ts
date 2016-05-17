@@ -62,7 +62,7 @@ export class Databox2 {
       throw "Both attributes widthInPixels and widthInCols have been set, choose one";
     }
     return `
-            <div class="container-fluid" style="padding:0">
+            <div class="container-fluid" id="databox2-{{name}}" style="padding:0">
                 <div class="row vertical-align bottom5">
                     <div class="col-md-2 col-sm-4 noright-padding">
                             <span class="bold">{{label}}</span>
@@ -74,9 +74,9 @@ export class Databox2 {
                                 </label>
                             </div>
                     </div>
-                    <div class="col-md-1 col-sm-2 bold noside-padding"
+                    <div class="col-md-1 col-sm-2 bold noside-padding dataCharsNum"
                           ng-if="!showCharsnum || showCharsnum =='true'">Chars: {{charsNum}}</div>
-                    <div class="col-md-1 col-sm-2 bold noside-padding"
+                    <div class="col-md-1 col-sm-2 bold noside-padding dataSize"
                           ng-if="!showSize || showSize == 'true'" >Size: {{size}} bytes</div>
                     <div class="col-md-8 col-sm-4 noside-padding red bold" >{{errorMsg ||typeErrorMsg}}</div>
                 </div>

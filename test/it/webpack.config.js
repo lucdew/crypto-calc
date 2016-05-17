@@ -11,17 +11,17 @@ module.exports = {
     root: __dirname,
     extensions: ['', '.ts', '.js', '.json'],
     alias: {
-      'node-forge': path.join(__dirname, '..', 'js','forge.min.js')
+      'node-forge': path.join(__dirname, '..', '..', 'js','forge.min.js')
     }
   },
   resolveLoader: {
-    modulesDirectories: [path.join(__dirname, '..', 'node_modules')]
+    modulesDirectories: [path.join(__dirname, '..', '..', 'node_modules')]
   },
   node: {
     Buffer: true
   },
   output: {
-    path: path.join(__dirname, '..', 'build', 'test'),
+    path: path.join(__dirname, '..', '..', 'build', 'test'),
     filename: 'test-all.js'
   },
   entry: [
