@@ -5,9 +5,8 @@
 Crypto-calc is a crypto "swiss army knife" like app that enables to perform some cryptographic operations on small amount of data.
 It is developed as web application and should run fine on Chrome/Firefox/Safari (the Internet Explorer has some issues even on IE 11 ). Note that all cryptographic operations run locally (no Ajax).
 
-Project is still in development and should not be used for production.
+**Project is no longer maintained.**
 
-To see a live demo go to [https://cryptocalc.dewavrin.info](https://cryptocalc.dewavrin.info)
 
 ## Features
 
